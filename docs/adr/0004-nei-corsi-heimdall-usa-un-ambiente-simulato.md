@@ -1,3 +1,5 @@
+> **Superata da ADR-0005** su dove si decide il backend reale. Il resto resta in vigore.
+
 # Nei corsi Heimdall usa un ambiente simulato; l'accesso ai sistemi reali si configura solo in locale
 
 Durante le lezioni Heimdall non si collega ad AppScan, SonarQube e Azure DevOps aziendali, ma a un ambiente simulato. Gli agenti raggiungono i sistemi esterni solo attraverso il server MCP di Heimdall, con strumenti stabili (per esempio: elenco degli alert nello schema comune, apertura di una pull request, stato e log di una pipeline). Dietro quel server ci sono due backend intercambiabili:
