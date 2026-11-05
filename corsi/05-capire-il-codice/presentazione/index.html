@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab 05</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+.app,.stage{grid-template-columns:minmax(0,1fr)}
+.slide{min-width:0}.slide>*{min-width:0;max-width:100%}
+.code.scroll{max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab · 05</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · corso 05 · Claude Code e GitHub Copilot</div>
+  <h1>Capire<br>il codice</h1>
+  <p class="lead">Un alert dice che cosa ha visto lo scanner, non che cosa succede nel progetto. Oggi Heimdall impara a leggere il codice: un programma misura dipendenze, chiamate e punti d'ingresso, il Security Analyst giudica se l'alert è pertinente e scrive il primo piano di correzione.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>pertinenza</span><span>albero sintattico</span><span>dipendenze</span><span>Remediation Plan</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Prerequisiti: le lezioni 03 e 04. Servono il contratto degli artefatti in .pipeline/, il plugin heimdall con il suo server MCP e l'alert PAY-160644 preso in carico alla fine della lezione 04.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Sei tappe, dall'alert al piano v1</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">La 02 è la domanda di oggi: questo alert ci riguarda? La 03 è lo strumento per rispondere: un albero del codice invece del testo. La 04 è il risultato, il piano. La 05 le differenze tra gli strumenti, la 06 il laboratorio.</aside>
+</section>
+
+<!-- ============ 1. PERCHÉ CAPIRE IL CODICE ============ -->
+<section class="slide" data-ch="1" data-title="Un alert non è ancora un problema">
+  <div class="eyebrow"><b>01</b> Perché capire il codice</div>
+  <h2>Un alert non è ancora un problema</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Lo scanner vede la versione</h3><p>AppScan trova <code>acme-xml 1.4.2</code> nel <code>pom.xml</code> e lo confronta con un elenco di vulnerabilità. Non sa se il progetto usa la parte vulnerabile, né con quali dati.</p></div>
+    <div class="panel"><h3>Il piano ha bisogno del codice</h3><p>«Aggiorna alla 2.0.0» è una riga. Quali file cambiano, quale versione di Java serve, quali test lo verificano: queste cose le dice il codice, non l'alert.</p></div>
+    <div class="panel"><h3>Fatti e giudizio</h3><p>Righe, chiamate e versioni le misura un programma, sempre uguale. Se l'input lo controlla un attaccante, lo decide l'agente, leggendo il codice che il programma gli indica.</p></div>
+  </div>
+  <div class="codewrap"><span class="label">chi fa che cosa, oggi</span><pre class="code">alert.json ──▶ <span class="k">analyze.js</span> ──▶ analysis.json ──▶ <span class="k">security-analyst</span> ──▶ plan-v1.md
+               parser Java        dipendenze, usi,       pertinenza,             il Remediation
+               pom.xml            catene, test           verifica nel codice     Plan v1
+               get_component</pre></div>
+  <aside class="notes">Lo stesso principio delle lezioni 03 e 04: quello che deve essere esatto lo produce un programma. Lì erano il contratto degli artefatti e lo schema degli alert, qui sono i fatti sul codice. Il modello fa la parte che un programma non sa fare: capire se un dato arriva da un cliente.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-title="Il pezzo di Heimdall">
+  <div class="eyebrow"><b>01</b> Perché capire il codice</div>
+  <h2>Oggi costruiamo il Security Analyst</h2>
+  <p style="line-height:2.1"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Selezione</span> <span aria-hidden="true">→</span> <span class="tag acc">Security Analyst</span> <span aria-hidden="true">⇄</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+  <div class="grid g2">
+    <div class="panel"><span class="tag">lezione 04</span><h3>Dove eravamo</h3><p>Il server MCP restituisce gli alert nello schema comune. <code>save-alert.js</code> ha scritto <code>.pipeline/PAY-160644/alert.json</code> in una cartella <code>payments-api</code> ancora vuota.</p></div>
+    <div class="panel"><span class="tag acc">oggi</span><h3>Dove arriviamo</h3><p>Il codice di <code>payments-api</code>, l'analisi in <code>analysis.json</code>, il giudizio di pertinenza e il piano v1: aggiornare <code>acme-xml</code> alla 2.0.0, che richiede Java 11.</p></div>
+  </div>
+  <div class="callout">Il piano v1 di oggi non lo approva nessuno. Nella lezione 06 il Supervisor lo confronta con i vincoli del progetto, e uno di questi dice Java 8.</div>
+  <aside class="notes">È lo scenario Java 8 della demo: dipendenza vulnerabile, piano v1 con l'upgrade di Java, rifiuto del Supervisor, piano v2 approvato. Oggi ci fermiamo al v1, e lo vogliamo onesto: il costo dell'upgrade deve essere scritto, non scoperto dopo.</aside>
+</section>
+
+<!-- ============ 2. LA PERTINENZA ============ -->
+<section class="slide" data-ch="2" data-title="Tre domande">
+  <div class="eyebrow"><b>02</b> La pertinenza</div>
+  <h2>Tre domande prima di scrivere un piano</h2>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">1</span><h3>Il problema c'è?</h3><p>La libreria è dichiarata alla versione segnalata, e il codice la usa. Per un alert sul codice: la riga fa quello che dice l'alert.</p></div>
+    <div class="panel"><span class="tag acc">2</span><h3>È raggiungibile?</h3><p>Da quali punti d'ingresso si arriva al codice dell'alert: un endpoint HTTP, un filtro, l'avvio, un job pianificato.</p></div>
+    <div class="panel"><span class="tag acc">3</span><h3>Chi controlla l'input?</h3><p>Un file caricato da un cliente lo controlla un attaccante. Una risorsa dentro il jar, o una costante, no.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Esito</th><th>Quando</th><th>Che cosa succede</th></tr></thead>
+    <tbody>
+      <tr><td>pertinente</td><td>Il problema c'è ed è raggiungibile con un input esterno</td><td>Piano v1</td></tr>
+      <tr><td>pertinente, non sfruttabile oggi</td><td>Il problema c'è, ma nessuna catena porta un input esterno</td><td>Piano v1, con la priorità più bassa: basta una modifica perché diventi sfruttabile</td></tr>
+      <tr><td>non pertinente</td><td>Il problema non c'è: versione diversa, libreria non usata, riga che fa altro</td><td>Nessun piano: «Alert non pertinente» con il motivo</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Le prime due domande le risponde un programma, la terza no: per sapere chi controlla un dato bisogna leggere il codice della catena. Per questo il giudizio è dell'agente. Non pertinente vuol dire che lo scanner ha sbagliato, non che il problema è piccolo.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Raggiungibile e sfruttabile">
+  <div class="eyebrow"><b>02</b> La pertinenza</div>
+  <h2>Raggiungibile non vuol dire sfruttabile</h2>
+  <div class="grid g2">
+    <div class="panel"><span class="tag acc">POST /api/statements</span><h3>L'estratto del cliente</h3>
+      <pre class="code" style="font-size:12.5px">StatementController#upload        :34
+  → StatementImportService#importStatement :24
+  → StatementParser#parse           :22
+      XmlReaderFactory.newReader()
+      reader.read(xml)              :24</pre>
+      <p>Il documento arriva da <code>file.getInputStream()</code> del file caricato: lo controlla chi lo carica. <strong>Sfruttabile.</strong></p></div>
+    <div class="panel"><span class="tag">all'avvio (@PostConstruct)</span><h3>I codici delle banche</h3>
+      <pre class="code" style="font-size:12.5px">BankCodesLoader#load              :27
+      XmlReaderFactory.newReader()
+        .read(in)</pre>
+      <p>Il documento è <code>/bank-codes.xml</code>, dentro il jar. Usa la stessa libreria vulnerabile, ma nessun attaccante sceglie che cosa legge. <strong>Raggiungibile, non sfruttabile.</strong></p></div>
+  </div>
+  <div class="callout">Le due catene vanno tutte e due nel piano: la prima dice che l'alert è pertinente, la seconda che l'aggiornamento tocca anche l'avvio del servizio.</div>
+  <aside class="notes">Il programma trova le due catene allo stesso modo: per lui sono due punti d'ingresso che arrivano alla libreria. La differenza la fa la lettura di upload e di load, ed è il lavoro del Security Analyst.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Simulatore">
+  <div class="eyebrow"><b>02</b> La pertinenza</div>
+  <h2>Prova: togli una chiamata, che cosa resta?</h2>
+  <div class="graphbox"><svg id="rsimSvg" viewBox="0 0 900 270" role="img" aria-label="Grafo delle chiamate di payments-api verso acme-xml"></svg></div>
+  <div class="grid g2">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="steps" id="rsimCuts"></div>
+      <p class="small">Linea continua: una chiamata nel codice; in evidenza, le catene che arrivano alla libreria. Tratteggiata: un test.</p>
+    </div>
+    <div class="term" id="rsimOut"></div>
+  </div>
+  <aside class="notes">Tre tagli, tre esiti. Togliete la chiamata del controller: resta solo l'avvio, l'alert diventa pertinente ma non sfruttabile oggi. Togliete anche gli usi nel parser e nel loader: la libreria è dichiarata ma nessuno la usa, e l'alert non è pertinente. Nel laboratorio fate il primo taglio sul codice vero, con analyze.js --no-save.</aside>
+</section>
+
+<!-- ============ 3. ALBERO E DIPENDENZE ============ -->
+<section class="slide" data-ch="3" data-title="grep e parser">
+  <div class="eyebrow"><b>03</b> Albero e dipendenze</div>
+  <h2>grep trova il testo, il parser trova il codice</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">grep -rn "Xml[A-Z]" src/main/java</pre></div>
+      <div class="seg" id="grepMode"><button type="button" data-v="grep" aria-pressed="true">Quello che trova grep</button><button type="button" data-v="parser" aria-pressed="false">Quello che è codice</button></div>
+      <ul class="clean">
+        <li>grep confronta caratteri: un commento e un messaggio di log contano come un uso.</li>
+        <li>Il parser divide il file in token: identificatori, stringhe, commenti. Un nome in un commento non è un identificatore.</li>
+        <li>Per l'agente fa differenza: 18 righe da leggere o 16, e due falsi indizi in meno.</li>
+      </ul>
+    </div>
+    <div class="tablewrap" style="max-height:440px;overflow:auto"><table id="grepTable">
+      <thead><tr><th>File</th><th>Riga</th><th>Testo</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il conto torna con analyze.js, che stampa «18 righe contengono …; 16 sono codice» e le due che non lo sono. Su un progetto grande il rapporto peggiora: commenti, log, documentazione, test.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="L'albero di un file">
+  <div class="eyebrow"><b>03</b> Albero e dipendenze</div>
+  <h2>L'albero di un file, senza compilatore</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">node …/scripts/java-outline.js …/StatementParser.java · estratto</span><pre class="code scroll" style="font-size:12.5px">class StatementParser  @Component  · riga 19
+  parse(InputStream xml)  · righe 21–34
+      22  XmlReaderFactory.newReader() → <span class="s">com.acme.xml.XmlReaderFactory</span>
+      24  reader.read()                → <span class="s">com.acme.xml.XmlReader</span>
+      25  document.getRoot()           → <span class="s">com.acme.xml.XmlDocument</span>
+      26  new Statement()              → <span class="k">progetto: Statement#Statement</span>
+      26  root.attribute()             → <span class="s">com.acme.xml.XmlElement</span>
+      27  root.children()              → <span class="s">com.acme.xml.XmlElement</span>
+      28  statement.addLine()          → <span class="k">progetto: Statement#addLine</span>
+      28  toLine()                     → <span class="k">progetto: StatementParser#toLine</span>
+  toLine(XmlElement element)  · righe 36–41
+      38  element.attribute()          → <span class="s">com.acme.xml.XmlElement</span>
+      …
+
+<span class="c">fuori dall'albero: 4 righe di commento, 6 stringhe</span></pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li><strong>Token</strong>: <code>analysis/java.js</code> separa identificatori, stringhe, commenti e simboli, con la riga.</li>
+        <li><strong>Albero</strong>: package e import, poi tipi, campi, metodi, e dentro ogni metodo le chiamate.</li>
+        <li><strong>Risoluzione</strong>: <code>reader</code> è una variabile locale di tipo <code>XmlReader</code>, e l'import dice che è <code>com.acme.xml.XmlReader</code>.</li>
+      </ul>
+      <div class="callout warn"><strong>Un parser minimale, scritto per il corso.</strong> Non conosce i tipi di ritorno: in <code>newReader().read(in)</code> la seconda chiamata resta <code>?.read</code>. Non distingue gli overload e non vede le chiamate dentro un framework. Su un progetto vero: JavaParser con il symbol solver, tree-sitter (lo usa graphify, corso 01), o il compilatore.</div>
+    </div>
+  </div>
+  <aside class="notes">Volutamente piccolo: poche centinaia di righe senza dipendenze, da leggere in aula. Il punto non è il parser, è il tipo di informazione: chi chiama chi, dove, con quale tipo. I limiti li dichiariamo nell'output, così l'agente sa dove controllare a mano.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Grafo e punti d'ingresso">
+  <div class="eyebrow"><b>03</b> Albero e dipendenze</div>
+  <h2>Dal grafo delle chiamate ai punti d'ingresso</h2>
+  <div class="grid g2">
+    <div class="tablewrap"><table>
+      <thead><tr><th>Ingresso</th><th>Come lo riconosce</th><th>In payments-api</th></tr></thead>
+      <tbody>
+        <tr><td>HTTP</td><td><code>@GetMapping</code>, <code>@PostMapping</code>…, con il <code>@RequestMapping</code> della classe</td><td><code>POST /api/statements</code></td></tr>
+        <tr><td>filtro</td><td><code>doFilter</code> o <code>doFilterInternal</code> di un <code>OncePerRequestFilter</code> o <code>Filter</code></td><td><code>SessionCookieFilter</code></td></tr>
+        <tr><td>avvio</td><td><code>@PostConstruct</code>, <code>@EventListener</code>, <code>@Scheduled</code></td><td><code>BankCodesLoader#load</code></td></tr>
+        <tr><td>main</td><td><code>public static void main</code></td><td><code>PaymentsApplication</code></td></tr>
+        <tr><td>test</td><td><code>@Test</code> in <code>src/test/java</code></td><td>4 test, 2 passano da <code>parse</code></td></tr>
+      </tbody>
+    </table></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Ogni chiamata risolta a un metodo del progetto è un arco. Se il tipo è un'interfaccia, l'arco va anche alle implementazioni.</li>
+        <li>Le catene si cercano all'indietro: dal metodo dell'alert ai chiamanti, fino a un punto d'ingresso.</li>
+        <li>I test sono ingressi a parte: dicono quali test verificheranno la correzione.</li>
+      </ul>
+      <div class="callout">Per l'alert sul cookie (<code>PAY-195647</code>) l'analisi trova la catena del filtro, ma nessun test: <code>SessionCookieFilterTest</code> chiama <code>doFilter</code>, ed è Spring a passare a <code>doFilterInternal</code>. Il grafo non vede dentro le librerie.</div>
+    </div>
+  </div>
+  <aside class="notes">Le regole degli ingressi sono una tabella nel codice, in analysis/index.js: per un altro framework si aggiunge una riga. L'esempio del filtro è il limite più insidioso, perché il risultato sbagliato è «nessun test», che sembra un fatto.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Le dipendenze">
+  <div class="eyebrow"><b>03</b> Albero e dipendenze</div>
+  <h2>Le dipendenze: il pom e i metadati della libreria</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">pom.xml · estratto</span><pre class="code" style="font-size:12.5px"><span class="c">21</span>  &lt;java.version&gt;<span class="s">1.8</span>&lt;/java.version&gt;
+<span class="c">22</span>  &lt;acme-xml.version&gt;<span class="s">1.4.2</span>&lt;/acme-xml.version&gt;
+    …
+<span class="c">46</span>  &lt;dependency&gt;
+<span class="c">47</span>    &lt;groupId&gt;com.acme.libs&lt;/groupId&gt;
+<span class="c">48</span>    &lt;artifactId&gt;<span class="k">acme-xml</span>&lt;/artifactId&gt;   <span class="c">← l'alert</span>
+<span class="c">49</span>    &lt;version&gt;${acme-xml.version}&lt;/version&gt;
+<span class="c">50</span>  &lt;/dependency&gt;</pre></div>
+    <div class="codewrap"><span class="label">get_component · lo strumento nuovo del server MCP</span><pre class="code" style="font-size:12.5px">node scripts/mcp-call.js get_component \
+  '{"project":"payments-api","name":"com.acme.libs:acme-xml"}'
+
+<span class="k">1.3.0</span>  Java 8   aggiunge resolveExternalEntities(boolean)
+<span class="k">1.4.2</span>  Java 8   ultima della linea 1.x
+<span class="k">2.0.0</span>  Java 11  corregge CWE-611, toglie XmlReaderFactory</pre></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Fatto</th><th>Da dove</th><th>Per payments-api</th></tr></thead>
+    <tbody>
+      <tr><td>Dove cambia la versione</td><td><code>pom.js</code>: la dipendenza e la proprietà che la definisce</td><td><code>pom.xml:22</code>, non la 48</td></tr>
+      <tr class="hl"><td>Versioni corrette compatibili</td><td>Versioni ≥ <code>fixedIn</code> con Java minimo ≤ quello del progetto</td><td>Nessuna: aggiornare vuol dire Java 11</td></tr>
+      <tr><td>Che cosa si rompe</td><td>Le API rimosse, incrociate con le chiamate trovate dal parser</td><td><code>XmlReaderFactory</code> in due file</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">get_component è il quinto strumento del server: i metadati di una libreria sono un sistema esterno, come gli scanner, e passano dal server MCP (ADR-0004). Nel backend simulato stanno in scenarios/payments-api/components.json. Nel backend reale non ci sono ancora: da dove leggerli, se dal repository Maven aziendale o da Maven Central, è una decisione aperta. Le dipendenze transitive il nostro lettore non le vede: per quelle serve mvn dependency:tree.</aside>
+</section>
+
+<!-- ============ 4. IL REMEDIATION PLAN ============ -->
+<section class="slide" data-ch="4" data-title="Il programma misura">
+  <div class="eyebrow"><b>04</b> Il Remediation Plan</div>
+  <h2>Il programma misura, l'agente giudica</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">.pipeline/PAY-160644/analysis.json</div>
+      <button data-show="a-dep" aria-pressed="true">&nbsp;&nbsp;dependency</button>
+      <button data-show="a-use" aria-pressed="false">&nbsp;&nbsp;usages</button>
+      <button data-show="a-reach" aria-pressed="false">&nbsp;&nbsp;reachability</button>
+      <button data-show="a-tests" aria-pressed="false">&nbsp;&nbsp;tests</button>
+      <button data-show="a-up" aria-pressed="false">&nbsp;&nbsp;upgradeImpact</button>
+      <div class="dir">chi lo legge</div>
+      <button data-show="a-who" aria-pressed="false">&nbsp;&nbsp;security-analyst</button>
+    </div>
+    <div>
+      <div data-file="a-dep" class="codewrap"><span class="label">dependency · estratto</span><pre class="code scroll">{
+  <span class="k">"name"</span>: <span class="s">"com.acme.libs:acme-xml"</span>,
+  <span class="k">"declared"</span>: { <span class="k">"at"</span>: <span class="s">"pom.xml:46-50"</span>, <span class="k">"alertLineInside"</span>: true,
+    <span class="k">"version"</span>: <span class="s">"1.4.2"</span>, <span class="k">"versionAt"</span>: <span class="s">"pom.xml:22"</span>,
+    <span class="k">"versionProperty"</span>: <span class="s">"acme-xml.version"</span>, <span class="k">"scope"</span>: <span class="s">"compile"</span>, <span class="k">"direct"</span>: true },
+  <span class="k">"packages"</span>: [<span class="s">"com.acme.xml"</span>],
+  <span class="k">"fixedIn"</span>: { <span class="k">"version"</span>: <span class="s">"2.0.0"</span>, <span class="k">"javaMin"</span>: <span class="s">"11"</span>, … },
+  <span class="k">"compatibleFixes"</span>: [],
+  <span class="k">"javaUpgrade"</span>: { <span class="k">"from"</span>: <span class="s">"1.8"</span>, <span class="k">"to"</span>: <span class="s">"11"</span>, <span class="k">"at"</span>: <span class="s">"pom.xml:21"</span> }
+}</pre></div>
+      <div data-file="a-use" class="codewrap" hidden><span class="label">usages · estratto</span><pre class="code scroll">{
+  <span class="k">"imports"</span>: [ <span class="c">… 8 import di com.acme.xml</span> ],
+  <span class="k">"calls"</span>: [
+    { <span class="k">"at"</span>: <span class="s">"…/StatementParser.java:22"</span>, <span class="k">"in"</span>: <span class="s">"…StatementParser#parse"</span>,
+      <span class="k">"api"</span>: <span class="s">"com.acme.xml.XmlReaderFactory.newReader"</span> },
+    { <span class="k">"at"</span>: <span class="s">"…/StatementParser.java:24"</span>, <span class="k">"in"</span>: <span class="s">"…StatementParser#parse"</span>,
+      <span class="k">"api"</span>: <span class="s">"com.acme.xml.XmlReader.read"</span> },
+    <span class="c">… 14 chiamate in 3 metodi</span>
+  ],
+  <span class="k">"untyped"</span>: [
+    { <span class="k">"at"</span>: <span class="s">"…/BankCodesLoader.java:27"</span>, <span class="k">"call"</span>: <span class="s">"?.read"</span> }, …
+  ]
+}</pre></div>
+      <div data-file="a-reach" class="codewrap" hidden><span class="label">reachability · estratto</span><pre class="code scroll">[
+  { <span class="k">"entry"</span>: { <span class="k">"kind"</span>: <span class="s">"http"</span>, <span class="k">"label"</span>: <span class="s">"POST /api/statements"</span> },
+    <span class="k">"steps"</span>: [
+      { <span class="k">"method"</span>: <span class="s">"…StatementController#upload"</span>, <span class="k">"at"</span>: <span class="s">"…/StatementController.java:34"</span> },
+      { <span class="k">"method"</span>: <span class="s">"…StatementImportService#importStatement"</span>, <span class="k">"at"</span>: <span class="s">"…:24"</span> },
+      { <span class="k">"method"</span>: <span class="s">"…StatementParser#parse"</span>, <span class="k">"at"</span>: <span class="s">"…/StatementParser.java:22"</span> } ] },
+  { <span class="k">"entry"</span>: { <span class="k">"kind"</span>: <span class="s">"startup"</span>, <span class="k">"label"</span>: <span class="s">"all'avvio (@PostConstruct)"</span> },
+    <span class="k">"steps"</span>: [ { <span class="k">"method"</span>: <span class="s">"…BankCodesLoader#load"</span>, <span class="k">"at"</span>: <span class="s">"…:27"</span> } ] }
+]</pre></div>
+      <div data-file="a-tests" class="codewrap" hidden><span class="label">tests</span><pre class="code scroll">[
+  { <span class="k">"test"</span>: <span class="s">"…StatementParserTest#readsCustomerAndLines"</span>, <span class="k">"reaches"</span>: <span class="s">"…StatementParser#parse"</span> },
+  { <span class="k">"test"</span>: <span class="s">"…StatementParserTest#rejectsMalformedXml"</span>, <span class="k">"reaches"</span>: <span class="s">"…StatementParser#parse"</span> }
+]</pre></div>
+      <div data-file="a-up" class="codewrap" hidden><span class="label">upgradeImpact</span><pre class="code scroll">[
+  { <span class="k">"api"</span>: <span class="s">"com.acme.xml.XmlReaderFactory"</span>,
+    <span class="k">"change"</span>: <span class="s">"Removed. Use XmlReader.builder().build()."</span>,
+    <span class="k">"usedAt"</span>: [ <span class="s">"…/BankCodesLoader.java:27"</span>, <span class="s">"…/StatementParser.java:22"</span> ] },
+  { <span class="k">"api"</span>: null, <span class="k">"change"</span>: <span class="s">"Requires Java 11 or later."</span>, <span class="k">"usedAt"</span>: [] }
+]</pre></div>
+      <div data-file="a-who" class="panel" hidden><h3>Che cosa ci aggiunge l'agente</h3><ul class="clean">
+        <li>Apre ogni file alla riga indicata e controlla il fatto prima di usarlo.</li>
+        <li>Legge i metodi delle catene: da dove arriva l'<code>InputStream</code>?</li>
+        <li>Completa a mano quello che il parser non sa: <code>?.read</code> è <code>XmlReader#read</code>.</li>
+        <li>Decide l'esito della pertinenza e scrive il piano. Non tocca il codice.</li></ul></div>
+    </div>
+  </div>
+  <aside class="notes">analysis.json è un artefatto della pipeline come alert.json: lo scrive un programma, non si riscrive, e analyze.js esce con 3 se c'è già. Con --no-save si rifà l'analisi senza salvarla, per provare.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Il formato del piano">
+  <div class="eyebrow"><b>04</b> Il Remediation Plan</div>
+  <h2>Il piano del corso 03, con quattro sezioni in più</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">plan-v1.md · lo scheletro</span><pre class="code"><span class="c">---</span>
+<span class="k">alert:</span> PAY-160644
+<span class="k">version:</span> 1
+<span class="c">---</span>
+# Piano v1 · PAY-160644
+
+<span class="s">## Pertinenza</span>      <span class="c">← nuova</span>
+## Diagnosi
+<span class="s">## Evidenze</span>        <span class="c">← nuova</span>
+## Modifiche
+## File toccati
+## Dipendenze
+<span class="s">## Test</span>            <span class="c">← nuova</span>
+## Rischi
+<span class="s">## Alternative</span>     <span class="c">← nuova</span></pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li><strong>Pertinenza</strong>: l'esito e il perché, con la catena e chi controlla l'input.</li>
+        <li><strong>Evidenze</strong>: ogni affermazione con <code>file:riga</code>, da <code>analysis.json</code> o da un file letto.</li>
+        <li><strong>Test</strong>: Heimdall non modifica i test. Quelli esistenti devono continuare a passare, quelli nuovi sono file nuovi.</li>
+        <li><strong>Alternative</strong>: le strade scartate, con il motivo. Al Supervisor servono per chiedere un piano diverso.</li>
+      </ul>
+      <div class="callout">Il frontmatter e le sezioni «Modifiche», «File toccati», «Dipendenze» restano: l'hook <code>guard-pipeline</code> del corso 03 accetta il piano di Heimdall così com'è.</div>
+    </div>
+  </div>
+  <aside class="notes">Il contratto cresce senza rompersi: chi leggeva il piano del corso 03 trova le stesse sezioni. Le quattro nuove servono al Supervisor della lezione 06, che deve poter rifiutare un piano con motivi precisi.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Il piano v1 di payments-api">
+  <div class="eyebrow"><b>04</b> Il Remediation Plan</div>
+  <h2>Il piano v1 dice anche che cosa costa</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">esempi/PAY-160644/plan-v1.md · estratto</span><pre class="code scroll" style="font-size:12.5px;white-space:pre-wrap"><span class="s">## Modifiche</span>
+
+1. In pom.xml:22 portare acme-xml.version da 1.4.2 a 2.0.0.
+2. La 2.0.0 richiede Java 11: in pom.xml:21 portare
+   java.version da 1.8 a 11.
+3. La 2.0.0 toglie XmlReaderFactory. In StatementParser.java:22
+   sostituire XmlReaderFactory.newReader() con
+   XmlReader.builder().build() …
+4. In BankCodesLoader.java:27 …
+5. Aggiungere StatementParserXxeTest.java …
+
+<span class="s">## Dipendenze</span>
+
+- com.acme.libs:acme-xml da 1.4.2 a 2.0.0.
+- Java da 1.8 a 11, perché nessuna versione corretta
+  di acme-xml gira su Java 8.</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="panel"><h3>Rischi</h3><p>Il passaggio a Java 11 riguarda tutto il servizio: CI, JDK di build, runtime. E il <code>pom.xml</code> stesso, alle righe 36 e 43, dice di restare sulla 1.x e di sentire il team piattaforma.</p></div>
+      <div class="panel"><h3>Alternative</h3><p>Restare sulla 1.4.2 con <code>resolveExternalEntities(false)</code>, disponibile dalla 1.3.0. Toglie la vulnerabilità senza cambiare Java, ma lo scanner continua a segnalare la versione.</p></div>
+      <div class="callout warn">Un buon analyst non nasconde il costo per far approvare il piano. Lo scrive, e lascia la decisione al Supervisor: è la lezione 06.</div>
+    </div>
+  </div>
+  <aside class="notes">Il piano segue la correzione suggerita dall'alert, come l'analyst del corso 03. La differenza è che ora le conseguenze vengono da fatti misurati: compatibleFixes vuoto, javaUpgrade, upgradeImpact. Se il modello le omette, il confronto con analysis.json lo mostra.</aside>
+</section>
+
+<!-- ============ 5. NEI DUE STRUMENTI ============ -->
+<section class="slide" data-ch="5" data-title="Il Security Analyst">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Il Security Analyst, in Claude Code e Copilot CLI</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">agents/security-analyst.md · frontmatter</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> security-analyst
+<span class="k">description:</span> Security Analyst di Heimdall. Riceve
+  un alert preso in carico e la sua analisi statica,
+  verifica nel codice se l'alert è pertinente …
+<span class="k">tools:</span> Read, Grep, Glob
+<span class="k">maxTurns:</span> 20
+<span class="c">---</span></pre></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th></tr></thead>
+      <tbody>
+        <tr><td>La skill</td><td><code>/heimdall:analyze-alert PAY-160644</code></td><td><code>/analyze-alert PAY-160644</code></td></tr>
+        <tr><td>Il subagente</td><td><code>heimdall:security-analyst</code></td><td><code>security-analyst</code></td></tr>
+        <tr><td>Lo script</td><td colspan="2"><code>allowed-tools: Bash(node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js *)</code>, come <code>save-alert.js</code> nella lezione 04</td></tr>
+        <tr><td>Strumenti dell'agente</td><td colspan="2"><code>Read, Grep, Glob</code>, come l'analyst del corso 03: legge, non scrive, non esegue</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="callout">Il subagente non ha <code>Bash</code>: non lancia <code>analyze.js</code>, non compila, non esegue i test. Riceve i fatti dalla skill, nella cartella <code>.pipeline/&lt;ID&gt;/</code>, e li verifica leggendo.</div>
+  <aside class="notes">Meno strumenti, meno modi di sbagliare: un analyst che può eseguire comandi può anche cambiare il progetto. In Copilot la delega al subagente e i nomi degli strumenti sono documentati ma non provati in sessione: come nelle lezioni 03 e 04.</aside>
+</section>
+
+<section class="slide" data-ch="5" data-title="Una copia per lezione">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Una copia del plugin per ogni lezione</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>La decisione (ADR-0007)</h3><p>Ogni lezione tiene nel suo <code>lab/</code> il plugin <code>heimdall</code> completo, com'è alla fine del laboratorio. Il marketplace <code>courses-ai</code> punta all'ultima copia; quelle precedenti restano come punto di partenza.</p>
+      <ul class="clean"><li>Le slide di ogni lezione coincidono con i suoi file.</li><li>Chi ha perso la 04 parte dalla sua soluzione.</li><li><code>version</code>: 0.1.0 alla 04, 0.2.0 alla 05.</li></ul></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="codewrap"><span class="label">che cosa aggiunge la lezione 05</span><pre class="code">diff -r corsi/04-connettere-i-sistemi/lab/team-marketplace/plugins/heimdall \
+        corsi/05-capire-il-codice/lab/team-marketplace/plugins/heimdall</pre></div>
+      <div class="callout warn">Il prezzo: una correzione ai file comuni va nella copia più recente, e in quelle vecchie solo se ne rompe il laboratorio. Il nome resta <code>heimdall</code> in tutte le copie: chi ne installa una disinstalla le altre.</div>
+    </div>
+  </div>
+  <aside class="notes">Era una decisione aperta del percorso dalla lezione 04. L'alternativa, una cartella sola che le lezioni fanno avanzare, avrebbe reso sbagliate le slide della lezione 04 già da oggi.</aside>
+</section>
+
+<!-- ============ 6. LABORATORIO ============ -->
+<section class="slide" data-ch="6" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>06</b> Laboratorio</div>
+  <h2>Dal codice di payments-api al piano v1</h2>
+  <p class="lead">Partiamo da dove finisce la lezione 04: il plugin in <code>~/heimdall-lab/heimdall</code> e l'alert <code>PAY-160644</code> in carico. Alla fine <code>payments-api</code> ha il codice, l'analisi e il piano v1.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">Passi 1–2</span><h3>Leggere il codice</h3><p>Il progetto, grep contro l'albero di un file.</p></div>
+    <div class="panel"><span class="tag acc">Passi 3–4</span><h3>Misurare</h3><p>I metadati della libreria, l'analisi, una catena tolta e rimessa.</p></div>
+    <div class="panel"><span class="tag acc">Passi 5–6</span><h3>Giudicare</h3><p>Il Security Analyst nel plugin e il piano v1, con l'agente.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: il repo <code>courses-ai</code> clonato, Claude Code e/o Copilot CLI, Node.js 18 o successivo, Git. Chi non ha fatto la lezione 04 parte dalla sua soluzione: i comandi sono nel README del laboratorio. I passi con l'agente consumano token sul vostro account.</p>
+  <aside class="notes">I passi 1–4 non usano il modello: tutto quello che il Security Analyst riceverà si vede e si prova prima. Chi finisce prima prova l'alert sul cookie, PAY-195647, e si chiede perché l'analisi non trova test.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 1 · Il codice">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 1</div>
+  <h2>Il codice di payments-api</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">dalla radice di courses-ai</span><pre class="code">export H="$PWD/corsi/05-capire-il-codice/lab/team-marketplace/plugins/heimdall"
+export L="$PWD/corsi/05-capire-il-codice/lab"
+cp -r "$L/payments-api/." ~/heimdall-lab/payments-api/
+cd ~/heimdall-lab/payments-api</pre></div>
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">git init &amp;&amp; git add pom.xml src README.md .gitignore
+git commit -m "chore: payments-api di partenza"
+grep -rn "Xml[A-Z]" src/main/java</pre></div>
+  </div>
+  <p>Nel <code>pom.xml</code>: la dipendenza alle righe 46–50, la versione nella proprietà della riga 22, Java 1.8 alla riga 21. Poi le 18 righe di grep: quali sono codice?</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span>Ho trovato nel <code>pom.xml</code> la dipendenza, la proprietà della versione e la versione di Java</span></label>
+    <label class="check"><input type="checkbox" id="lab2"><span>Tra le 18 righe di grep ho trovato il commento e la stringa</span></label>
+  </div>
+  <aside class="notes">La copia con "/." porta dentro anche .gitignore e lascia al suo posto .pipeline/ della lezione 04. Il codice non si compila: acme-xml è inventata. Heimdall lo legge, non lo esegue.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 2 · L'albero">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 2</div>
+  <h2>L'albero di un file</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">cp -r "$H/analysis" ~/heimdall-lab/heimdall/
+cp "$H/scripts/java-outline.js" ~/heimdall-lab/heimdall/scripts/
+node ~/heimdall-lab/heimdall/scripts/java-outline.js src/main/java/com/acme/payments/statements/StatementParser.java
+node ~/heimdall-lab/heimdall/scripts/java-outline.js src/main/java/com/acme/payments/statements/StatementController.java</pre></div>
+  <div class="grid g2">
+    <div class="term">  upload(MultipartFile file)  · righe 32–40  @PostMapping
+      <span class="k">◀ ingresso: POST /api/statements</span>
+      33  file.getInputStream()  → org.springframework…MultipartFile
+      34  importService.importStatement()
+                                 → <span class="k">progetto: StatementImportService#importStatement</span>
+      35  ?.body()               → tipo non risolto</div>
+    <ul class="clean">
+      <li><code>reader.read()</code> va a <code>com.acme.xml.XmlReader</code>: variabile locale più import.</li>
+      <li><code>toLine()</code> è un metodo del progetto: diventerà un arco del grafo.</li>
+      <li><code>?.body()</code> è in catena: il parser non sa che cosa restituisce <code>status()</code>.</li>
+    </ul>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab3"><span>Ho visto <code>POST /api/statements</code> come punto d'ingresso e una chiamata senza tipo</span></label>
+  </div>
+  <aside class="notes">Fate confrontare l'albero con il file aperto nell'editor: le righe tornano una per una. Le due righe di grep che mancano dall'albero sono il commento in StatementImportService e la stringa di log in StatementController.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 3 · I metadati">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 3</div>
+  <h2>I metadati della libreria, dal server MCP</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">cd ~/heimdall-lab/heimdall
+cp "$H"/mcp/{server.js,connector.js} mcp/ &amp;&amp; cp "$H"/mcp/backends/*.js mcp/backends/
+cp "$H/.claude-plugin/plugin.json" .claude-plugin/
+cp "$H/scenarios/payments-api/components.json" scenarios/payments-api/
+node scripts/mcp-call.js get_component '{"project":"payments-api","name":"com.acme.libs:acme-xml"}'</pre></div>
+  <div class="grid g2">
+    <ul class="clean">
+      <li>Tre versioni: 1.3.0, 1.4.2, 2.0.0, ognuna con il Java minimo.</li>
+      <li>La 2.0.0: <code>"javaMin": "11"</code> e <code>breaking</code> con <code>XmlReaderFactory</code>.</li>
+      <li>Senza argomenti <code>mcp-call.js</code> elenca cinque strumenti.</li>
+    </ul>
+    <div class="term"><span class="c">con HEIMDALL_BACKEND=real:</span>
+Backend reale: get_component non è ancora disponibile.
+Da dove leggere i metadati delle librerie si decide
+più avanti nel percorso.
+<span class="k">exit=1</span></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab4"><span><code>get_component</code> restituisce le tre versioni, e la 2.0.0 richiede Java 11</span></label>
+  </div>
+  <aside class="notes">Il manifest passa qui a 0.2.0 perché da qui il plugin cambia: analysis.json riporta la versione dello script, e così il confronto con esempi/ del passo 4 torna. Il backend reale dichiara il suo limite invece di inventare: è un errore dello strumento, il server non cade.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 4 · L'analisi">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 4</div>
+  <h2>L'analisi, poi una catena tolta</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">cp "$H/scripts/analyze.js" ~/heimdall-lab/heimdall/scripts/
+node ~/heimdall-lab/heimdall/scripts/analyze.js PAY-160644; echo "exit=$?"
+diff .pipeline/PAY-160644/analysis.json "$L/esempi/PAY-160644/analysis.json"</pre></div>
+  <div class="term">  versioni corrette compatibili con Java 1.8: <span class="k">nessuna</span>
+  aggiornare vuol dire passare da Java 1.8 a Java 11 (pom.xml:21)
+Raggiungibile da:
+  POST /api/statements         StatementController#upload → StatementImportService#importStatement → StatementParser#parse
+  all'avvio (@PostConstruct)   BankCodesLoader#load
+Con 2.0.0 cambia:
+  XmlReaderFactory: Removed. Use XmlReader.builder().build(). · usato in BankCodesLoader.java:27, StatementParser.java:22
+Salvato .pipeline/PAY-160644/analysis.json</div>
+  <p>Poi in <code>StatementController.java:34</code> togliete la chiamata e rilanciate con <code>--no-save</code>: resta solo l'avvio. Rimettete il file con <code>git checkout src</code>.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab5"><span>L'analisi trova due catene, e il secondo lancio esce con 3</span></label>
+    <label class="check"><input type="checkbox" id="lab6"><span>Senza la chiamata del controller la catena HTTP sparisce e <code>parse</code> è tra i non raggiunti</span></label>
+  </div>
+  <aside class="notes">Il diff vuoto con esempi/ dice che l'analisi è deterministica: stessi file, stesso risultato. È quello che rende confrontabili i piani del modello nella lezione 08. Il comando di cp è da ~/heimdall-lab/payments-api con il percorso completo del plugin.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 5 · Il Security Analyst">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 5</div>
+  <h2>Il Security Analyst nel plugin</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">cd ~/heimdall-lab/heimdall
+cp "$H/agents/security-analyst.md" agents/
+cp -r "$H/skills/analyze-alert" skills/
+cp "$H/skills/retrieve-alerts/SKILL.md" skills/retrieve-alerts/
+claude plugin validate ~/heimdall-lab
+claude plugin marketplace update heimdall-lab
+claude plugin update heimdall@heimdall-lab
+claude plugin details heimdall</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="term">heimdall 0.2.0
+  Skills (2)  analyze-alert, retrieve-alerts
+  Agents (2)  security-analyst, data-retriever
+  MCP servers (1)  heimdall</div>
+      <div class="codewrap"><span class="label gh">Copilot CLI · non verificato</span><pre class="code">copilot plugin marketplace update heimdall-lab
+copilot plugin install heimdall@heimdall-lab</pre></div>
+    </div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab7"><span><code>plugin details</code> dice 0.2.0, con 2 skill, 2 agenti e 1 server MCP</span></label>
+  </div>
+  <aside class="notes">claude plugin update chiede di riavviare la sessione: se avete claude aperto, chiudetelo e riapritelo. In Copilot l'aggiornamento di un marketplace locale e la reinstallazione non sono verificati: se il plugin resta alla 0.1.0, disinstallatelo e installatelo di nuovo.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 6 · Il piano v1">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 6</div>
+  <h2>Il piano v1, con l'agente</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code"><span class="c"># Claude Code</span>
+/heimdall:analyze-alert PAY-160644
+
+<span class="c"># Copilot CLI</span>
+/analyze-alert PAY-160644</pre></div>
+    <ul class="clean">
+      <li>La skill trova l'analisi già fatta (uscita 3) e la usa.</li>
+      <li>Approvate la scrittura di <code>.pipeline/PAY-160644/plan-v1.md</code>.</li>
+      <li>Confrontate il piano con <code>esempi/PAY-160644/plan-v1.md</code>.</li>
+    </ul>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab8"><span>La pertinenza cita la catena da <code>POST /api/statements</code> e dice perché <code>BankCodesLoader</code> non è sfruttabile</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span>Java da 1.8 a 11 compare in «Modifiche», «Dipendenze» e «Rischi»</span></label>
+    <label class="check"><input type="checkbox" id="lab10"><span>File toccati: <code>pom.xml</code>, <code>StatementParser.java</code>, <code>BankCodesLoader.java</code> e un test nuovo; i test esistenti non cambiano</span></label>
+  </div>
+  <aside class="notes">Se un file:riga del piano non torna con il codice, ha ragione il codice: è il momento di guardare insieme le istruzioni del subagente. Espandete la chiamata al subagente per vedere quali file ha letto. Se il piano non cita le alternative, chiedetevi se il Supervisor avrà abbastanza per rifiutarlo con un motivo.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Quiz">
+  <div class="eyebrow"><b>06</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Come nei corsi precedenti: ognuno risponde a voce, poi si clicca.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Dove andiamo">
+  <div class="eyebrow"><b>06</b> Dove andiamo</div>
+  <h2>Heimdall, un pezzo alla volta</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag acc">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag acc">Security Analyst</span> <span aria-hidden="true">→</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <div class="callout"><strong>Da oggi:</strong> Heimdall legge il codice e scrive il piano v1. La lezione 06 porta il Supervisor e gli hook: i vincoli di <code>payments-api</code>, Java 8 compreso, e il primo rifiuto.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr><td><code>01</code></td><td>Skill e plugin</td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr><td><code>03</code></td><td>Orchestrare più agenti</td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr><td><code>04</code></td><td>Connettere i sistemi</td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr class="hl"><td><code>05</code></td><td>Capire il codice <span class="tag acc">oggi</span></td><td>Security Analyst e piano di remediation</td></tr>
+      <tr><td><code>06</code></td><td>Vincoli e guardrail</td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Le decisioni di oggi: ADR-0007, una copia del plugin per lezione. Resta aperto da dove il backend reale legge i metadati delle librerie.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagenti</a>: il campo <code>tools</code></li>
+      <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Skill</a>: <code>allowed-tools</code> e <code>$ARGUMENTS</code></li>
+      <li><a href="https://code.claude.com/docs/en/plugins-reference" target="_blank" rel="noopener">Riferimento dei plugin</a></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference" target="_blank" rel="noopener">Riferimento dei plugin della CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/custom-agents-configuration" target="_blank" rel="noopener">Configurazione dei custom agent</a></li></ul></div>
+    <div class="panel"><h3>Analisi del codice</h3><ul class="clean">
+      <li><a href="https://javaparser.org/" target="_blank" rel="noopener">JavaParser</a>, con il symbol solver</li>
+      <li><a href="https://tree-sitter.github.io/tree-sitter/" target="_blank" rel="noopener">tree-sitter</a>, quello di graphify</li>
+      <li><a href="https://maven.apache.org/plugins/maven-dependency-plugin/tree-mojo.html" target="_blank" rel="noopener">mvn dependency:tree</a>, per le dipendenze transitive</li>
+      <li><a href="https://cwe.mitre.org/data/definitions/611.html" target="_blank" rel="noopener">CWE-611</a>, XXE</li></ul></div>
+    <div class="panel"><h3>Nel repo</h3><ul class="clean">
+      <li><code>corsi/05-capire-il-codice/lab/</code>: la soluzione e <code>payments-api</code></li>
+      <li><code>heimdall@courses-ai</code>: il plugin 0.2.0, installabile</li>
+      <li><code>docs/adr/0007-…</code>: una copia del plugin per lezione</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Perché capire il codice","La pertinenza","Albero e dipendenze","Il Remediation Plan","Nei due strumenti","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+
+  // ---- grep e parser (le righe vere di grep -rn "Xml[A-Z]" src/main/java su payments-api)
+  const GREP = [
+    ['banks/BankCodesLoader.java', 12, 'import com.acme.xml.XmlDocument;'],
+    ['banks/BankCodesLoader.java', 13, 'import com.acme.xml.XmlElement;'],
+    ['banks/BankCodesLoader.java', 14, 'import com.acme.xml.XmlReaderFactory;'],
+    ['banks/BankCodesLoader.java', 27, 'XmlDocument document = XmlReaderFactory.newReader().read(in);'],
+    ['banks/BankCodesLoader.java', 28, 'for (XmlElement bank : document.getRoot().children("bank")) {'],
+    ['statements/StatementController.java', 37, 'log.warn("Estratto rifiutato da XmlReader: {}", e.getMessage());', 'stringa'],
+    ['statements/StatementParser.java', 8, 'import com.acme.xml.XmlDocument;'],
+    ['statements/StatementParser.java', 9, 'import com.acme.xml.XmlElement;'],
+    ['statements/StatementParser.java', 10, 'import com.acme.xml.XmlException;'],
+    ['statements/StatementParser.java', 11, 'import com.acme.xml.XmlReader;'],
+    ['statements/StatementParser.java', 12, 'import com.acme.xml.XmlReaderFactory;'],
+    ['statements/StatementParser.java', 22, 'XmlReader reader = XmlReaderFactory.newReader();'],
+    ['statements/StatementParser.java', 24, 'XmlDocument document = reader.read(xml);'],
+    ['statements/StatementParser.java', 25, 'XmlElement root = document.getRoot();'],
+    ['statements/StatementParser.java', 27, 'for (XmlElement line : root.children("line")) {'],
+    ['statements/StatementParser.java', 31, '} catch (XmlException e) {'],
+    ['statements/StatementParser.java', 36, 'private StatementLine toLine(XmlElement element) {'],
+    ['statements/StatementImportService.java', 23, '// XmlReader non è thread-safe: StatementParser ne crea uno per ogni estratto', 'commento']
+  ];
+  function renderGrep(mode){
+    const body = $('#grepTable tbody'); body.innerHTML = '';
+    GREP.forEach(([file, line, text, why]) => {
+      const tr = document.createElement('tr');
+      if (mode === 'parser' && why) tr.className = 'same';
+      if (mode === 'parser' && !why) tr.className = 'hl';
+      tr.innerHTML = '<td><code></code></td><td></td><td><code></code>' + (mode === 'parser' && why ? ' <span class="tag">' + why + ': non è codice</span>' : '') + '</td>';
+      tr.querySelector('td code').textContent = file.split('/').pop();
+      tr.children[1].textContent = line;
+      tr.children[2].querySelector('code').textContent = text;
+      body.appendChild(tr);
+    });
+  }
+  segInit('grepMode', renderGrep);
+  renderGrep('grep');
+
+  // ---- simulatore delle catene (il grafo di payments-api, come lo costruisce analysis/index.js)
+  const RN = {
+    upload: { x: 110, y: 75, label: 'StatementController#upload', entry: 'POST /api/statements', input: 'il file caricato dal cliente' },
+    service: { x: 410, y: 75, label: 'StatementImportService#importStatement' },
+    parse: { x: 680, y: 75, label: 'StatementParser#parse' },
+    toLine: { x: 680, y: 160, label: 'StatementParser#toLine' },
+    load: { x: 110, y: 230, label: 'BankCodesLoader#load', entry: "all'avvio (@PostConstruct)", input: '/bank-codes.xml, dentro il jar' },
+    lib: { x: 840, y: 230, label: 'acme-xml 1.4.2', lib: true },
+    test: { x: 410, y: 160, label: 'StatementParserTest', test: true }
+  };
+  const RE = [
+    { id: 'c1', from: 'upload', to: 'service', at: 'StatementController.java:34' },
+    { id: 'c2', from: 'service', to: 'parse', at: 'StatementImportService.java:24' },
+    { id: 'c3', from: 'parse', to: 'toLine', at: 'StatementParser.java:28' },
+    { id: 'u1', from: 'parse', to: 'lib', at: 'StatementParser.java:22,24' },
+    { id: 'u2', from: 'toLine', to: 'lib', at: 'StatementParser.java:38' },
+    { id: 'u3', from: 'load', to: 'lib', at: 'BankCodesLoader.java:27' },
+    { id: 't1', from: 'test', to: 'parse', test: true }
+  ];
+  const CUTS = [
+    { id: 'cut1', edges: ['c1'], text: 'Togli la chiamata in <code>StatementController.java:34</code>' },
+    { id: 'cut2', edges: ['u3'], text: 'Togli acme-xml da <code>BankCodesLoader</code>' },
+    { id: 'cut3', edges: ['u1', 'u2'], text: 'Togli acme-xml da <code>StatementParser</code>' }
+  ];
+  const cut = new Set();
+  const svg = $('#rsimSvg');
+  const NS = 'http://www.w3.org/2000/svg';
+  CUTS.forEach(c => {
+    const l = document.createElement('label'); l.className = 'check';
+    l.innerHTML = '<input type="checkbox"><span>' + c.text + '</span>';
+    l.querySelector('input').addEventListener('change', e => {
+      c.edges.forEach(id => e.target.checked ? cut.add(id) : cut.delete(id));
+      renderR();
+    });
+    $('#rsimCuts').appendChild(l);
+  });
+  function renderR(){
+    const live = RE.filter(e => !cut.has(e.id));
+    // in avanti da ogni ingresso: il cammino fino alla libreria, se c'è
+    const pathFrom = start => {
+      const prev = { [start]: null }; const q = [start];
+      while (q.length){ const n = q.shift(); if (n === 'lib') break;
+        live.filter(e => e.from === n && !e.test).forEach(e => { if (!(e.to in prev)){ prev[e.to] = e; q.push(e.to); } }); }
+      if (!('lib' in prev)) return null;
+      const edges = []; for (let n = 'lib'; prev[n]; n = prev[n].from) edges.unshift(prev[n]);
+      return edges;
+    };
+    const chains = ['upload', 'load'].map(s => ({ s, edges: pathFrom(s) })).filter(c => c.edges);
+    const on = new Set(chains.flatMap(c => c.edges.map(e => e.id)));
+    const used = live.some(e => e.to === 'lib');
+    svg.innerHTML = '';
+    live.concat(RE.filter(e => cut.has(e.id))).forEach(e => {
+      const a = RN[e.from], b = RN[e.to];
+      const p = document.createElementNS(NS, 'line');
+      p.setAttribute('x1', a.x); p.setAttribute('y1', a.y); p.setAttribute('x2', b.x); p.setAttribute('y2', b.y);
+      p.setAttribute('class', 'edge' + (e.test ? ' inf' : '') + (on.has(e.id) ? ' on' : ''));
+      if (cut.has(e.id)) { p.setAttribute('stroke-dasharray', '2 6'); p.style.opacity = '.35'; }
+      svg.appendChild(p);
+    });
+    Object.entries(RN).forEach(([k, n]) => {
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'node' + (n.lib ? ' on' : '') + (n.test ? ' doc' : '') + (chains.some(c => c.s === k) ? ' sel' : ''));
+      const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', n.x); c.setAttribute('cy', n.y); c.setAttribute('r', n.entry ? 11 : 8);
+      const t = document.createElementNS(NS, 'text');
+      const below = n.test || n.lib || k === 'toLine';
+      t.setAttribute('x', n.lib ? n.x + 10 : n.x); t.setAttribute('y', below ? n.y + 28 : n.y - 18);
+      t.setAttribute('text-anchor', n.lib ? 'end' : 'middle');
+      t.textContent = n.label;
+      g.appendChild(t);
+      if (n.entry) {
+        const e2 = document.createElementNS(NS, 'text');
+        e2.setAttribute('x', n.x); e2.setAttribute('y', below ? n.y + 46 : n.y - 36); e2.setAttribute('text-anchor', 'middle');
+        e2.setAttribute('style', 'fill:var(--accent);font-weight:600'); e2.textContent = '◀ ' + n.entry;
+        g.appendChild(e2);
+      }
+      g.insertBefore(c, g.firstChild); svg.appendChild(g);
+    });
+    // l'esito, con le stesse regole del security-analyst
+    let out = '<span class="k">Raggiungibile da:</span>\n';
+    if (!chains.length) out += '  nessun punto d\'ingresso\n';
+    chains.forEach(c => { out += '  ' + RN[c.s].entry + '\n    ' + c.edges.map(e => RN[e.from].label.split('#')[1] + ' (' + e.at + ')').join(' → ') + '\n    input: ' + RN[c.s].input + '\n'; });
+    let verdict;
+    if (!used) verdict = 'non pertinente: acme-xml è nel pom.xml, ma il codice non la usa da nessuna parte. Nessun piano.';
+    else if (chains.some(c => c.s === 'upload')) verdict = 'pertinente: si arriva alla libreria da POST /api/statements, con un documento scelto dal cliente.';
+    else verdict = 'pertinente, non sfruttabile oggi: il codice usa la libreria, ma nessuna catena porta un input esterno. Il piano si scrive lo stesso.';
+    out += '\n<span class="k">Esito:</span> ' + esc(verdict);
+    $('#rsimOut').innerHTML = out;
+  }
+  renderR();
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab05.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab05.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['AppScan segnala acme-xml 1.4.2 in payments-api. Che cosa manca per dire che l\'alert è pertinente?', ['Niente: se lo scanner lo segnala, è pertinente','Sapere se il codice usa la libreria, da quali punti d\'ingresso e con quale input','Sapere se la 2.0.0 è già uscita'], 1, 'Lo scanner vede la versione nel pom.xml. Uso, raggiungibilità e controllo dell\'input si scoprono solo leggendo il codice.'],
+    ['BankCodesLoader usa la stessa libreria vulnerabile all\'avvio, su un file nel jar. Che cosa vuol dire?', ['È raggiungibile ma non sfruttabile: nessun attaccante sceglie il documento','È la catena più pericolosa, perché parte all\'avvio','L\'alert non è pertinente'], 0, 'Raggiungibile non vuol dire sfruttabile. Però l\'aggiornamento tocca anche questo file, e il piano lo deve dire.'],
+    ['grep trova 18 righe con Xml…, l\'analisi dice che 16 sono codice. Le altre due?', ['Sono import inutilizzati','Un commento e una stringa di log: testo, non identificatori','Errori del parser'], 1, 'Il parser separa identificatori, stringhe e commenti. Un nome dentro un commento non è un uso.'],
+    ['Chi decide se l\'input di una catena è controllato da un attaccante?', ['analyze.js, dal grafo delle chiamate','Lo scanner','Il security-analyst, leggendo i metodi della catena'], 2, 'Il programma trova le catene, ma non segue i dati. Da dove arriva l\'InputStream lo dice la lettura del codice.'],
+    ['Il piano v1 propone acme-xml 2.0.0 e Java 11. Perché scrive anche il costo e le alternative?', ['Perché lo chiede lo schema del corso 03','Perché il Supervisor deve poter decidere con tutti i fatti, e rifiutare con un motivo preciso','Per allungare il piano'], 1, 'Un piano che nasconde il passaggio a Java 11 verrebbe approvato per sbaglio. Nella lezione 06 il Supervisor lo confronta con i vincoli del progetto.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>
