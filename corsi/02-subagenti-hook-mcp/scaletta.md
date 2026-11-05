@@ -7,9 +7,9 @@ Le skill insegnano all'agente come lavoriamo. Questo corso aggiunge i tre compon
 
 Li mette nello stesso plugin e mostra come misurare con le eval se il plugin migliora davvero le risposte.
 
-- **Presentazione:** [presentazione/index.html](presentazione/index.html), 26 slide. Ogni slide ha un link diretto: `index.html#s10` apre il simulatore dell'hook.
+- **Presentazione:** [presentazione/index.html](presentazione/index.html), 27 slide. Ogni slide ha un link diretto: `index.html#s10` apre il simulatore dell'hook.
 - **Laboratorio:** [lab/](lab/)
-- **Durata indicativa:** 3 ore e 25 minuti, con una pausa da 15 minuti prima del laboratorio.
+- **Durata indicativa:** 3 ore e 30 minuti, con una pausa da 15 minuti prima del laboratorio.
 - **Prerequisito:** il [corso 01](../01-skill-e-plugin/scaletta.md). Il laboratorio riparte dal progetto `acme-shop` e dal marketplace costruiti lì.
 
 ## Tappe
@@ -27,7 +27,7 @@ Le durate sono una stima da tarare dopo la prima edizione.
 | 06 | Misurare con le eval | 17–18 | 15' | Due bracci e Δ, grader, mock MCP, costo in token |
 | — | Pausa | | 15' | |
 | 07 | Laboratorio | 19–24 | 75' | Subagente, hook, server MCP, impacchettamento nel marketplace, un caso di eval |
-| — | Quiz e risorse | 25–26 | 10' | Verifica a voce e link per approfondire |
+| — | Quiz, dove andiamo, risorse | 25–27 | 15' | Verifica a voce; il percorso verso Heimdall; link per approfondire |
 
 ## Da preparare prima
 

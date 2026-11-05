@@ -407,10 +407,9 @@ claude --plugin-dir ./mio-plugin   <span class="c"># sviluppo</span></pre></div>
 /nome-skill argomenti</pre></div>
         <div class="codewrap"><span class="label">dalla shell</span><pre class="code">copilot plugin marketplace add owner/repo
 copilot plugin install nome@marketplace
-copilot plugin install ./percorso/plugin
 gh skill install github/awesome-copilot nome  <span class="c"># gh ≥ 2.90</span></pre></div>
       </div>
-      <p class="small"><code>awesome-copilot</code> è il marketplace predefinito, già registrato. Le skill arrivate da un plugin si rimuovono gestendo il plugin, non con <code>/skills remove</code>.</p>
+      <p class="small"><code>awesome-copilot</code> è il marketplace predefinito, già registrato. L'installazione diretta da cartella, repo o URL è deprecata: Copilot CLI 1.0.105 avvisa che in futuro varrà solo <code>nome@marketplace</code>. Le skill arrivate da un plugin si rimuovono gestendo il plugin, non con <code>/skills remove</code>.</p>
     </div>
     <div class="tabpanel" data-panel="vs" hidden>
       <ul class="clean">
@@ -482,7 +481,7 @@ printf '%04d\n' $((10#${last:-0} + 1))</pre></div>
     <tbody>
       <tr><td><code>name</code></td><td>Nome del comando <code>/</code>. Minuscole, cifre e trattini, max 64 caratteri.</td><td><span class="tag cc">Claude</span> <span class="tag gh">Copilot</span></td></tr>
       <tr><td><code>description</code></td><td>Che cosa fa e quando usarla. È ciò che il modello legge per decidere. Max 1024 caratteri.</td><td><span class="tag cc">Claude</span> <span class="tag gh">Copilot</span></td></tr>
-      <tr><td><code>argument-hint</code></td><td>Suggerimento nell'autocompletamento, es. <code>[numero-issue]</code>.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
+      <tr><td><code>argument-hint</code></td><td>Suggerimento nell'autocompletamento, es. <code>"[numero-issue]"</code>, tra virgolette.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
       <tr><td><code>disable-model-invocation</code></td><td>Solo tu puoi avviarla.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
       <tr><td><code>user-invocable</code></td><td><code>false</code>: solo il modello può usarla, sparisce dal menu.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
       <tr><td><code>allowed-tools</code></td><td>Strumenti concessi senza chiedere permesso durante la skill, es. <code>Bash(git diff *)</code>.</td><td><span class="tag cc">Claude</span></td></tr>
@@ -491,7 +490,7 @@ printf '%04d\n' $((10#${last:-0} + 1))</pre></div>
     </tbody>
   </table></div>
   <p class="small">Nel corpo, solo in Claude Code: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> per gli argomenti e <code>!`comando`</code> per iniettare l'output di un comando prima che il prompt arrivi al modello.</p>
-  <aside class="notes">Per una skill portabile tra i due strumenti basta name + description. I campi extra di Claude Code vengono semplicemente ignorati dove non sono supportati: verificatelo sulla versione di Copilot che usate.</aside>
+  <aside class="notes">Per una skill portabile tra i due strumenti basta name + description. I campi extra di Claude Code vengono semplicemente ignorati dove non sono supportati: verificatelo sulla versione di Copilot che usate. argument-hint va tra virgolette: senza, YAML legge le parentesi quadre come una lista.</aside>
 </section>
 
 <section class="slide" data-ch="3" data-chname="Creare una skill" data-title="La description">
@@ -613,10 +612,10 @@ Sei il revisore del team…</pre></div>
     <span class="k">"PostToolUse"</span>: [{
       <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
       <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
-        <span class="k">"command"</span>: <span class="s">"npx prettier --write \"$FILE\""</span> }]
+        <span class="k">"command"</span>: <span class="s">"jq -r '.tool_input.file_path' | xargs npx prettier --write"</span> }]
     }]
   }
-}</pre><p class="small" style="margin-top:8px">Esempio indicativo: controlla nella documentazione degli hook le variabili disponibili.</p></div>
+}</pre><p class="small" style="margin-top:8px">L'hook riceve l'evento come JSON su stdin: il percorso del file è in <code>tool_input.file_path</code>. È l'esempio della guida ufficiale agli hook.</p></div>
       <div data-file="pl-mcp" class="codewrap" hidden><pre class="code">{
   <span class="k">"mcpServers"</span>: {
     <span class="k">"postgres"</span>: {
@@ -638,7 +637,6 @@ Sei il revisore del team…</pre></div>
   <div class="split">
     <div class="codewrap"><span class="label">team-marketplace/.claude-plugin/marketplace.json</span><pre class="code">{
   <span class="k">"name"</span>: <span class="s">"team-marketplace"</span>,
-  <span class="k">"description"</span>: <span class="s">"Plugin del team"</span>,
   <span class="k">"owner"</span>: { <span class="k">"name"</span>: <span class="s">"Team Acme"</span> },
   <span class="k">"plugins"</span>: [
     {
@@ -673,11 +671,11 @@ claude plugin install team-toolkit@team-marketplace</pre></div>
       <li>Sviluppo senza installare: <code>claude --plugin-dir ./team-toolkit</code>.</li></ul></div>
     <div class="panel"><h3 class="gh">Copilot CLI e VS Code</h3><ul class="clean">
       <li>Il manifest viene cercato in <code>.plugin/</code>, alla radice, in <code>.github/plugin/</code> e in <code>.claude-plugin/</code>.</li>
-      <li>Marketplace in <code>.github/plugin/marketplace.json</code>.</li>
+      <li>Marketplace in <code>.github/plugin/marketplace.json</code>; legge anche <code>.claude-plugin/marketplace.json</code>.</li>
       <li>Agenti come <code>agents/*.agent.md</code>, skill in <code>skills/*/SKILL.md</code>.</li></ul></div>
   </div>
-  <div class="callout"><strong>Ricetta per servire entrambi:</strong> manifest in <code>.claude-plugin/plugin.json</code> (lo leggono tutti e due) e lo stesso <code>marketplace.json</code> sia in <code>.claude-plugin/</code> sia in <code>.github/plugin/</code>. Le skill restano identiche.</div>
-  <aside class="notes">Gli agenti sono il punto in cui i formati divergono di più: per Copilot il file è .agent.md. Se un plugin deve servire entrambi, partite dalle skill, che sono lo standard comune.</aside>
+  <div class="callout"><strong>Ricetta per servire entrambi:</strong> manifest in <code>.claude-plugin/plugin.json</code> e catalogo in <code>.claude-plugin/marketplace.json</code>. Copilot CLI li legge tutti e due, senza copie. Le skill restano identiche.</div>
+  <aside class="notes">Gli agenti sono il punto in cui i formati divergono di più: per Copilot il file è .agent.md. Se un plugin deve servire entrambi, partite dalle skill, che sono lo standard comune. Il marketplace senza copia in .github/plugin/ l'abbiamo provato con Copilot CLI 1.0.105. VS Code non documenta dove cerca il catalogo: se non lo trova, la copia torna a servire.</aside>
 </section>
 
 <!-- ============ 5. DIFFERENZE ============ -->
@@ -696,14 +694,16 @@ claude plugin install team-toolkit@team-marketplace</pre></div>
       <tr><td>Frontmatter extra</td><td><code>allowed-tools</code>, <code>context: fork</code>, <code>model</code>, <code>hooks</code>, <code>paths</code></td><td>Base: <code>name</code>, <code>description</code>; VS Code anche <code>argument-hint</code> e i controlli d'invocazione</td></tr>
       <tr><td>Contesto dinamico</td><td><code>!`comando`</code>, <code>$ARGUMENTS</code></td><td>Non c'è: l'agente esegue i comandi quando servono</td></tr>
       <tr><td>Manifest plugin</td><td><code>.claude-plugin/plugin.json</code></td><td><code>plugin.json</code> in radice, <code>.github/plugin/</code> o <code>.claude-plugin/</code></td></tr>
-      <tr><td>Marketplace</td><td><code>.claude-plugin/marketplace.json</code>; predefinito <code>claude-plugins-official</code></td><td><code>.github/plugin/marketplace.json</code>; predefinito <code>awesome-copilot</code></td></tr>
+      <tr><td>Marketplace</td><td><code>.claude-plugin/marketplace.json</code>; predefinito <code>claude-plugins-official</code></td><td><code>.github/plugin/marketplace.json</code>, legge anche <code>.claude-plugin/marketplace.json</code>; predefinito <code>awesome-copilot</code></td></tr>
+      <tr><td>Marketplace locale</td><td><code>marketplace add ./cartella</code></td><td>Percorso assoluto: <code>./cartella</code> viene letto come <code>owner/repo</code> di GitHub</td></tr>
+      <tr><td>Installazione</td><td><code>nome@marketplace</code>; <code>--plugin-dir</code> per provare senza installare</td><td><code>nome@marketplace</code>; da cartella, repo o URL è deprecata</td></tr>
       <tr><td>Comandi</td><td><code>/plugin</code>, <code>claude plugin …</code></td><td><code>/skills</code>, <code>copilot plugin …</code>, <code>gh skill …</code></td></tr>
       <tr><td>Abilitazione per il team</td><td><code>.claude/settings.json</code>: <code>extraKnownMarketplaces</code> e <code>enabledPlugins</code></td><td>Marketplace registrati da ognuno; <code>extraKnownMarketplaces</code> in <code>~/.copilot/settings.json</code></td></tr>
       <tr><td>Subagenti</td><td><code>.claude/agents/*.md</code></td><td><code>.github/agents/*.agent.md</code> (VS Code legge anche <code>.claude/agents</code>)</td></tr>
       <tr class="same"><td>Hook e MCP nei plugin</td><td>Sì</td><td>Sì, stesso formato degli hook</td></tr>
     </tbody>
   </table></div>
-  <aside class="notes">Il messaggio chiave: scrivete skill portabili (solo name e description, niente !`cmd`) se devono girare su entrambi; usate i campi di Claude Code quando la skill è solo per Claude. Gli strumenti evolvono in fretta: le colonne Copilot vanno ricontrollate sulla versione installata.</aside>
+  <aside class="notes">Il messaggio chiave: scrivete skill portabili (solo name e description, niente !`cmd`) se devono girare su entrambi; usate i campi di Claude Code quando la skill è solo per Claude. Gli strumenti evolvono in fretta: le colonne Copilot vanno ricontrollate sulla versione installata. Le righe sul marketplace locale e sull'installazione le abbiamo provate con Copilot CLI 1.0.105.</aside>
 </section>
 
 <!-- ============ 6. MATT POCOCK ============ -->
@@ -980,7 +980,7 @@ graphify explain "OrderService" --graph graphify-out/graph.json</pre></div>
 <span class="k">name:</span> conventional-commit
 <span class="k">description:</span> Scrive il messaggio di commit secondo le convenzioni del team
   (conventional commits, descrizione in italiano, numero dell'issue in fondo).
-<span class="k">argument-hint:</span> [numero-issue]
+<span class="k">argument-hint:</span> "[numero-issue]"
 <span class="k">disable-model-invocation:</span> true
 <span class="k">allowed-tools:</span> Bash(git diff *) Bash(git status *)
 <span class="c">---</span>
@@ -1002,7 +1002,7 @@ Mostra il messaggio e chiedi conferma prima di eseguire `git commit`.</pre></div
 <span class="k">name:</span> new-adr
 <span class="k">description:</span> Crea un nuovo Architecture Decision Record in docs/adr
   con il numero successivo e il template del team.
-<span class="k">argument-hint:</span> [la decisione]
+<span class="k">argument-hint:</span> "[la decisione]"
 <span class="k">disable-model-invocation:</span> true
 <span class="c">---</span>
 
@@ -1038,7 +1038,8 @@ riferimenti agli altri ADR (ADR-0006).&gt;
     <div class="tabpanel" data-panel="c" hidden>
       <div class="codewrap"><span class="label">.claude/skills/italian-copy/SKILL.md</span><pre class="code"><span class="c">---</span>
 <span class="k">name:</span> italian-copy
-<span class="k">description:</span> Regole per i testi in italiano del repo: commenti, messaggi
+<span class="k">description:</span> &gt;-
+  Regole per i testi in italiano del repo: commenti, messaggi
   d'errore, stringhe dell'interfaccia, documentazione. Usala ogni volta che
   scrivi o modifichi testo destinato a persone.
 <span class="k">user-invocable:</span> false
@@ -1049,6 +1050,7 @@ riferimenti agli altri ADR (ADR-0006).&gt;
 - Un errore dice che cosa è andato storto e come rimediare, senza scuse.
 - Usa i termini di CONTEXT.md (carrello, ordine, cliente),
   mai sinonimi inventati.</pre></div>
+      <p class="small">La description contiene <code>: </code> dopo «del repo», che per YAML separa una chiave dal valore. Nel blocco <code>&gt;-</code> resta testo: senza, <code>claude plugin validate</code> fallisce e Copilot non carica la skill.</p>
     </div>
   </div>
   <div class="steps" data-lab>
@@ -1091,8 +1093,7 @@ cp -r .claude/skills/* .github/skills/
   <h2>Impacchetta il plugin e il marketplace</h2>
   <div class="split">
     <div class="codewrap"><span class="label">struttura</span><pre class="code">team-marketplace/
-├── .claude-plugin/marketplace.json
-├── .github/plugin/marketplace.json   <span class="c"># copia per Copilot</span>
+├── .claude-plugin/marketplace.json   <span class="c"># lo leggono tutti e due</span>
 └── plugins/team-toolkit/
     ├── .claude-plugin/plugin.json
     └── skills/
@@ -1101,7 +1102,7 @@ cp -r .claude/skills/* .github/skills/
         ├── new-adr/template.md
         └── italian-copy/SKILL.md</pre></div>
     <div class="codewrap"><span class="label">da lanciare nella cartella che contiene il repo</span><pre class="code">M=team-marketplace; P=$M/plugins/team-toolkit
-mkdir -p $M/.claude-plugin $M/.github/plugin $P/.claude-plugin
+mkdir -p $M/.claude-plugin $P/.claude-plugin
 cp -r acme-shop/.claude/skills $P/skills
 
 cat &gt; $P/.claude-plugin/plugin.json &lt;&lt;'EOF'
@@ -1116,8 +1117,7 @@ cat &gt; $M/.claude-plugin/marketplace.json &lt;&lt;'EOF'
   "plugins": [{ "name": "team-toolkit",
     "source": "./plugins/team-toolkit",
     "description": "Commit, ADR e testi in italiano" }] }
-EOF
-cp $M/.claude-plugin/marketplace.json $M/.github/plugin/</pre></div>
+EOF</pre></div>
   </div>
   <div class="steps" data-lab>
     <label class="check"><input type="checkbox" id="lab6"><span>Ho creato <code>team-marketplace/</code> con il plugin dentro</span></label>
@@ -1143,12 +1143,11 @@ claude plugin details team-toolkit
 
 <span class="c"># nella sessione:</span>
 /team-toolkit:conventional-commit 12</pre></div>
-    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">copilot plugin marketplace add ./team-marketplace
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code"><span class="c"># percorso assoluto: ./team-marketplace</span>
+<span class="c"># verrebbe letto come owner/repo di GitHub</span>
+copilot plugin marketplace add "$PWD/team-marketplace"
 copilot plugin install team-toolkit@team-marketplace
 copilot plugin list
-
-<span class="c"># oppure direttamente dalla cartella:</span>
-copilot plugin install ./team-marketplace/plugins/team-toolkit
 
 <span class="c"># nella sessione:</span>
 /skills list
@@ -1159,7 +1158,7 @@ copilot plugin install ./team-marketplace/plugins/team-toolkit
     <label class="check"><input type="checkbox" id="lab9"><span>Il plugin è installato in Claude Code e la skill risponde con il prefisso</span></label>
     <label class="check"><input type="checkbox" id="lab10"><span>Il plugin è installato in Copilot CLI</span></label>
   </div>
-  <aside class="notes">Dopo una modifica al plugin: in Claude Code /reload-plugins, in Copilot /skills reload. Con il marketplace locale e il source relativo, Claude Code legge i file direttamente dalla cartella.</aside>
+  <aside class="notes">Dopo una modifica al plugin: in Claude Code /reload-plugins; in Copilot le modifiche valgono dalla sessione successiva. Con il marketplace locale e il source relativo, tutti e due leggono i file direttamente dalla cartella, senza copiarli.</aside>
 </section>
 
 <section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 5 · Condividi col team">
@@ -1198,6 +1197,38 @@ copilot plugin marketplace add ORG/team-marketplace</pre></div>
   <div class="grid g2" id="quiz"></div>
   <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
   <aside class="notes">Fare il quiz insieme, a voce: ognuno risponde, poi si clicca. La spiegazione compare sotto ogni domanda.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Dove andiamo">
+  <div class="eyebrow"><b>12</b> Dove andiamo</div>
+  <h2>Il percorso porta a Heimdall</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">→</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <ul class="clean">
+        <li>Non modifica i test.</li>
+        <li>Non fa merge: l'esito è sempre una pull request da rivedere.</li>
+        <li>Ogni passo lascia una traccia leggibile.</li>
+      </ul>
+      <div class="callout"><strong>Da oggi:</strong> <code>/heimdall remediate</code> sarà una skill come <code>/conventional-commit</code>, in un plugin installato dal marketplace <code>courses-ai</code>.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr class="hl"><td><code>01</code></td><td>Skill e plugin <span class="tag acc">oggi</span></td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr><td><code>03</code></td><td>Orchestrare più agenti</td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr><td><code>04</code></td><td>Connettere i sistemi</td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr><td><code>05</code></td><td>Capire il codice</td><td>Security Analyst e piano di remediation</td></tr>
+      <tr><td><code>06</code></td><td>Vincoli e guardrail</td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Nelle lezioni Heimdall usa un ambiente simulato, con dati inventati: niente credenziali né dati reali (ADR-0004). Il suo codice vive nel repo heimdall (ADR-0003).</aside>
 </section>
 
 <section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Risorse">
@@ -1403,8 +1434,10 @@ copilot plugin marketplace add ORG/team-marketplace</pre></div>
     $('#bDescHint').className = 'hint' + (desc.length > 1024 ? ' err' : '');
     const isGh = where === 'ghp' || where === 'ghu';
     const wrapDesc = d => { const words = d.split(' '); const lines = []; let l = ''; words.forEach(w => { if ((l + ' ' + w).trim().length > 66){ lines.push(l); l = w; } else l = (l + ' ' + w).trim(); }); if (l) lines.push(l); return lines.join('\n  '); };
-    let fm = '<span class="c">---</span>\n<span class="k">name:</span> ' + esc(name || 'senza-nome') + '\n<span class="k">description:</span> ' + esc(wrapDesc(desc));
-    if (arg) fm += '\n<span class="k">argument-hint:</span> ' + esc(arg);
+    const yamlDesc = /: |^[\[{"'>|*&!%@`#-]/.test(desc) ? '>-\n  ' + wrapDesc(desc) : wrapDesc(desc);
+    const yamlArg = /^[\[{"'>|*&!%@`#]|: /.test(arg) ? JSON.stringify(arg) : arg;
+    let fm = '<span class="c">---</span>\n<span class="k">name:</span> ' + esc(name || 'senza-nome') + '\n<span class="k">description:</span> ' + esc(yamlDesc);
+    if (arg) fm += '\n<span class="k">argument-hint:</span> ' + esc(yamlArg);
     if (who === 'user') fm += '\n<span class="k">disable-model-invocation:</span> true';
     if (who === 'model') fm += '\n<span class="k">user-invocable:</span> false';
     if (tools) fm += '\n<span class="k">allowed-tools:</span> ' + esc(tools);

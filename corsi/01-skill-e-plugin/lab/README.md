@@ -46,6 +46,16 @@ cd ~/skill-lab/acme-shop && git init && git add . && git commit -m "chore: proge
    claude plugin install team-toolkit@team-marketplace
    ```
 
+   In Copilot CLI usa il percorso assoluto del marketplace:
+
+   ```bash
+   copilot plugin marketplace add "$PWD/team-marketplace"
+   ```
+
+   ```bash
+   copilot plugin install team-toolkit@team-marketplace
+   ```
+
 5. **Condividi** (slide 34). Nel corso il marketplace remoto è già pronto: è questo repo.
 
    ```bash
@@ -68,11 +78,12 @@ claude plugin marketplace add ./corsi/01-skill-e-plugin/lab/team-marketplace
 claude plugin install team-toolkit@team-marketplace
 ```
 
-Con Copilot CLI i comandi sono gli stessi, con `copilot plugin` al posto di `claude plugin`.
+Con Copilot CLI il marketplace locale va aggiunto con il percorso assoluto, perché `./cartella` viene letto come `owner/repo` di GitHub:
 
-## Differenze dalle slide
+```bash
+copilot plugin marketplace add "$PWD/corsi/01-skill-e-plugin/lab/team-marketplace"
+```
 
-I file di `team-marketplace/` coincidono con le slide, tranne due correzioni al frontmatter. Senza, il YAML non si legge correttamente:
-
-- `argument-hint` è tra virgolette (`"[numero-issue]"`, `"[la decisione]"`). Senza virgolette YAML lo legge come una lista e non come un testo.
-- La `description` di `italian-copy` è in un blocco `>-`. Senza, il `: ` dopo «del repo» rompe il parsing: `claude plugin validate` fallisce e la skill si carica senza metadati.
+```bash
+copilot plugin install team-toolkit@team-marketplace
+```
