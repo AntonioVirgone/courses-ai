@@ -1,0 +1,6 @@
+{
+  "name": "team-toolkit",
+  "version": "0.1.0",
+  "description": "Commit, ADR e testi in italiano",
+  "author": { "name": "Team Acme" }
+}
