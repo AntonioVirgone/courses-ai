@@ -1,0 +1,11 @@
+{
+  "name": "team-marketplace",
+  "owner": { "name": "Team Acme" },
+  "plugins": [
+    {
+      "name": "team-pipeline",
+      "source": "./plugins/team-pipeline",
+      "description": "Pipeline di remediation con analyst e supervisor"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ACME-101",
+  "source": "scanner simulato",
+  "rule": "expired-coupon-accepted",
+  "severity": "high",
+  "title": "Un coupon scaduto applica comunque lo sconto",
+  "location": { "file": "packages/core/src/coupon.ts", "line": 9 },
+  "description": "applyCoupon riceve la data corrente in now ma non la confronta con coupon.expiresAt: un coupon scaduto applica lo sconto come uno valido.",
+  "suggestedFix": "Confronta now ed expiresAt con isAfter di date-fns e, se il coupon è scaduto, lancia un errore."
+}

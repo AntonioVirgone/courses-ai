@@ -1,0 +1,6 @@
+{
+  "name": "team-pipeline",
+  "version": "0.1.0",
+  "description": "Pipeline di remediation per acme-shop: analyst e supervisor, con rifiuto e rielaborazione del piano",
+  "author": { "name": "Team Acme" }
+}
