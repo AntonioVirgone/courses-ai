@@ -26,11 +26,38 @@ Su Linux usa `xdg-open` al posto di `open`. Il file funziona anche senza rete, m
 
 Comandi da tastiera: `←` `→` per navigare, `N` per le note del relatore, `O` per l'indice, `Esc` per chiudere.
 
+## Il repo è anche un marketplace
+
+Il repo pubblica i plugin dei laboratori come marketplace `courses-ai` (vedi [ADR-0002](docs/adr/0002-il-repo-e-il-marketplace-courses-ai-dei-plugin-dei-laboratori.md)). Il repo è privato: serve l'accesso in lettura.
+
+Claude Code:
+
+```bash
+claude plugin marketplace add AntonioVirgone/courses-ai
+```
+
+```bash
+claude plugin install team-toolkit@courses-ai
+```
+
+Copilot CLI:
+
+```bash
+copilot plugin marketplace add AntonioVirgone/courses-ai
+```
+
+```bash
+copilot plugin install team-toolkit@courses-ai
+```
+
+I plugin sono didattici: codificano le convenzioni del progetto di esempio `acme-shop`, non quelle di un progetto reale.
+
 ## Struttura
 
 ```
 CLAUDE.md                 istruzioni per gli agenti (AGENTS.md rimanda qui)
 CONTEXT.md                glossario
+.claude-plugin/           il marketplace courses-ai
 docs/adr/                 le decisioni del repo
 corsi/NN-slug/            un corso
 ```

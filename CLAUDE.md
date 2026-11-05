@@ -4,7 +4,8 @@ Questo repo raccoglie i corsi interni del team su Claude Code e GitHub Copilot. 
 
 ## Struttura
 
-- Ogni corso è una cartella autonoma `corsi/NN-slug/` con `presentazione/index.html`, `scaletta.md` e `lab/`. Un corso nuovo ha le stesse tre parti e una riga nella tabella del README.
+- Ogni corso è una cartella autonoma `corsi/NN-slug/` con `presentazione/index.html`, `scaletta.md` e `lab/` (ADR-0001). Un corso nuovo ha le stesse tre parti e una riga nella tabella del README.
+- `.claude-plugin/marketplace.json` alla radice è il marketplace `courses-ai` (ADR-0002). Ogni voce punta con un percorso relativo al plugin dentro il `lab/` di un corso: i file del plugin esistono in una sola copia. Se sposti un plugin, aggiorna la voce.
 
 ## Lingue
 
