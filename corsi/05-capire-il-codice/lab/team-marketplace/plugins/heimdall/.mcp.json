@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "heimdall": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/server.js"],
+      "env": {
+        "HEIMDALL_BACKEND": "${HEIMDALL_BACKEND:-simulated}",
+        "HEIMDALL_CONFIG": "${HEIMDALL_CONFIG:-}",
+        "HEIMDALL_SONARQUBE_TOKEN": "${HEIMDALL_SONARQUBE_TOKEN:-}",
+        "HEIMDALL_APPSCAN_KEY_ID": "${HEIMDALL_APPSCAN_KEY_ID:-}",
+        "HEIMDALL_APPSCAN_KEY_SECRET": "${HEIMDALL_APPSCAN_KEY_SECRET:-}"
+      }
+    }
+  }
+}

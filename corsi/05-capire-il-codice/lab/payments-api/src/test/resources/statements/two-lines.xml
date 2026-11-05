@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement customer="CUST-0042" date="2026-10-31">
+  <line iban="IT00X0000000000000000000001" amountCents="125000">Fattura 2026/118</line>
+  <line iban="IT00X0000000000000000000002" amountCents="-4990">Commissioni di ottobre</line>
+</statement>

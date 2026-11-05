@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Alert normalizzato di Heimdall",
+  "description": "Lo schema comune: ogni alert, da qualunque scanner arrivi, esce dal server MCP in questa forma.",
+  "type": "object",
+  "required": ["id", "project", "source", "scannerId", "kind", "rule", "severity", "title", "cwe", "location", "component", "description", "suggestedFix", "detectedAt"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Z]+-\\d+$", "description": "Chiave del progetto e un numero ricavato da che cosa segnala l'alert: è lo stesso a ogni lettura" },
+    "project": { "type": "string" },
+    "source": { "enum": ["appscan", "sonarqube"] },
+    "scannerId": { "type": "string", "description": "L'identificativo dell'alert nello scanner" },
+    "kind": { "enum": ["code", "dependency"] },
+    "rule": { "type": "string" },
+    "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+    "title": { "type": "string" },
+    "cwe": { "type": ["string", "null"], "pattern": "^CWE-\\d+$" },
+    "location": {
+      "type": "object",
+      "required": ["file", "line"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string" },
+        "line": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "component": {
+      "type": ["object", "null"],
+      "description": "Solo per kind dependency: la libreria vulnerabile",
+      "required": ["name", "version", "fixedIn"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "fixedIn": { "type": ["string", "null"] }
+      }
+    },
+    "description": { "type": "string" },
+    "suggestedFix": { "type": ["string", "null"] },
+    "detectedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T" }
+  }
+}

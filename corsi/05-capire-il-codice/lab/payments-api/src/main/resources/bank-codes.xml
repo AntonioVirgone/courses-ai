@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Codici inventati per il progetto di esempio -->
+<banks>
+  <bank abi="00001">Banca Esempio</bank>
+  <bank abi="00002">Cassa Immaginaria</bank>
+</banks>

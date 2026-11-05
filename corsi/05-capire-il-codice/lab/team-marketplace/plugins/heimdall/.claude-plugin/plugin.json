@@ -1,0 +1,8 @@
+{
+  "name": "heimdall",
+  "version": "0.2.0",
+  "description": "Heimdall, fino al Security Analyst: il server MCP degli alert e dei metadati delle librerie, con backend simulato e reale, il Data Retriever, l'analisi statica del codice e il primo piano di remediation",
+  "author": {
+    "name": "Team Heimdall"
+  }
+}

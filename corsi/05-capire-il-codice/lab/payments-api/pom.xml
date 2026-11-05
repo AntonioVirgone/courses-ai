@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.18</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.acme</groupId>
+  <artifactId>payments-api</artifactId>
+  <version>3.4.0-SNAPSHOT</version>
+  <name>payments-api</name>
+  <description>Pagamenti ed estratti conto dei clienti business. Progetto di esempio del corso, dati inventati.</description>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <acme-xml.version>1.4.2</acme-xml.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- Libreria interna per gli estratti conto in XML -->
+    <!-- La 2.x richiede Java 11: per ora restiamo sulla 1.x -->
+    <!--
+      Storico: fino alla 3.1.0 gli estratti si leggevano con il parser del JDK.
+      Con la 3.2.0 siamo passati ad acme-xml, che è la libreria comune dei
+      servizi di pagamento: stesse regole di validazione degli importi e degli
+      IBAN in tutti i servizi.
+    -->
+    <!-- Non aggiornare acme-xml senza aver sentito il team piattaforma -->
+    <!-- Ultima revisione delle dipendenze: settembre 2026 -->
+
+    <dependency>
+      <groupId>com.acme.libs</groupId>
+      <artifactId>acme-xml</artifactId>
+      <version>${acme-xml.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
