@@ -1,0 +1,1597 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · Claude Code e GitHub Copilot</div>
+  <h1>Skill e plugin<br>per agenti di coding</h1>
+  <p class="lead">Come insegnare una volta sola all'agente il modo in cui lavoriamo, impacchettarlo e distribuirlo al team. Con due raccolte pronte da usare: le skill di Matt Pocock e graphify.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>mattpocock/skills</span><span>graphify</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Apertura. Obiettivo della sessione: alla fine ognuno sa installare un plugin, scrivere una skill e impacchettarla. L'ultima parte è pratica: tenete aperto un terminale con Claude Code o Copilot CLI.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Dodici tappe, dall'idea al plugin installato</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">Le prime cinque tappe sono i concetti, le sei centrali sono due casi reali, l'ultima è il laboratorio. Ogni voce è cliccabile.</aside>
+</section>
+
+<!-- ============ 1. PERCHÉ ============ -->
+<section class="slide" data-ch="1" data-chname="Perché skill e plugin" data-title="Il problema">
+  <div class="eyebrow"><b>01</b> Perché skill e plugin</div>
+  <h2>Ogni sessione l'agente riparte da zero</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Prompt ripetuti</h3><p>«Usa i conventional commits, scope in minuscolo, issue in fondo…» lo riscriviamo a mano ogni volta, e ognuno a modo suo.</p></div>
+    <div class="panel"><h3>Conoscenza tribale</h3><p>Il modo giusto di fare un ADR, una review, un rilascio sta nella testa di due persone. L'agente non lo sa, i nuovi arrivati nemmeno.</p></div>
+    <div class="panel"><h3>Contesto sprecato</h3><p>Mettere tutto nel file di istruzioni globale (CLAUDE.md, copilot-instructions.md) gonfia ogni richiesta, anche quando quelle regole non servono.</p></div>
+  </div>
+  <div class="callout"><strong>Una skill è una procedura scritta una volta</strong>: una cartella con un <code>SKILL.md</code> che l'agente carica solo quando serve. <strong>Un plugin</strong> è il pacchetto che porta skill, agenti, hook e server MCP sulle macchine di tutto il team, con versioni e aggiornamenti.</div>
+  <aside class="notes">Partire da un esempio concreto del team: quante volte avete spiegato all'agente come scrivere un commit o un ADR? Quello è il candidato perfetto per una skill.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-chname="Perché skill e plugin" data-title="Progressive disclosure">
+  <div class="eyebrow"><b>01</b> Perché skill e plugin</div>
+  <h2>Si paga solo quello che si usa</h2>
+  <p class="lead">Le skill si caricano a strati. Clicca un livello per vedere che cosa entra nel contesto del modello.</p>
+  <div class="split">
+    <div class="levels" id="levels">
+      <button class="level" aria-pressed="true" data-w="3" data-i="0"><span class="lv">L1</span><span><strong>Nome e description</strong><br><small>sempre nel contesto, per ogni skill</small></span><span class="cost">~50–100 token</span></button>
+      <button class="level" aria-pressed="false" data-w="35" data-i="1"><span class="lv">L2</span><span><strong>Corpo di SKILL.md</strong><br><small>quando la skill viene attivata</small></span><span class="cost">fino a qualche migliaio</span></button>
+      <button class="level" aria-pressed="false" data-w="80" data-i="2"><span class="lv">L3</span><span><strong>File di supporto e script</strong><br><small>solo se le istruzioni li richiedono</small></span><span class="cost">a richiesta</span></button>
+    </div>
+    <div class="panel">
+      <div class="small">Contesto occupato dalla skill</div>
+      <div class="meter"><i id="levelMeter"></i></div>
+      <div id="levelText"></div>
+    </div>
+  </div>
+  <aside class="notes">Questo è il motivo tecnico per cui le skill scalano: possiamo averne decine installate e pagare solo le descrizioni. Anche per questo la description va scritta bene: è l'unica cosa che il modello vede prima di decidere.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-chname="Perché skill e plugin" data-title="Quando usare cosa">
+  <div class="eyebrow"><b>01</b> Perché skill e plugin</div>
+  <h2>Quando usare cosa</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Strumento</th><th>Che cos'è</th><th>Usalo per</th></tr></thead>
+    <tbody>
+      <tr><td>Istruzioni di progetto</td><td><code>CLAUDE.md</code>, <code>.github/copilot-instructions.md</code>, <code>AGENTS.md</code></td><td>Regole sempre valide e brevi: layout del repo, lingue, convenzioni.</td></tr>
+      <tr class="hl"><td>Skill</td><td>Cartella con <code>SKILL.md</code>, caricata a richiesta</td><td>Procedure ripetibili: scrivere un commit, un ADR, fare triage, review.</td></tr>
+      <tr><td>Subagente</td><td>Agente con prompt e strumenti propri, contesto separato</td><td>Lavoro specialistico da delegare (es. <code>acme-api</code> per il backend, <code>acme-web</code> per il frontend).</td></tr>
+      <tr><td>Hook</td><td>Comando eseguito su un evento (dopo un edit, prima di un tool)</td><td>Controlli deterministici: lint, format, blocchi di sicurezza.</td></tr>
+      <tr><td>Server MCP</td><td>Strumenti esterni esposti all'agente</td><td>Accesso a sistemi: issue tracker, database, browser.</td></tr>
+      <tr class="hl"><td>Plugin</td><td>Pacchetto installabile di tutto quanto sopra</td><td>Distribuire e versionare il setup al team.</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Regola pratica: se una regola vale sempre, va nelle istruzioni; se è una procedura che serve ogni tanto, è una skill; se deve succedere sempre senza eccezioni, è un hook.</aside>
+</section>
+
+<!-- ============ 2. COME USARE ============ -->
+<section class="slide" data-ch="2" data-chname="Come usare skill e plugin" data-title="Due modi di attivarle">
+  <div class="eyebrow"><b>02</b> Come usare skill e plugin</div>
+  <h2>Due modi di attivare una skill</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Esplicito <span class="tag acc">/nome</span></h3>
+      <p>La scrivi tu, come un comando. Gli argomenti finiscono in <code>$ARGUMENTS</code>.</p>
+      <div class="codewrap"><pre class="code">/conventional-commit 42
+/grill-me il nuovo flusso degli inviti</pre></div></div>
+    <div class="panel"><h3>Implicito <span class="tag acc">description</span></h3>
+      <p>Il modello legge le description e carica da solo la skill che corrisponde alla richiesta.</p>
+      <div class="codewrap"><pre class="code"><span class="c"># tu scrivi</span>
+c'è un bug: il punteggio non si aggiorna
+<span class="c"># l'agente attiva</span>
+diagnosing-bugs</pre></div></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Frontmatter</th><th>La invochi tu</th><th>La invoca il modello</th><th>Esempio</th></tr></thead>
+    <tbody>
+      <tr><td>(nessuno)</td><td>sì</td><td>sì</td><td>regole di stile, TDD</td></tr>
+      <tr><td><code>disable-model-invocation: true</code></td><td>sì</td><td>no</td><td>deploy, commit, rilascio</td></tr>
+      <tr><td><code>user-invocable: false</code></td><td>no</td><td>sì</td><td>conoscenza di sfondo</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Le azioni con effetti collaterali (commit, deploy, pubblicazione) vanno sempre su disable-model-invocation: non vogliamo che l'agente decida da solo di fare un rilascio.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-chname="Come usare skill e plugin" data-title="Comandi essenziali">
+  <div class="eyebrow"><b>02</b> Come usare skill e plugin</div>
+  <h2>I comandi da sapere a memoria</h2>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="cc">Claude Code</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="cli">Copilot CLI</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="vs">VS Code (Copilot Chat)</button>
+    </div>
+    <div class="tabpanel" data-panel="cc">
+      <div class="grid g2">
+        <div class="codewrap"><span class="label">nella sessione</span><pre class="code"><span class="c"># menu delle skill: digita /</span>
+/plugin                       <span class="c"># Discover, Installed, Marketplaces</span>
+/plugin marketplace add owner/repo
+/plugin install nome@marketplace
+/reload-plugins               <span class="c"># dopo una modifica</span></pre></div>
+        <div class="codewrap"><span class="label">dalla shell</span><pre class="code">claude plugin marketplace add owner/repo
+claude plugin install nome@marketplace
+claude plugin list
+claude plugin disable nome
+claude --plugin-dir ./mio-plugin   <span class="c"># sviluppo</span></pre></div>
+      </div>
+      <p class="small">Le skill di un plugin hanno il prefisso del plugin: <code>/mio-plugin:hello</code>. Scope di installazione: utente, progetto (via <code>.claude/settings.json</code> versionato) o locale.</p>
+    </div>
+    <div class="tabpanel" data-panel="cli" hidden>
+      <div class="grid g2">
+        <div class="codewrap"><span class="label">nella sessione</span><pre class="code">/skills list
+/skills info nome-skill
+/skills reload                <span class="c"># dopo una modifica</span>
+/nome-skill argomenti</pre></div>
+        <div class="codewrap"><span class="label">dalla shell</span><pre class="code">copilot plugin marketplace add owner/repo
+copilot plugin install nome@marketplace
+copilot plugin install ./percorso/plugin
+gh skill install github/awesome-copilot nome  <span class="c"># gh ≥ 2.90</span></pre></div>
+      </div>
+      <p class="small"><code>awesome-copilot</code> è il marketplace predefinito, già registrato. Le skill arrivate da un plugin si rimuovono gestendo il plugin, non con <code>/skills remove</code>.</p>
+    </div>
+    <div class="tabpanel" data-panel="vs" hidden>
+      <ul class="clean">
+        <li>Le skill di progetto e personali compaiono come comandi <code>/</code> nella chat in modalità Agent.</li>
+        <li>VS Code legge sia <code>.github/skills/</code> sia <code>.claude/skills/</code> del workspace, e <code>~/.copilot/skills/</code> e <code>~/.claude/skills/</code> nella home.</li>
+        <li>Plugin da repository: Command Palette → <strong>Chat: Install Plugin From Source</strong> e incolla l'URL GitHub.</li>
+        <li>VS Code riconosce anche il manifest dei plugin di Claude (<code>.claude-plugin/plugin.json</code>) e lo stesso formato degli hook.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Mostrare dal vivo /plugin in Claude Code: la scheda Discover elenca il marketplace ufficiale, che Claude Code aggiunge da solo al primo avvio.</aside>
+</section>
+
+<!-- ============ 3. CREARE SKILL ============ -->
+<section class="slide" data-ch="3" data-chname="Creare una skill" data-title="Anatomia di una skill">
+  <div class="eyebrow"><b>03</b> Creare una skill</div>
+  <h2>Anatomia: una cartella, un file obbligatorio</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">.claude/skills/</div>
+      <div class="dir">&nbsp;&nbsp;new-adr/</div>
+      <button data-show="an-skill" aria-pressed="true">&nbsp;&nbsp;&nbsp;&nbsp;SKILL.md</button>
+      <button data-show="an-tpl" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;template.md</button>
+      <div class="dir">&nbsp;&nbsp;&nbsp;&nbsp;scripts/</div>
+      <button data-show="an-sh" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next-number.sh</button>
+    </div>
+    <div>
+      <div data-file="an-skill" class="codewrap"><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> new-adr
+<span class="k">description:</span> Crea un nuovo ADR in docs/adr con il numero
+  successivo e il template del team. Usala quando si prende
+  una decisione architetturale da documentare.
+<span class="c">---</span>
+
+# Nuovo ADR
+
+1. Trova il numero con `scripts/next-number.sh`.
+2. Parti da [template.md](template.md): il titolo è la decisione,
+   il corpo il perché, poi `## Considered Options`.
+3. Una decisione cambiata non si riscrive: nuovo ADR e nota
+   «Superata da» in cima al vecchio.
+4. Il commit dell'ADR è un `docs:` a sé.</pre></div>
+      <div data-file="an-tpl" class="codewrap" hidden><pre class="code"># &lt;La decisione in una frase, non l'argomento&gt;
+
+&lt;Che cosa si è deciso e perché, in prosa: vincoli, contesto,
+riferimenti agli altri ADR (ADR-0006).&gt;
+
+&lt;Le conseguenze: che cosa diventa più facile e che cosa più difficile.&gt;
+
+## Considered Options
+
+- **&lt;Alternativa&gt;.** Scartato: &lt;motivo&gt;.
+- **&lt;Alternativa&gt;.** Rimandato a &lt;fase&gt;: &lt;motivo&gt;.</pre></div>
+      <div data-file="an-sh" class="codewrap" hidden><pre class="code">#!/usr/bin/env bash
+<span class="c"># stampa il prossimo numero di ADR a 4 cifre</span>
+last=$(ls docs/adr | grep -oE '^[0-9]{4}' | sort | tail -1)
+printf '%04d\n' $((10#${last:-0} + 1))</pre></div>
+    </div>
+  </div>
+  <p class="small">Il frontmatter dice <em>quando</em> usarla, il corpo <em>come</em>. Template e script si leggono o si eseguono solo se il corpo li nomina: lo script non entra nel contesto, ne entra solo l'output.</p>
+  <aside class="notes">Il formato è uno standard aperto (Agent Skills, agentskills.io): la stessa cartella funziona in Claude Code, Copilot, Codex, Gemini CLI, Cursor. Cambia solo dove la si mette.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-chname="Creare una skill" data-title="Il frontmatter">
+  <div class="eyebrow"><b>03</b> Creare una skill</div>
+  <h2>Il frontmatter, campo per campo</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Campo</th><th>A cosa serve</th><th>Dove vale</th></tr></thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>Nome del comando <code>/</code>. Minuscole, cifre e trattini, max 64 caratteri.</td><td><span class="tag cc">Claude</span> <span class="tag gh">Copilot</span></td></tr>
+      <tr><td><code>description</code></td><td>Che cosa fa e quando usarla. È ciò che il modello legge per decidere. Max 1024 caratteri.</td><td><span class="tag cc">Claude</span> <span class="tag gh">Copilot</span></td></tr>
+      <tr><td><code>argument-hint</code></td><td>Suggerimento nell'autocompletamento, es. <code>[numero-issue]</code>.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
+      <tr><td><code>disable-model-invocation</code></td><td>Solo tu puoi avviarla.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
+      <tr><td><code>user-invocable</code></td><td><code>false</code>: solo il modello può usarla, sparisce dal menu.</td><td><span class="tag cc">Claude</span> <span class="tag gh">VS Code</span></td></tr>
+      <tr><td><code>allowed-tools</code></td><td>Strumenti concessi senza chiedere permesso durante la skill, es. <code>Bash(git diff *)</code>.</td><td><span class="tag cc">Claude</span></td></tr>
+      <tr><td><code>context: fork</code> + <code>agent</code></td><td>Esegue la skill in un subagente con contesto separato.</td><td><span class="tag cc">Claude</span></td></tr>
+      <tr><td><code>model</code>, <code>effort</code>, <code>paths</code>, <code>hooks</code></td><td>Modello, sforzo, file che la attivano, hook propri.</td><td><span class="tag cc">Claude</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Nel corpo, solo in Claude Code: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> per gli argomenti e <code>!`comando`</code> per iniettare l'output di un comando prima che il prompt arrivi al modello.</p>
+  <aside class="notes">Per una skill portabile tra i due strumenti basta name + description. I campi extra di Claude Code vengono semplicemente ignorati dove non sono supportati: verificatelo sulla versione di Copilot che usate.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-chname="Creare una skill" data-title="La description">
+  <div class="eyebrow"><b>03</b> Creare una skill</div>
+  <h2>La description decide se la skill verrà mai usata</h2>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="bad">Da evitare</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="good">Così funziona</button>
+    </div>
+    <div class="tabpanel" data-panel="bad">
+      <div class="codewrap"><pre class="code"><span class="k">description:</span> Helper per i test</pre></div>
+      <ul class="clean"><li>Non dice quali test, né in quale stack.</li><li>Nessuna frase che un collega scriverebbe davvero: il modello non ha niente da far corrispondere.</li><li>Risultato: la skill resta lì e nessuno la attiva.</li></ul>
+    </div>
+    <div class="tabpanel" data-panel="good" hidden>
+      <div class="codewrap"><pre class="code"><span class="k">description:</span> Scrive e corregge i test Vitest di @acme/core
+  seguendo il ciclo red-green-refactor, con nomi dei test in
+  italiano. Usala quando l'utente chiede di aggiungere un test,
+  di coprire una regola dei prezzi o quando un test fallisce.</pre></div>
+      <ul class="clean"><li>Dice <strong>cosa</strong> fa e <strong>dove</strong>: Vitest, il pacchetto core.</li><li>Elenca i <strong>trigger</strong> con le parole che usiamo davvero.</li><li>Terza persona, concreta, sotto i 1024 caratteri.</li></ul>
+    </div>
+  </div>
+  <aside class="notes">Test rapido per una description: leggetela senza il corpo. Capite quando va usata? Se no, nemmeno il modello lo capirà.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-chname="Creare una skill" data-title="Generatore di SKILL.md">
+  <div class="eyebrow"><b>03</b> Creare una skill</div>
+  <h2>Prova: componi una skill</h2>
+  <div class="split">
+    <form class="form" id="builder" autocomplete="off">
+      <div class="field"><label for="bName">name</label><input id="bName" value="review-pr"><span class="hint" id="bNameHint"></span></div>
+      <div class="field"><label for="bDesc">description</label><textarea id="bDesc" style="min-height:70px;font-family:var(--f-body)">Revisiona la PR corrente contro le convenzioni del repo (lingue, commit, test). Usala quando l'utente chiede una review o prima di aprire una PR.</textarea><span class="hint" id="bDescHint"></span></div>
+      <div class="field"><label>Chi la invoca</label><div class="seg" id="bWho"><button type="button" data-v="both" aria-pressed="true">Entrambi</button><button type="button" data-v="user" aria-pressed="false">Solo io</button><button type="button" data-v="model" aria-pressed="false">Solo il modello</button></div></div>
+      <div class="grid g2">
+        <div class="field"><label for="bArg">argument-hint</label><input id="bArg" value="[numero-pr]"></div>
+        <div class="field"><label for="bTools">allowed-tools</label><input id="bTools" value="Bash(git diff *) Bash(gh pr view *)"></div>
+      </div>
+      <div class="field"><label for="bBody">Istruzioni</label><textarea id="bBody"># Review della PR $ARGUMENTS
+
+1. Leggi il diff con `gh pr diff $ARGUMENTS`.
+2. Controlla: commenti e messaggi in italiano, identificatori in inglese.
+3. Ogni regola di business nuova ha un test.
+4. Riporta i problemi in ordine di gravità, con file e riga.</textarea></div>
+      <div class="field"><label>Destinazione</label><div class="seg" id="bWhere">
+        <button type="button" data-v="ccp" aria-pressed="true">Claude · progetto</button>
+        <button type="button" data-v="ccu" aria-pressed="false">Claude · personale</button>
+        <button type="button" data-v="ghp" aria-pressed="false">Copilot · progetto</button>
+        <button type="button" data-v="ghu" aria-pressed="false">Copilot · personale</button>
+        <button type="button" data-v="plg" aria-pressed="false">Plugin</button>
+      </div></div>
+    </form>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="path" id="bPath"></div>
+      <div class="codewrap"><pre class="code" id="bOut"></pre></div>
+      <div class="warnlist" id="bWarn"></div>
+    </div>
+  </div>
+  <aside class="notes">Far provare a qualcuno del pubblico: cambiare destinazione mostra che il file è identico, cambia solo il percorso. Il campo allowed-tools viene segnalato come specifico di Claude Code quando si sceglie Copilot.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-chname="Creare una skill" data-title="Buone pratiche">
+  <div class="eyebrow"><b>03</b> Creare una skill</div>
+  <h2>Buone pratiche</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Una skill, un lavoro</h3><p>Piccole e componibili battono il manuale unico. Se la description contiene «e anche», probabilmente sono due skill.</p></div>
+    <div class="panel"><h3>SKILL.md sotto le 500 righe</h3><p>Il resto va in file di supporto citati dal corpo: il modello li apre solo quando servono.</p></div>
+    <div class="panel"><h3>Script per il deterministico</h3><p>Calcoli, parsing, numerazioni: uno script è più affidabile e costa meno contesto di una spiegazione.</p></div>
+    <div class="panel"><h3>Imperativo e verificabile</h3><p>Passi numerati, criteri di uscita chiari («mostra il messaggio e chiedi conferma prima di committare»).</p></div>
+    <div class="panel"><h3>Versionala nel repo</h3><p>Le skill di progetto passano dalla review come il codice. Chi clona il repo le ha subito.</p></div>
+    <div class="panel"><h3>Provala sul serio</h3><p>Tre richieste realistiche: si attiva quando deve? Resta zitta quando non deve? Il risultato è quello atteso?</p></div>
+  </div>
+  <aside class="notes">Per chi vuole andare oltre: Claude Code ha anche le eval dei plugin (claude plugin eval) per misurare se una skill si attiva correttamente.</aside>
+</section>
+
+<!-- ============ 4. PLUGIN ============ -->
+<section class="slide" data-ch="4" data-chname="Impacchettare in un plugin" data-title="Da skill a plugin">
+  <div class="eyebrow"><b>04</b> Impacchettare in un plugin</div>
+  <h2>Un plugin è una cartella con un manifest</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">team-toolkit/</div>
+      <button data-show="pl-manifest" aria-pressed="true">&nbsp;&nbsp;.claude-plugin/plugin.json</button>
+      <div class="dir">&nbsp;&nbsp;skills/</div>
+      <button data-show="pl-skill" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;conventional-commit/SKILL.md</button>
+      <button data-show="pl-skill2" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;new-adr/SKILL.md</button>
+      <div class="dir">&nbsp;&nbsp;agents/</div>
+      <button data-show="pl-agent" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;reviewer.md</button>
+      <button data-show="pl-hooks" aria-pressed="false">&nbsp;&nbsp;hooks/hooks.json</button>
+      <button data-show="pl-mcp" aria-pressed="false">&nbsp;&nbsp;.mcp.json</button>
+    </div>
+    <div>
+      <div data-file="pl-manifest" class="codewrap"><pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"team-toolkit"</span>,
+  <span class="k">"version"</span>: <span class="s">"0.1.0"</span>,
+  <span class="k">"description"</span>: <span class="s">"Le skill condivise del team"</span>,
+  <span class="k">"author"</span>: { <span class="k">"name"</span>: <span class="s">"Team Acme"</span> }
+}</pre><p class="small" style="margin-top:8px">Il <code>name</code> diventa il prefisso delle skill: <code>/team-toolkit:new-adr</code>.</p></div>
+      <div data-file="pl-skill" class="codewrap" hidden><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> conventional-commit
+<span class="k">description:</span> Scrive il messaggio di commit secondo
+  le convenzioni del team.
+<span class="k">disable-model-invocation:</span> true
+<span class="c">---</span>
+…</pre></div>
+      <div data-file="pl-skill2" class="codewrap" hidden><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> new-adr
+<span class="k">description:</span> Crea un nuovo ADR in docs/adr…
+<span class="c">---</span>
+…</pre></div>
+      <div data-file="pl-agent" class="codewrap" hidden><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> reviewer
+<span class="k">description:</span> Revisore che controlla una PR contro
+  CLAUDE.md e gli ADR. Delegagli le review.
+<span class="k">tools:</span> Read, Grep, Glob, Bash
+<span class="c">---</span>
+Sei il revisore del team…</pre></div>
+      <div data-file="pl-hooks" class="codewrap" hidden><pre class="code">{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PostToolUse"</span>: [{
+      <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+      <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+        <span class="k">"command"</span>: <span class="s">"npx prettier --write \"$FILE\""</span> }]
+    }]
+  }
+}</pre><p class="small" style="margin-top:8px">Esempio indicativo: controlla nella documentazione degli hook le variabili disponibili.</p></div>
+      <div data-file="pl-mcp" class="codewrap" hidden><pre class="code">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"postgres"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@modelcontextprotocol/server-postgres"</span>,
+               <span class="s">"postgresql://localhost/acmeshop"</span>]
+    }
+  }
+}</pre></div>
+    </div>
+  </div>
+  <p class="small">Solo <code>plugin.json</code> sta dentro <code>.claude-plugin/</code>. Le cartelle dei componenti vanno alla radice del plugin.</p>
+  <aside class="notes">Errore classico: mettere skills/ dentro .claude-plugin/. Il manifest sta lì, tutto il resto alla radice.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-chname="Impacchettare in un plugin" data-title="Il marketplace">
+  <div class="eyebrow"><b>04</b> Impacchettare in un plugin</div>
+  <h2>Il marketplace è un catalogo in un repo git</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">team-marketplace/.claude-plugin/marketplace.json</span><pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"team-marketplace"</span>,
+  <span class="k">"description"</span>: <span class="s">"Plugin del team"</span>,
+  <span class="k">"owner"</span>: { <span class="k">"name"</span>: <span class="s">"Team Acme"</span> },
+  <span class="k">"plugins"</span>: [
+    {
+      <span class="k">"name"</span>: <span class="s">"team-toolkit"</span>,
+      <span class="k">"source"</span>: <span class="s">"./plugins/team-toolkit"</span>,
+      <span class="k">"description"</span>: <span class="s">"Commit, ADR e testi in italiano"</span>
+    }
+  ]
+}</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Id d'installazione: <code>nome-plugin@nome-marketplace</code>.</li>
+        <li>Il <code>name</code> della voce e quello in <code>plugin.json</code> devono coincidere.</li>
+        <li><code>source</code> relativo alla radice del marketplace, mai con <code>..</code>. In alternativa <code>github</code>, <code>git-subdir</code>, <code>url</code>, <code>npm</code>.</li>
+        <li>Il repo può essere privato: basta che chi installa abbia accesso.</li>
+      </ul>
+      <div class="codewrap"><pre class="code">claude plugin validate ./team-marketplace
+claude plugin marketplace add ./team-marketplace
+claude plugin install team-toolkit@team-marketplace</pre></div>
+    </div>
+  </div>
+  <aside class="notes">Un marketplace interno è il modo più semplice per tenere tutti allineati: si aggiorna il repo e i colleghi ricevono la nuova versione.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-chname="Impacchettare in un plugin" data-title="Un plugin, due strumenti">
+  <div class="eyebrow"><b>04</b> Impacchettare in un plugin</div>
+  <h2>Un plugin solo per Claude Code e Copilot</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li>Manifest in <code>.claude-plugin/plugin.json</code>.</li>
+      <li>Marketplace in <code>.claude-plugin/marketplace.json</code>.</li>
+      <li>Sviluppo senza installare: <code>claude --plugin-dir ./team-toolkit</code>.</li></ul></div>
+    <div class="panel"><h3 class="gh">Copilot CLI e VS Code</h3><ul class="clean">
+      <li>Il manifest viene cercato in <code>.plugin/</code>, alla radice, in <code>.github/plugin/</code> e in <code>.claude-plugin/</code>.</li>
+      <li>Marketplace in <code>.github/plugin/marketplace.json</code>.</li>
+      <li>Agenti come <code>agents/*.agent.md</code>, skill in <code>skills/*/SKILL.md</code>.</li></ul></div>
+  </div>
+  <div class="callout"><strong>Ricetta per servire entrambi:</strong> manifest in <code>.claude-plugin/plugin.json</code> (lo leggono tutti e due) e lo stesso <code>marketplace.json</code> sia in <code>.claude-plugin/</code> sia in <code>.github/plugin/</code>. Le skill restano identiche.</div>
+  <aside class="notes">Gli agenti sono il punto in cui i formati divergono di più: per Copilot il file è .agent.md. Se un plugin deve servire entrambi, partite dalle skill, che sono lo standard comune.</aside>
+</section>
+
+<!-- ============ 5. DIFFERENZE ============ -->
+<section class="slide" data-ch="5" data-chname="Claude Code vs Copilot" data-title="Le differenze">
+  <div class="eyebrow"><b>05</b> Claude Code vs Copilot</div>
+  <h2>Stesso standard, dettagli diversi</h2>
+  <div class="chips" id="cmpFilter"><button class="chip" aria-pressed="true" data-v="all">Tutto</button><button class="chip" aria-pressed="false" data-v="diff">Solo le differenze</button></div>
+  <div class="tablewrap"><table id="cmpTable">
+    <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">GitHub Copilot</th></tr></thead>
+    <tbody>
+      <tr class="same"><td>Formato skill</td><td>Cartella con <code>SKILL.md</code> (Agent Skills)</td><td>Lo stesso</td></tr>
+      <tr><td>Skill di progetto</td><td><code>.claude/skills/</code></td><td><code>.github/skills/</code>, legge anche <code>.claude/skills/</code></td></tr>
+      <tr><td>Skill personali</td><td><code>~/.claude/skills/</code></td><td><code>~/.copilot/skills/</code>, <code>~/.agents/skills/</code> (VS Code anche <code>~/.claude/skills/</code>)</td></tr>
+      <tr class="same"><td>Invocazione</td><td><code>/nome</code> o automatica dalla description</td><td>La stessa</td></tr>
+      <tr><td>Skill dei plugin</td><td>Con prefisso: <code>/plugin:skill</code></td><td>Senza prefisso; vince la prima trovata, una skill di progetto omonima nasconde quella del plugin</td></tr>
+      <tr><td>Frontmatter extra</td><td><code>allowed-tools</code>, <code>context: fork</code>, <code>model</code>, <code>hooks</code>, <code>paths</code></td><td>Base: <code>name</code>, <code>description</code>; VS Code anche <code>argument-hint</code> e i controlli d'invocazione</td></tr>
+      <tr><td>Contesto dinamico</td><td><code>!`comando`</code>, <code>$ARGUMENTS</code></td><td>Non c'è: l'agente esegue i comandi quando servono</td></tr>
+      <tr><td>Manifest plugin</td><td><code>.claude-plugin/plugin.json</code></td><td><code>plugin.json</code> in radice, <code>.github/plugin/</code> o <code>.claude-plugin/</code></td></tr>
+      <tr><td>Marketplace</td><td><code>.claude-plugin/marketplace.json</code>; predefinito <code>claude-plugins-official</code></td><td><code>.github/plugin/marketplace.json</code>; predefinito <code>awesome-copilot</code></td></tr>
+      <tr><td>Comandi</td><td><code>/plugin</code>, <code>claude plugin …</code></td><td><code>/skills</code>, <code>copilot plugin …</code>, <code>gh skill …</code></td></tr>
+      <tr><td>Abilitazione per il team</td><td><code>.claude/settings.json</code>: <code>extraKnownMarketplaces</code> e <code>enabledPlugins</code></td><td>Marketplace registrati da ognuno; <code>extraKnownMarketplaces</code> in <code>~/.copilot/settings.json</code></td></tr>
+      <tr><td>Subagenti</td><td><code>.claude/agents/*.md</code></td><td><code>.github/agents/*.agent.md</code> (VS Code legge anche <code>.claude/agents</code>)</td></tr>
+      <tr class="same"><td>Hook e MCP nei plugin</td><td>Sì</td><td>Sì, stesso formato degli hook</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Il messaggio chiave: scrivete skill portabili (solo name e description, niente !`cmd`) se devono girare su entrambi; usate i campi di Claude Code quando la skill è solo per Claude. Gli strumenti evolvono in fretta: le colonne Copilot vanno ricontrollate sulla versione installata.</aside>
+</section>
+
+<!-- ============ 6. MATT POCOCK ============ -->
+<section class="slide" data-ch="6" data-chname="Le skill di Matt Pocock" data-title="Che cosa sono">
+  <div class="eyebrow"><b>06</b> Le skill di Matt Pocock</div>
+  <h2>Un metodo di lavoro, impacchettato</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Matt Pocock, noto per Total TypeScript e AI Hero, pubblica in <code>mattpocock/skills</code> le skill che usa ogni giorno. Sono open source e coprono l'intero ciclo: allinearsi su un'idea, scriverne la spec, spezzarla in ticket, implementarla in TDD, rivederla.</p>
+      <ul class="clean">
+        <li>Due famiglie: <strong>engineering</strong> e <strong>productivity</strong>.</li>
+        <li>Ogni skill è <strong>user-invoked</strong> (la lanci tu) o <strong>model-invoked</strong> (la usa l'agente quando serve).</li>
+        <li>Si appoggiano al tuo issue tracker e a un glossario di dominio, configurati una volta per repo.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Che cosa lascia nel repo</h3>
+      <p>Dopo <code>/setup-matt-pocock-skills</code> un progetto tipo contiene:</p>
+      <div class="codewrap"><pre class="code">CONTEXT.md                     <span class="c"># glossario</span>
+docs/adr/                      <span class="c"># decisioni</span>
+docs/agents/issue-tracker.md   <span class="c"># GitHub Issues via gh</span>
+docs/agents/triage-labels.md   <span class="c"># needs-triage, ready-for-agent…</span>
+docs/agents/domain.md          <span class="c"># dove sono i documenti</span></pre></div>
+    </div>
+  </div>
+  <aside class="notes">Il setup aggiunge al file di istruzioni del progetto (CLAUDE.md o AGENTS.md) una sezione Agent skills che rimanda a questi file. Le skill leggono da lì come lavora il team, invece di avere le regole cablate dentro.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-chname="Le skill di Matt Pocock" data-title="Il catalogo">
+  <div class="eyebrow"><b>06</b> Le skill di Matt Pocock</div>
+  <h2>Il catalogo</h2>
+  <div class="chips" id="catFilter">
+    <button class="chip" aria-pressed="true" data-f="all">Tutte</button>
+    <button class="chip" aria-pressed="false" data-f="eng">Engineering</button>
+    <button class="chip" aria-pressed="false" data-f="prod">Productivity</button>
+    <button class="chip" aria-pressed="false" data-f="user">La lanci tu</button>
+    <button class="chip" aria-pressed="false" data-f="model">La usa l'agente</button>
+    <input class="search" id="catSearch" type="search" placeholder="Cerca una skill" aria-label="Cerca una skill">
+  </div>
+  <div class="catalog" id="catalog"></div>
+  <p class="small" id="catCount"></p>
+  <aside class="notes">Non serve conoscerle tutte. Il punto d'ingresso è /ask-matt, che ti indirizza alla skill giusta per la situazione.</aside>
+</section>
+
+<!-- ============ 7. VANTAGGI MATT ============ -->
+<section class="slide" data-ch="7" data-chname="Perché usare le skill di Pocock" data-title="Il flusso">
+  <div class="eyebrow"><b>07</b> Perché usarle</div>
+  <h2>Dall'idea alla PR, un passo alla volta</h2>
+  <div class="pipe" id="pipe"></div>
+  <div class="panel pipedetail" id="pipeDetail"></div>
+  <aside class="notes">Il valore sta nel fermare l'agente prima che scriva codice: il grilling fa emergere le decisioni non prese, la spec le fissa, i ticket verticali tengono le PR piccole.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-chname="Perché usare le skill di Pocock" data-title="I vantaggi">
+  <div class="eyebrow"><b>07</b> Perché usarle</div>
+  <h2>Che cosa ci guadagniamo</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Allineamento prima del codice</h3><p><code>/grill-me</code> fa domande finché ogni ramo del design è deciso. Meno rifacimenti a metà ticket.</p></div>
+    <div class="panel"><h3>Linguaggio condiviso</h3><p><code>CONTEXT.md</code> e gli ADR tengono uniti dominio e codice; <code>/grill-with-docs</code> li aggiorna mentre si discute.</p></div>
+    <div class="panel"><h3>L'issue tracker come memoria</h3><p>Spec e ticket finiscono su GitHub Issues: un altro agente o un collega riprende da lì.</p></div>
+    <div class="panel"><h3>Fette verticali in TDD</h3><p><code>tdd</code> procede una fetta alla volta, red-green-refactor: PR piccole, sempre verdi.</p></div>
+    <div class="panel"><h3>Review contro la spec</h3><p><code>code-review</code> confronta il diff con gli standard e con la spec da cui è partito.</p></div>
+    <div class="panel"><h3>Si migliora da solo</h3><p><code>/retro</code> propone modifiche all'ambiente dell'agente a fine sessione.</p></div>
+  </div>
+  <aside class="notes">Le label di triage (needs-triage, ready-for-agent, ready-for-human) stanno in triage-labels.md; un ticket marcato ready-for-agent si può passare a /implement.</aside>
+</section>
+
+<!-- ============ 8. INSTALL MATT ============ -->
+<section class="slide" data-ch="8" data-chname="Installare le skill di Pocock" data-title="Installazione">
+  <div class="eyebrow"><b>08</b> Installare e usare le skill di Pocock</div>
+  <h2>Installazione</h2>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="cc">Claude Code</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="cli">Copilot CLI</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="vs">VS Code</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="npx">File modificabili</button>
+    </div>
+    <div class="tabpanel" data-panel="cc">
+      <div class="codewrap"><pre class="code">claude plugin install mattpocock-skills@claude-plugins-official</pre></div>
+      <p>È nel marketplace ufficiale, già registrato: si aggiorna da solo. Nella sessione funziona anche <code>/plugin</code> → Discover.</p>
+    </div>
+    <div class="tabpanel" data-panel="cli" hidden>
+      <div class="codewrap"><pre class="code">copilot plugin marketplace add mattpocock/skills
+copilot plugin install mattpocock-skills@mattpocock</pre></div>
+      <p>Il README chiede inoltre di aggiungere una volta la voce <code>extraKnownMarketplaces</code> in <code>~/.copilot/settings.json</code>: copiala da lì.</p>
+    </div>
+    <div class="tabpanel" data-panel="vs" hidden>
+      <p>Command Palette → <strong>Chat: Install Plugin From Source</strong> e incolla:</p>
+      <div class="codewrap"><pre class="code">https://github.com/mattpocock/skills</pre></div>
+    </div>
+    <div class="tabpanel" data-panel="npx" hidden>
+      <div class="codewrap"><pre class="code">npx skills@latest add mattpocock/skills      <span class="c"># chiede agente e skill</span>
+npx skills@latest update</pre></div>
+      <p>Copia le skill nel repo come file che puoi modificare. Includi <code>setup-matt-pocock-skills</code> quando te lo chiede. Aggiornamenti manuali.</p>
+    </div>
+  </div>
+  <div class="callout warn">Scegli <strong>una</strong> strada: plugin oppure file copiati. Con entrambi ogni skill compare due volte.</div>
+  <aside class="notes">Per il team consiglio il plugin: si aggiorna da solo. I file copiati servono solo se volete personalizzare le skill.</aside>
+</section>
+
+<section class="slide" data-ch="8" data-chname="Installare le skill di Pocock" data-title="Primo giro">
+  <div class="eyebrow"><b>08</b> Installare e usare le skill di Pocock</div>
+  <h2>Primo giro su un repo</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">una volta per repo</span><pre class="code">/setup-matt-pocock-skills
+<span class="c"># chiede: issue tracker (GitHub, Linear, file locali),</span>
+<span class="c"># label di triage, dove stanno CONTEXT.md e gli ADR</span>
+<span class="c"># → scrive docs/agents/*.md e una sezione in CLAUDE.md/AGENTS.md</span></pre></div>
+    <div class="codewrap"><span class="label">un ticket, dall'inizio alla fine</span><pre class="code">/grill-me voglio i coupon di sconto nel carrello
+/to-spec
+/to-tickets
+/implement #57
+<span class="c"># implement usa tdd e chiude con code-review</span></pre></div>
+  </div>
+  <div class="grid g3">
+    <div class="panel"><h3>Non sai da dove partire?</h3><p><code>/ask-matt</code> ti indica la skill adatta.</p></div>
+    <div class="panel"><h3>Bug ostinato</h3><p>Descrivilo: l'agente attiva <code>diagnosing-bugs</code> da solo.</p></div>
+    <div class="panel"><h3>Fine giornata</h3><p><code>/handoff</code> riassume la sessione per chi la riprende.</p></div>
+  </div>
+  <aside class="notes">In Claude Code, installate come plugin, le skill hanno anche il nome completo con prefisso (mattpocock-skills:grill-me); nel menu / basta iniziare a digitare.</aside>
+</section>
+
+<!-- ============ 9. GRAPHIFY ============ -->
+<section class="slide" data-ch="9" data-chname="Le skill di graphify" data-title="Che cos'è graphify">
+  <div class="eyebrow"><b>09</b> Le skill di graphify</div>
+  <h2>Il codebase come grafo di conoscenza</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">graphify è uno strumento open source (<code>safishamsi/graphify</code>) che si installa come skill <code>/graphify</code> per Claude Code, Copilot, Codex, Cursor e Gemini CLI. Trasforma una cartella in un grafo interrogabile.</p>
+      <ul class="clean">
+        <li>Legge codice, documentazione, schemi SQL, configurazioni e PDF.</li>
+        <li>Il codice è analizzato in locale con tree-sitter, senza LLM.</li>
+        <li>Ogni arco è marcato <strong>EXTRACTED</strong> (letto nel codice) o <strong>INFERRED</strong> (dedotto, es. da un documento).</li>
+        <li>Raggruppa i nodi in comunità: le «zone» del sistema.</li>
+        <li>Non è un indice vettoriale: è una mappa di relazioni.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Attenzione al nome</h3>
+      <p>Il pacchetto PyPI è <code>graphifyy</code>, con due y. Gli altri pacchetti <code>graphify*</code> non c'entrano.</p>
+      <div class="codewrap"><pre class="code">uv tool install graphifyy
+<span class="c"># oppure</span>
+pipx install graphifyy</pre></div>
+    </div>
+  </div>
+  <aside class="notes">Il nome con due y è la prima domanda che arriva sempre: un pacchetto con un nome simile installa tutt'altro.</aside>
+</section>
+
+<section class="slide" data-ch="9" data-chname="Le skill di graphify" data-title="Che cosa produce">
+  <div class="eyebrow"><b>09</b> Le skill di graphify</div>
+  <h2>Che cosa trovi in graphify-out/</h2>
+  <div class="grid g3">
+    <div class="panel"><h3><code>graph.html</code></h3><p>Il grafo interattivo da aprire nel browser. Ottimo per l'onboarding su una zona sconosciuta.</p></div>
+    <div class="panel"><h3><code>GRAPH_REPORT.md</code></h3><p>Concetti chiave, nodi più collegati, connessioni sorprendenti, domande suggerite. Nelle versioni recenti riporta il commit da cui è stato costruito.</p></div>
+    <div class="panel"><h3><code>graph.json</code></h3><p>Il grafo completo: <code>query</code>, <code>path</code> ed <code>explain</code> lo interrogano senza rileggere i sorgenti.</p></div>
+  </div>
+  <div class="callout">Buona pratica: metti <code>graphify-out/</code> in <code>.gitignore</code>, costruiscilo nella checkout principale e scrivi le regole d'uso per gli agenti in un file dedicato, per esempio <code>docs/agents/code-graph.md</code>.</div>
+  <aside class="notes">Il grafo fotografa i file al momento della costruzione: per questo il report riporta il commit, così si capisce quanto è vecchio.</aside>
+</section>
+
+<!-- ============ 10. VANTAGGI GRAPHIFY ============ -->
+<section class="slide" data-ch="10" data-chname="Perché usare graphify" data-title="La mappa in pratica">
+  <div class="eyebrow"><b>10</b> Perché usare graphify</div>
+  <h2>Prima la mappa, poi il codice</h2>
+  <p class="small">Esempio illustrativo con nomi generici. Clicca un nodo per <code>explain</code>; clicca un secondo nodo per <code>path</code>. Linea continua = EXTRACTED, tratteggiata = INFERRED.</p>
+  <div class="split">
+    <div class="graphbox"><svg id="graph" viewBox="0 0 560 360" role="img" aria-label="Grafo di esempio con servizi e documenti collegati"></svg></div>
+    <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+      <div class="term" id="graphTerm" aria-live="polite"></div>
+      <button class="btn" id="graphReset" type="button" style="align-self:flex-start">Azzera selezione</button>
+    </div>
+  </div>
+  <aside class="notes">Far vedere la differenza: senza grafo l'agente fa grep e apre file uno dopo l'altro; con il grafo sa subito quali tre file leggere. Poi però li legge: il grafo dice dove guardare, non che cosa c'è.</aside>
+</section>
+
+<section class="slide" data-ch="10" data-chname="Perché usare graphify" data-title="Vantaggi e limiti">
+  <div class="eyebrow"><b>10</b> Perché usare graphify</div>
+  <h2>Vantaggi e limiti</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Vantaggi</h3><ul class="clean">
+      <li><strong>Meno token:</strong> l'agente interroga il grafo invece di aprire decine di file per orientarsi.</li>
+      <li><strong>Analisi d'impatto:</strong> prima di toccare un tipo condiviso vedi chi ne dipende, così web e mobile si adattano nella stessa PR.</li>
+      <li><strong>Codice e documenti insieme:</strong> un ADR collegato al servizio che descrive.</li>
+      <li><strong>Costruzione del codice gratuita:</strong> tree-sitter in locale, nessun credito LLM.</li>
+      <li><strong>Onboarding:</strong> <code>graph.html</code> e le comunità mostrano le zone del sistema.</li>
+    </ul></div>
+    <div class="panel"><h3>Limiti e buone abitudini</h3><ul class="clean">
+      <li>È una <strong>mappa</strong>: le conclusioni vengono dalla lettura del codice.</li>
+      <li>Invecchia: dopo un pull serve <code>graphify update .</code>.</li>
+      <li>Le query confrontano alla lettera: cerca con i nomi del codice, in inglese.</li>
+      <li>Zero risultati non vuol dire che non esiste: prova altri termini.</li>
+      <li>Per un file che conosci già, aprilo direttamente.</li>
+    </ul></div>
+  </div>
+  <aside class="notes">Sono le regole da scrivere nel file per gli agenti (es. docs/agents/code-graph.md): valgono uguali per le persone.</aside>
+</section>
+
+<!-- ============ 11. INSTALL GRAPHIFY ============ -->
+<section class="slide" data-ch="11" data-chname="Installare graphify" data-title="Installazione">
+  <div class="eyebrow"><b>11</b> Installare e usare graphify</div>
+  <h2>Installazione</h2>
+  <div class="codewrap"><span class="label">1 · la CLI, una volta per macchina</span><pre class="code">uv tool install graphifyy            <span class="c"># o pipx / pip install graphifyy</span>
+uv tool install "graphifyy[watch]"   <span class="c"># se vuoi graphify watch</span></pre></div>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="cc">Claude Code</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="cli">Copilot CLI</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="vs">VS Code Copilot Chat</button>
+    </div>
+    <div class="tabpanel" data-panel="cc">
+      <div class="codewrap"><span class="label">2 · registra la skill</span><pre class="code">graphify install                     <span class="c"># Linux e macOS</span>
+graphify install --platform windows  <span class="c"># Windows</span>
+graphify install --project           <span class="c"># solo per questo repo</span></pre></div>
+    </div>
+    <div class="tabpanel" data-panel="cli" hidden>
+      <div class="codewrap"><span class="label">2 · registra la skill</span><pre class="code">graphify install --platform copilot</pre></div>
+    </div>
+    <div class="tabpanel" data-panel="vs" hidden>
+      <div class="codewrap"><span class="label">2 · registra la skill</span><pre class="code">graphify vscode install</pre></div>
+    </div>
+  </div>
+  <aside class="notes">Chi usa sia Claude Code sia Copilot lancia entrambe le install: la CLI è una sola, cambia dove viene registrata la skill.</aside>
+</section>
+
+<section class="slide" data-ch="11" data-chname="Installare graphify" data-title="I comandi">
+  <div class="eyebrow"><b>11</b> Installare e usare graphify</div>
+  <h2>I comandi</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">nell'agente (skill)</span><pre class="code">/graphify .                      <span class="c"># costruisce il grafo</span>
+/graphify . --update             <span class="c"># incrementale, anche i documenti</span>
+/graphify . --cluster-only       <span class="c"># ricalcola le comunità</span>
+/graphify query "come arriva un ordine al pagamento?"
+/graphify path "UserService" "DatabasePool"
+/graphify explain "RateLimiter"</pre></div>
+    <div class="codewrap"><span class="label">nella shell (senza LLM)</span><pre class="code">graphify update .                <span class="c"># dopo git pull, solo codice</span>
+graphify hook install            <span class="c"># ricostruisce a commit e checkout</span>
+graphify watch                   <span class="c"># aggiorna mentre lavori</span>
+
+graphify query "checkout" --graph graphify-out/graph.json --budget 1500
+graphify path "A" "B" --graph graphify-out/graph.json
+graphify explain "OrderService" --graph graphify-out/graph.json</pre></div>
+  </div>
+  <div class="callout">Flusso del team: il maintainer costruisce il grafo nella checkout principale; gli agenti lo leggono e non lo riscrivono mai da un worktree. In Codex il comando è <code>$graphify</code>.</div>
+  <aside class="notes">--budget limita i token della risposta. Gli agenti possono usare query, path ed explain dalla shell, con --graph puntato alla checkout principale.</aside>
+</section>
+
+<!-- ============ 12. LAB ============ -->
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>12</b> Laboratorio</div>
+  <h2>Costruiamo team-toolkit</h2>
+  <p class="lead">Tre skill che codificano le convenzioni di un progetto di esempio, <code>acme-shop</code>, un plugin che le raccoglie, un marketplace che lo distribuisce. Lo proviamo in Claude Code e in Copilot.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">user-invoked</span><h3><code>conventional-commit</code></h3><p>Il messaggio di commit secondo le regole del team: scope, italiano, issue in fondo.</p></div>
+    <div class="panel"><span class="tag acc">user-invoked</span><h3><code>new-adr</code></h3><p>Un ADR numerato dal template, con contesto dinamico.</p></div>
+    <div class="panel"><span class="tag acc">model-invoked</span><h3><code>italian-copy</code></h3><p>Regole per commenti, errori e testi in italiano, applicate in automatico.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: Claude Code e/o Copilot CLI installati, un repo di prova (va bene un progetto qualsiasi), Git.</p>
+  <aside class="notes">Lavoriamo prima con le skill di progetto, poi le spostiamo nel plugin: così si vede che il file SKILL.md non cambia.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 1 · Le skill">
+  <div class="eyebrow"><b>12</b> Laboratorio · Passo 1</div>
+  <h2>Scrivi le tre skill nel repo</h2>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="a">conventional-commit</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="b">new-adr</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="c">italian-copy</button>
+    </div>
+    <div class="tabpanel" data-panel="a">
+      <div class="codewrap"><span class="label">.claude/skills/conventional-commit/SKILL.md</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> conventional-commit
+<span class="k">description:</span> Scrive il messaggio di commit secondo le convenzioni del team
+  (conventional commits, descrizione in italiano, numero dell'issue in fondo).
+<span class="k">argument-hint:</span> [numero-issue]
+<span class="k">disable-model-invocation:</span> true
+<span class="k">allowed-tools:</span> Bash(git diff *) Bash(git status *)
+<span class="c">---</span>
+
+# Messaggio di commit
+
+1. Leggi le modifiche in stage con `git diff --staged`.
+2. Scegli il tipo: feat, fix, refactor, test, docs, chore.
+3. Lo scope è l'app o il pacchetto toccato: api, web, mobile, core, types.
+4. Descrizione in italiano, senza punto finale, al massimo 72 caratteri.
+5. Chiudi con il numero dell'issue: (#$ARGUMENTS).
+
+Esempio: `feat(web): il carrello mostra il totale con la spedizione (#12)`
+
+Mostra il messaggio e chiedi conferma prima di eseguire `git commit`.</pre></div>
+    </div>
+    <div class="tabpanel" data-panel="b" hidden>
+      <div class="codewrap"><span class="label">.claude/skills/new-adr/SKILL.md</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> new-adr
+<span class="k">description:</span> Crea un nuovo Architecture Decision Record in docs/adr
+  con il numero successivo e il template del team.
+<span class="k">argument-hint:</span> [la decisione]
+<span class="k">disable-model-invocation:</span> true
+<span class="c">---</span>
+
+ADR esistenti:
+!`ls docs/adr`
+
+Crea `docs/adr/NNNN-&lt;slug&gt;.md`: numero successivo a quattro cifre, slug
+in italiano preso dalla decisione. Parti da [template.md](template.md).
+Decisione: $ARGUMENTS
+
+- Il titolo è la decisione in una frase, non l'argomento.
+- Il corpo spiega in prosa che cosa si è deciso e perché.
+- `## Considered Options` elenca le alternative:
+  `- **Nome.** Scartato: motivo.` (o Rimandato a …).
+- Se la decisione cambia un ADR esistente, non riscriverlo: in cima
+  al vecchio aggiungi `> **Superata da ADR-NNNN** su …. Il resto resta in vigore.`
+
+Fammi le domande che mancano sulle alternative, poi scrivi il file.
+L'ADR va in un commit `docs:` a sé.</pre></div>
+      <div class="codewrap"><span class="label">.claude/skills/new-adr/template.md</span><pre class="code"># &lt;La decisione in una frase, non l'argomento&gt;
+
+&lt;Che cosa si è deciso e perché, in prosa: vincoli, contesto,
+riferimenti agli altri ADR (ADR-0006).&gt;
+
+&lt;Le conseguenze: che cosa diventa più facile e che cosa più difficile.&gt;
+
+## Considered Options
+
+- **&lt;Alternativa&gt;.** Scartato: &lt;motivo&gt;.
+- **&lt;Alternativa&gt;.** Rimandato a &lt;fase&gt;: &lt;motivo&gt;.</pre></div>
+      <p class="small">Il titolo è la decisione stessa: chi scorre <code>docs/adr/</code> capisce che cosa si è deciso dal solo nome del file. <code>!`ls docs/adr`</code> funziona solo in Claude Code. In Copilot la riga arriva come testo e l'agente esegue il comando da sé: il risultato è lo stesso, con un passaggio in più.</p>
+    </div>
+    <div class="tabpanel" data-panel="c" hidden>
+      <div class="codewrap"><span class="label">.claude/skills/italian-copy/SKILL.md</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> italian-copy
+<span class="k">description:</span> Regole per i testi in italiano del repo: commenti, messaggi
+  d'errore, stringhe dell'interfaccia, documentazione. Usala ogni volta che
+  scrivi o modifichi testo destinato a persone.
+<span class="k">user-invocable:</span> false
+<span class="c">---</span>
+
+- Identificatori in inglese, testi in italiano.
+- Tono professionale ma non formale; all'utente si dà del tu.
+- Un errore dice che cosa è andato storto e come rimediare, senza scuse.
+- Usa i termini di CONTEXT.md (carrello, ordine, cliente),
+  mai sinonimi inventati.</pre></div>
+    </div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span>Ho creato le tre cartelle in <code>.claude/skills/</code> con i rispettivi <code>SKILL.md</code></span></label>
+    <label class="check"><input type="checkbox" id="lab2"><span>Ho aggiunto <code>new-adr/template.md</code></span></label>
+  </div>
+  <aside class="notes">Metto le skill in .claude/skills perché le leggono sia Claude Code sia Copilot. Chi usa solo Copilot può usare .github/skills.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 2 · Prova le skill">
+  <div class="eyebrow"><b>12</b> Laboratorio · Passo 2</div>
+  <h2>Provale nei due strumenti</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code</span><pre class="code">git add -p
+/conventional-commit 12
+/new-adr le notifiche push partono solo a fine turno
+
+<span class="c"># verifica l'attivazione automatica:</span>
+aggiungi un messaggio d'errore quando il coupon è scaduto
+<span class="c"># → deve entrare italian-copy</span></pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">/skills list                   <span class="c"># compaiono le tre?</span>
+/skills info conventional-commit
+/conventional-commit 12
+
+<span class="c"># se non le vede, copiale nella cartella nativa:</span>
+mkdir -p .github/skills
+cp -r .claude/skills/* .github/skills/
+/skills reload</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab3"><span><code>/conventional-commit</code> produce un messaggio nel formato del team</span></label>
+    <label class="check"><input type="checkbox" id="lab4"><span><code>italian-copy</code> si attiva senza che io la nomini</span></label>
+    <label class="check"><input type="checkbox" id="lab5"><span>Ho provato almeno una skill in Copilot</span></label>
+  </div>
+  <aside class="notes">Se italian-copy non si attiva, il problema è quasi sempre la description: rendetela più specifica, con le parole che usate nelle richieste.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 3 · Il plugin">
+  <div class="eyebrow"><b>12</b> Laboratorio · Passo 3</div>
+  <h2>Impacchetta il plugin e il marketplace</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">struttura</span><pre class="code">team-marketplace/
+├── .claude-plugin/marketplace.json
+├── .github/plugin/marketplace.json   <span class="c"># copia per Copilot</span>
+└── plugins/team-toolkit/
+    ├── .claude-plugin/plugin.json
+    └── skills/
+        ├── conventional-commit/SKILL.md
+        ├── new-adr/SKILL.md
+        ├── new-adr/template.md
+        └── italian-copy/SKILL.md</pre></div>
+    <div class="codewrap"><span class="label">da lanciare nella cartella che contiene il repo</span><pre class="code">M=team-marketplace; P=$M/plugins/team-toolkit
+mkdir -p $M/.claude-plugin $M/.github/plugin $P/.claude-plugin
+cp -r acme-shop/.claude/skills $P/skills
+
+cat &gt; $P/.claude-plugin/plugin.json &lt;&lt;'EOF'
+{ "name": "team-toolkit", "version": "0.1.0",
+  "description": "Commit, ADR e testi in italiano",
+  "author": { "name": "Team Acme" } }
+EOF
+
+cat &gt; $M/.claude-plugin/marketplace.json &lt;&lt;'EOF'
+{ "name": "team-marketplace",
+  "owner": { "name": "Team Acme" },
+  "plugins": [{ "name": "team-toolkit",
+    "source": "./plugins/team-toolkit",
+    "description": "Commit, ADR e testi in italiano" }] }
+EOF
+cp $M/.claude-plugin/marketplace.json $M/.github/plugin/</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab6"><span>Ho creato <code>team-marketplace/</code> con il plugin dentro</span></label>
+    <label class="check"><input type="checkbox" id="lab7"><span>Ho tolto le skill da <code>.claude/skills/</code> del repo, per non averle doppie</span></label>
+  </div>
+  <aside class="notes">Il secondo punto è importante: con la skill sia nel repo sia nel plugin, in Copilot vince quella di progetto e la versione del plugin viene ignorata in silenzio.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 4 · Installa e prova">
+  <div class="eyebrow"><b>12</b> Laboratorio · Passo 4</div>
+  <h2>Valida, installa, usa</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code</span><pre class="code">claude plugin validate ./team-marketplace
+<span class="c"># ✔ Validation passed</span>
+
+<span class="c"># sviluppo veloce, senza installare:</span>
+claude --plugin-dir ./team-marketplace/plugins/team-toolkit
+
+<span class="c"># installazione vera:</span>
+claude plugin marketplace add ./team-marketplace
+claude plugin install team-toolkit@team-marketplace
+claude plugin details team-toolkit
+
+<span class="c"># nella sessione:</span>
+/team-toolkit:conventional-commit 12</pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">copilot plugin marketplace add ./team-marketplace
+copilot plugin install team-toolkit@team-marketplace
+copilot plugin list
+
+<span class="c"># oppure direttamente dalla cartella:</span>
+copilot plugin install ./team-marketplace/plugins/team-toolkit
+
+<span class="c"># nella sessione:</span>
+/skills list
+/conventional-commit 12</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab8"><span><code>claude plugin validate</code> passa</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span>Il plugin è installato in Claude Code e la skill risponde con il prefisso</span></label>
+    <label class="check"><input type="checkbox" id="lab10"><span>Il plugin è installato in Copilot CLI</span></label>
+  </div>
+  <aside class="notes">Dopo una modifica al plugin: in Claude Code /reload-plugins, in Copilot /skills reload. Con il marketplace locale e il source relativo, Claude Code legge i file direttamente dalla cartella.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Passo 5 · Condividi col team">
+  <div class="eyebrow"><b>12</b> Laboratorio · Passo 5</div>
+  <h2>Pubblica e abilitalo per tutto il team</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="codewrap"><span class="label">1 · pubblica il marketplace</span><pre class="code">cd team-marketplace
+git init &amp;&amp; git add . &amp;&amp; git commit -m "feat: team-toolkit 0.1.0"
+git remote add origin git@github.com:ORG/team-marketplace.git
+git push -u origin main</pre></div>
+      <div class="codewrap"><span class="label">2 · ognuno lo aggiunge</span><pre class="code">claude plugin marketplace add ORG/team-marketplace
+copilot plugin marketplace add ORG/team-marketplace</pre></div>
+    </div>
+    <div class="codewrap"><span class="label">3 · nel progetto: .claude/settings.json (versionato)</span><pre class="code">{
+  <span class="k">"extraKnownMarketplaces"</span>: {
+    <span class="k">"team-marketplace"</span>: {
+      <span class="k">"source"</span>: { <span class="k">"source"</span>: <span class="s">"github"</span>, <span class="k">"repo"</span>: <span class="s">"ORG/team-marketplace"</span> }
+    }
+  },
+  <span class="k">"enabledPlugins"</span>: {
+    <span class="k">"team-toolkit@team-marketplace"</span>: <span class="s">true</span>
+  }
+}</pre><p class="small" style="margin-top:8px">Chi apre il repo con Claude Code riceve la proposta di installare il marketplace e il plugin.</p></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab11"><span>Il marketplace è su GitHub</span></label>
+    <label class="check"><input type="checkbox" id="lab12"><span>Ho alzato <code>version</code> in <code>plugin.json</code> dopo una modifica e l'ho vista arrivare</span></label>
+  </div>
+  <aside class="notes">Il versionamento conta: chi ha installato da un marketplace remoto riceve gli aggiornamenti in base alla versione. Per questo si alza version a ogni rilascio del plugin.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Quiz">
+  <div class="eyebrow"><b>12</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Fare il quiz insieme, a voce: ognuno risponde, poi si clicca. La spiegazione compare sotto ogni domanda.</aside>
+</section>
+
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Skill</a></li>
+      <li><a href="https://code.claude.com/docs/en/plugins" target="_blank" rel="noopener">Plugin</a></li>
+      <li><a href="https://code.claude.com/docs/en/plugins/create-marketplace.md" target="_blank" rel="noopener">Creare un marketplace</a></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills" target="_blank" rel="noopener">Skill in Copilot CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference" target="_blank" rel="noopener">Riferimento dei plugin CLI</a></li>
+      <li><a href="https://code.visualstudio.com/docs/copilot/customization/agent-skills" target="_blank" rel="noopener">Skill in VS Code</a></li></ul></div>
+    <div class="panel"><h3>Raccolte</h3><ul class="clean">
+      <li><a href="https://github.com/mattpocock/skills" target="_blank" rel="noopener">mattpocock/skills</a></li>
+      <li><a href="https://github.com/safishamsi/graphify" target="_blank" rel="noopener">safishamsi/graphify</a></li>
+      <li><a href="https://agentskills.io" target="_blank" rel="noopener">Standard Agent Skills</a></li></ul></div>
+    <div class="panel"><h3>Da preparare nel progetto</h3><ul class="clean">
+      <li><code>CLAUDE.md</code> o <code>AGENTS.md</code> con una sezione Agent skills</li>
+      <li><code>docs/agents/code-graph.md</code>: le regole del grafo</li>
+      <li><code>.claude/agents/</code>: un subagente per area</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Perché skill e plugin","Come usarle","Creare una skill","Impacchettare in un plugin","Claude Code vs Copilot","Le skill di Matt Pocock","Perché usarle","Installare le skill di Pocock","Le skill di graphify","Perché usare graphify","Installare graphify","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    if (pre.id === 'bOut') return;
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  // ---- livelli
+  const LEVELS = [
+    "Il modello vede solo <code>name</code> e <code>description</code> di ogni skill installata. Con 30 skill sono poche migliaia di token in tutto.",
+    "La richiesta corrisponde alla description, oppure hai scritto <code>/nome</code>: entra il corpo di <code>SKILL.md</code>, cioè le istruzioni.",
+    "Le istruzioni citano <code>template.md</code> o uno script: il modello legge il file o esegue lo script. Dello script entra solo l'output."
+  ];
+  function setLevel(i){
+    $$('#levels .level').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+    $('#levelMeter').style.width = $$('#levels .level')[i].dataset.w + '%';
+    $('#levelText').innerHTML = LEVELS[i];
+  }
+  $$('#levels .level').forEach((b, i) => b.onclick = () => setLevel(i));
+  setLevel(0);
+
+  // ---- builder
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let who = 'both', where = 'ccp';
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); build(); }); }
+  segInit('bWho', v => who = v); segInit('bWhere', v => where = v);
+  ['bName','bDesc','bArg','bTools','bBody'].forEach(id => $('#' + id).addEventListener('input', build));
+  function build(){
+    const name = $('#bName').value.trim();
+    const desc = $('#bDesc').value.trim().replace(/\s+/g,' ');
+    const arg = $('#bArg').value.trim(), tools = $('#bTools').value.trim(), body = $('#bBody').value;
+    const okName = /^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) && name.length <= 64;
+    $('#bNameHint').textContent = okName ? name.length + '/64 · minuscole, cifre, trattini' : 'Usa solo minuscole, cifre e trattini (max 64)';
+    $('#bNameHint').className = 'hint' + (okName ? '' : ' err');
+    $('#bDescHint').textContent = desc.length + '/1024' + (desc.length > 1024 ? ' · troppo lunga' : (/usal[ao] quando|quando/i.test(desc) ? '' : ' · aggiungi «Usala quando…»'));
+    $('#bDescHint').className = 'hint' + (desc.length > 1024 ? ' err' : '');
+    const isGh = where === 'ghp' || where === 'ghu';
+    const wrapDesc = d => { const words = d.split(' '); const lines = []; let l = ''; words.forEach(w => { if ((l + ' ' + w).trim().length > 66){ lines.push(l); l = w; } else l = (l + ' ' + w).trim(); }); if (l) lines.push(l); return lines.join('\n  '); };
+    let fm = '<span class="c">---</span>\n<span class="k">name:</span> ' + esc(name || 'senza-nome') + '\n<span class="k">description:</span> ' + esc(wrapDesc(desc));
+    if (arg) fm += '\n<span class="k">argument-hint:</span> ' + esc(arg);
+    if (who === 'user') fm += '\n<span class="k">disable-model-invocation:</span> true';
+    if (who === 'model') fm += '\n<span class="k">user-invocable:</span> false';
+    if (tools) fm += '\n<span class="k">allowed-tools:</span> ' + esc(tools);
+    fm += '\n<span class="c">---</span>\n\n' + esc(body);
+    $('#bOut').innerHTML = fm;
+    const n = name || 'senza-nome';
+    const paths = { ccp: '.claude/skills/' + n + '/SKILL.md', ccu: '~/.claude/skills/' + n + '/SKILL.md', ghp: '.github/skills/' + n + '/SKILL.md', ghu: '~/.copilot/skills/' + n + '/SKILL.md', plg: 'mio-plugin/skills/' + n + '/SKILL.md  →  /mio-plugin:' + n };
+    $('#bPath').textContent = paths[where];
+    const w = [];
+    if (isGh && tools) w.push('allowed-tools è un campo di Claude Code: Copilot non lo usa.');
+    if (isGh && /\$ARGUMENTS|\$\d/.test(body)) w.push('$ARGUMENTS è sostituito da Claude Code; in Copilot l\'argomento arriva come testo dopo il comando.');
+    if (isGh && /!`/.test(body)) w.push('!`comando` funziona solo in Claude Code.');
+    if (who === 'model' && /\$ARGUMENTS/.test(body)) w.push('Una skill che solo il modello invoca non riceve argomenti da te.');
+    if (!/usal[ao] quando|quando/i.test(desc) && who !== 'user') w.push('Senza un «quando» nella description il modello fatica ad attivarla da solo.');
+    $('#bWarn').innerHTML = w.map(x => '<div>' + esc(x) + '</div>').join('');
+  }
+  $('#builder').addEventListener('submit', e => e.preventDefault());
+  build();
+  // copia per l'output del builder
+  (function(){ const pre = $('#bOut'); const b = document.createElement('button'); b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia'; b.onclick = () => copyText(pre.innerText, b, pre); pre.parentElement.appendChild(b); })();
+
+  // ---- catalogo Pocock
+  const SK = [
+    ['ask-matt','eng','user','Ti indirizza alla skill giusta per la tua situazione.'],
+    ['setup-matt-pocock-skills','eng','user','Configura issue tracker, label di triage e documenti del repo. Una volta per repo.'],
+    ['grill-with-docs','eng','user','Sessione di domande che aggiorna anche glossario e ADR.'],
+    ['triage','eng','user','Fa avanzare le issue tra i ruoli di triage.'],
+    ['improve-codebase-architecture','eng','user','Trova dove approfondire i moduli e ti interroga su quello che scegli.'],
+    ['to-spec','eng','user','Trasforma la conversazione in una spec e la pubblica nell\'issue tracker.'],
+    ['to-tickets','eng','user','Spezza piano, spec o conversazione in ticket con le dipendenze.'],
+    ['implement','eng','user','Costruisce una spec o dei ticket con /tdd e chiude con /code-review.'],
+    ['implement-spec','eng','user','Implementa un\'intera spec su un branch, con i ticket come grafo parallelo.'],
+    ['wayfinder','eng','user','Pianifica lavori molto grandi come mappa condivisa di ticket-decisione.'],
+    ['retro','eng','user','A fine sessione suggerisce migliorie all\'ambiente dell\'agente.'],
+    ['prototype','eng','model','Costruisce un prototipo usa e getta per rispondere a una domanda di design.'],
+    ['diagnosing-bugs','eng','model','Ciclo a fasi per bug ostinati e regressioni di prestazioni.'],
+    ['research','eng','model','Indaga una domanda e salva nel repo un Markdown con le fonti.'],
+    ['tdd','eng','model','Red-green-refactor, una fetta verticale alla volta.'],
+    ['domain-modeling','eng','model','Affina modello di dominio, glossario e ADR.'],
+    ['codebase-design','eng','model','Guida per moduli profondi dietro interfacce piccole.'],
+    ['code-review','eng','model','Rivede il diff contro gli standard e la spec di partenza.'],
+    ['pr','eng','model','Dà forma al corpo della pull request.'],
+    ['wizard','eng','model','Genera uno script bash interattivo per i passi che solo una persona può fare.'],
+    ['grill-me','prod','user','Ti interroga su un piano finché ogni ramo del design è risolto.'],
+    ['handoff','prod','user','Compatta la conversazione in un documento per un altro agente.'],
+    ['teach','prod','user','Ti insegna un concetto in più sessioni.'],
+    ['to-questionnaire','prod','user','Trasforma una decisione aperta in un questionario per un\'altra persona.'],
+    ['wait-what','prod','user','Rispiega un messaggio poco chiaro con il vocabolario del glossario.'],
+    ['grilling','prod','model','La primitiva di intervista riusata da altre skill.'],
+    ['writing-for-agents','prod','model','Come scrivere skill, AGENTS.md, CLAUDE.md e altri testi per agenti.']
+  ];
+  let catF = 'all';
+  function renderCat(){
+    const q = $('#catSearch').value.trim().toLowerCase();
+    const list = SK.filter(s => (catF === 'all' || s[1] === catF || s[2] === catF) && (!q || (s[0] + ' ' + s[3]).toLowerCase().includes(q)));
+    $('#catalog').innerHTML = list.map(s => '<div class="skill"><span class="nm">' + (s[2] === 'user' ? '/' : '') + s[0] + '</span><span class="ds">' + esc(s[3]) + '</span><span class="meta"><span class="tag">' + (s[1] === 'eng' ? 'engineering' : 'productivity') + '</span><span class="tag acc">' + (s[2] === 'user' ? 'la lanci tu' : 'la usa l\'agente') + '</span></span></div>').join('');
+    $('#catCount').textContent = list.length + ' skill su ' + SK.length + ' · elenco dal README di mattpocock/skills';
+  }
+  $$('#catFilter .chip').forEach(c => c.onclick = () => { catF = c.dataset.f; $$('#catFilter .chip').forEach(x => x.setAttribute('aria-pressed', String(x === c))); renderCat(); });
+  $('#catSearch').addEventListener('input', renderCat);
+  renderCat();
+
+  // ---- pipeline
+  const PIPE = [
+    ['Allinearsi','/grill-me','Domande finché il design è chiaro','L\'agente ti interroga una domanda alla volta finché ogni ramo del piano è deciso. Con <code>/grill-with-docs</code> aggiorna anche <code>CONTEXT.md</code> e gli ADR mentre si discute. Nessuna riga di codice finché non c\'è accordo.'],
+    ['Fissare','/to-spec','La spec nell\'issue tracker','Trasforma la conversazione in una spec e la pubblica dove dice <code>docs/agents/issue-tracker.md</code>: per esempio una GitHub Issue creata con <code>gh</code>.'],
+    ['Spezzare','/to-tickets','Ticket verticali e collegati','Divide la spec in ticket piccoli e verticali, con i link di blocco. Ogni ticket attraversa tutti gli strati e si chiude con una PR piccola.'],
+    ['Costruire','/implement','TDD, una fetta alla volta','Prende una spec o dei ticket e li implementa con <code>tdd</code>: test rosso, codice minimo, refactor. Per una spec intera c\'è <code>/implement-spec</code>, che esegue i ticket in parallelo.'],
+    ['Verificare','code-review · pr','Review e corpo della PR','<code>code-review</code> confronta il diff con gli standard e con la spec di partenza; <code>pr</code> dà forma al corpo della pull request. Con GitHub la parola chiave di chiusura resta <code>Closes #N</code>.']
+  ];
+  const pipe = $('#pipe');
+  PIPE.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.innerHTML = '<span class="st">' + (i + 1) + ' · ' + p[0] + '</span><span class="cmd">' + p[1] + '</span><span class="what">' + p[2] + '</span>';
+    b.onclick = () => { $$('#pipe button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); showPipe(i); };
+    pipe.appendChild(b);
+  });
+  function showPipe(i){ $('#pipeDetail').innerHTML = '<h3>' + PIPE[i][1] + '</h3><p>' + PIPE[i][3] + '</p>'; }
+  showPipe(0);
+
+  // ---- grafo
+  const N = [
+    {id:'AuthController', x:90, y:70}, {id:'UserService', x:250, y:110}, {id:'DatabasePool', x:450, y:80},
+    {id:'RateLimiter', x:90, y:230}, {id:'SessionStore', x:270, y:250}, {id:'JwtSigner', x:120, y:320},
+    {id:'schema.sql', x:470, y:220, doc:true}, {id:'ADR-0004', x:420, y:320, doc:true}
+  ];
+  const E = [
+    ['AuthController','UserService','calls'],['AuthController','RateLimiter','uses'],['AuthController','JwtSigner','calls'],
+    ['UserService','DatabasePool','queries'],['UserService','SessionStore','writes'],['SessionStore','DatabasePool','queries'],
+    ['DatabasePool','schema.sql','reads',true],['SessionStore','ADR-0004','described_by',true],['RateLimiter','SessionStore','reads']
+  ];
+  const svg = $('#graph'), NS = 'http://www.w3.org/2000/svg';
+  const pos = Object.fromEntries(N.map(n => [n.id, n]));
+  const edgeEls = E.map(e => {
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', pos[e[0]].x); l.setAttribute('y1', pos[e[0]].y); l.setAttribute('x2', pos[e[1]].x); l.setAttribute('y2', pos[e[1]].y);
+    l.setAttribute('class', 'edge' + (e[3] ? ' inf' : '')); svg.appendChild(l); return l;
+  });
+  const nodeEls = {};
+  N.forEach(n => {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'node' + (n.doc ? ' doc' : '')); g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button'); g.setAttribute('aria-label', n.id);
+    const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', n.x); c.setAttribute('cy', n.y); c.setAttribute('r', 11);
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('x', n.x); t.setAttribute('y', n.y - 18); t.setAttribute('text-anchor', 'middle'); t.textContent = n.id;
+    g.append(c, t); svg.appendChild(g); nodeEls[n.id] = g;
+    g.addEventListener('click', () => pick(n.id));
+    g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); pick(n.id); } });
+  });
+  let sel = [];
+  const term = $('#graphTerm');
+  function neighbors(id){ return E.filter(e => e[0] === id || e[1] === id).map(e => ({other: e[0] === id ? e[1] : e[0], rel: e[2], out: e[0] === id, inf: !!e[3]})); }
+  function bfs(a, b){
+    const prev = {[a]: null}, q = [a];
+    while (q.length){ const x = q.shift(); if (x === b) break; neighbors(x).forEach(nb => { if (!(nb.other in prev)){ prev[nb.other] = x; q.push(nb.other); } }); }
+    if (!(b in prev)) return null; const p = []; for (let x = b; x !== null; x = prev[x]) p.unshift(x); return p;
+  }
+  function clearHl(){ Object.values(nodeEls).forEach(g => g.classList.remove('on','sel')); edgeEls.forEach(l => l.classList.remove('on')); }
+  function edgeIdx(a, b){ return E.findIndex(e => (e[0] === a && e[1] === b) || (e[0] === b && e[1] === a)); }
+  function pick(id){
+    if (sel.length >= 2 || sel[0] === id) sel = [];
+    sel.push(id); clearHl();
+    if (sel.length === 1){
+      nodeEls[id].classList.add('sel');
+      const nb = neighbors(id);
+      nb.forEach(x => { nodeEls[x.other].classList.add('on'); edgeEls[edgeIdx(id, x.other)].classList.add('on'); });
+      term.innerHTML = '<span class="c">$</span> <span class="k">graphify explain</span> "' + id + '"\n\n' + id + (pos[id].doc ? '  [documento]' : '  [codice]') + '\n' +
+        nb.map(x => '  ' + (x.out ? '→ ' : '← ') + x.rel.padEnd(13) + x.other + (x.inf ? '  (INFERRED)' : '  (EXTRACTED)')).join('\n') +
+        '\n\n<span class="c"># scegli un secondo nodo per graphify path</span>';
+    } else {
+      const p = bfs(sel[0], sel[1]);
+      sel.forEach(s => nodeEls[s].classList.add('sel'));
+      if (p){ p.forEach((x, k) => { if (k){ edgeEls[edgeIdx(p[k-1], x)].classList.add('on'); } if (k && k < p.length - 1) nodeEls[x].classList.add('on'); }); }
+      term.innerHTML = '<span class="c">$</span> <span class="k">graphify path</span> "' + sel[0] + '" "' + sel[1] + '"\n\n' +
+        (p ? p.map((x, k) => (k ? '  └─ ' : '  ') + x).join('\n') + '\n\n' + (p.length - 1) + ' salti · leggi questi file, nell\'ordine' : '  nessun percorso');
+    }
+  }
+  function resetGraph(){ sel = []; clearHl(); term.innerHTML = '<span class="c"># clicca un nodo del grafo</span>\n<span class="c"># ad esempio UserService, poi ADR-0004</span>'; }
+  $('#graphReset').onclick = resetGraph; resetGraph();
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['Che cosa vede il modello di una skill prima di attivarla?', ['Tutto SKILL.md','Solo name e description','I file di supporto'], 1, 'Progressive disclosure: il corpo entra solo all\'attivazione, i file di supporto solo se servono.'],
+    ['Una skill fa git push. Che campo le metti?', ['user-invocable: false','disable-model-invocation: true','context: fork'], 1, 'Le azioni con effetti collaterali le avvii tu: il modello non deve deciderle da solo.'],
+    ['Dove va plugin.json in un plugin per Claude Code?', ['Alla radice, accanto a skills/','In .claude-plugin/','In skills/'], 1, 'Solo il manifest sta in .claude-plugin/; skills/, agents/, hooks/ stanno alla radice del plugin.'],
+    ['Quale cartella di skill di progetto leggono sia Claude Code sia Copilot?', ['.github/skills/','.claude/skills/','.copilot/skills/'], 1, 'Copilot legge anche .claude/skills/; Claude Code non legge .github/skills/.'],
+    ['Il grafo di graphify dice che A non dipende da B. Che cosa fai?', ['Mi fido del grafo','Verifico nel codice: il grafo è una mappa e può essere vecchio','Rigenero il grafo dal worktree'], 1, 'Il grafo dice dove guardare. Zero risultati non vuol dire «non esiste», e da un worktree non si scrive in graphify-out/.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>

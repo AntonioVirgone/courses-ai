@@ -10,11 +10,21 @@ Ogni corso è una cartella autonoma in `corsi/NN-slug/` con tre parti:
 
 ## Corsi
 
-Nessun corso ancora.
+| # | Corso | Argomenti |
+|---|-------|-----------|
+| 01 | [Skill e plugin per agenti di coding](corsi/01-skill-e-plugin/scaletta.md) | Skill, plugin e marketplace in Claude Code e Copilot; le skill di Matt Pocock; graphify; laboratorio `team-toolkit` |
 
 ## Aprire una presentazione
 
-Clona il repo e apri `corsi/NN-slug/presentazione/index.html` nel browser. Il file funziona anche senza rete, ma i caratteri tipografici arrivano da Google Fonts: offline il browser usa quelli di sistema.
+Clona il repo e apri `corsi/NN-slug/presentazione/index.html` nel browser, per esempio:
+
+```bash
+open corsi/01-skill-e-plugin/presentazione/index.html
+```
+
+Su Linux usa `xdg-open` al posto di `open`. Il file funziona anche senza rete, ma i caratteri tipografici arrivano da Google Fonts: offline il browser usa quelli di sistema.
+
+Comandi da tastiera: `←` `→` per navigare, `N` per le note del relatore, `O` per l'indice, `Esc` per chiudere.
 
 ## Struttura
 
