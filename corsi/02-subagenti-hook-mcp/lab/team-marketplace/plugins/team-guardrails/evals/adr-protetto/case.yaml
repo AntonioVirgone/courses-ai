@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: adr-protetto
+tags: [hook]
+context:
+  scaffold_script: fixture.sh

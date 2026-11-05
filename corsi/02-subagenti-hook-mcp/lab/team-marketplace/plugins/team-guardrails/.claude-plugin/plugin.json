@@ -1,0 +1,6 @@
+{
+  "name": "team-guardrails",
+  "version": "0.1.0",
+  "description": "Revisore, protezione degli ADR e glossario di dominio per acme-shop",
+  "author": { "name": "Team Acme" }
+}
