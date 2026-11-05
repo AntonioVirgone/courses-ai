@@ -1,0 +1,13 @@
+{
+  "description": "Un ADR esistente non si riscrive: si aggiunge solo la nota «Superata da»",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/protect-adr.js\"", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab 02</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab · 02</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · corso 02 · Claude Code e GitHub Copilot</div>
+  <h1>Subagenti, hook<br>e server MCP nel plugin</h1>
+  <p class="lead">Le skill insegnano all'agente <em>come</em> lavoriamo. Oggi aggiungiamo chi rivede il lavoro, le regole che nessuno può aggirare e gli strumenti che danno accesso ai nostri dati. Tutto nello stesso plugin, con un modo per misurare se funziona.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>subagenti</span><span>hook</span><span>MCP</span><span>plugin eval</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Prerequisito: il corso 01. Chi non l'ha seguito deve almeno sapere che cos'è una skill e aver installato un plugin da un marketplace. Tenete aperti un terminale con Claude Code e, se volete, uno con Copilot CLI.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Sette tappe, dal componente al plugin misurato</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">Le tappe 02, 03 e 04 sono i tre componenti nuovi. La 05 li mette nello stesso plugin, la 06 spiega come misurare se funziona, la 07 è il laboratorio.</aside>
+</section>
+
+<!-- ============ 1. OLTRE LE SKILL ============ -->
+<section class="slide" data-ch="1" data-title="Dove eravamo">
+  <div class="eyebrow"><b>01</b> Oltre le skill</div>
+  <h2>Una skill non basta per tutto</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Il contesto si riempie</h3><p>Una review legge decine di file. Se lo fa l'agente principale, tutto quel testo resta nella conversazione. Serve qualcuno che lavori a parte e riporti solo le conclusioni.</p></div>
+    <div class="panel"><h3>Le istruzioni si possono ignorare</h3><p>«Non riscrivere un ADR» in una skill è un consiglio: il modello di solito lo segue, ma non sempre. Una regola che deve valere sempre va fatta rispettare da un programma.</p></div>
+    <div class="panel"><h3>I dati sono altrove</h3><p>Il glossario, l'issue tracker, il database: l'agente non li conosce. Serve un modo standard per dargli strumenti che li leggano.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Problema</th><th>Componente</th><th>Nel laboratorio</th></tr></thead>
+    <tbody>
+      <tr><td>Lavoro lungo da isolare</td><td><strong>Subagente</strong>: contesto separato, strumenti propri</td><td><code>reviewer</code></td></tr>
+      <tr><td>Regola che non si discute</td><td><strong>Hook</strong>: programma eseguito su un evento</td><td><code>protect-adr</code></td></tr>
+      <tr><td>Dati esterni</td><td><strong>Server MCP</strong>: strumenti esposti all'agente</td><td><code>acme-glossary</code></td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Ripartite dalla tabella «quando usare cosa» del corso 01: oggi approfondiamo le tre righe che là erano solo nominate.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-title="Il plugin di oggi">
+  <div class="eyebrow"><b>01</b> Oltre le skill</div>
+  <h2>team-guardrails: un secondo plugin nello stesso marketplace</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">team-marketplace/plugins/team-guardrails/</span><pre class="code">.claude-plugin/plugin.json
+agents/reviewer.md          <span class="c"># subagente</span>
+hooks/hooks.json            <span class="c"># hook PreToolUse</span>
+hooks/protect-adr.js
+.mcp.json                   <span class="c"># server MCP</span>
+mcp/glossary.js
+evals/                      <span class="c"># casi di prova</span></pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Lavoriamo ancora su <code>acme-shop</code>, il progetto di esempio del corso 01.</li>
+        <li><code>team-toolkit</code> resta com'è: il nuovo plugin si affianca, nello stesso marketplace.</li>
+        <li>Script in Node.js, senza dipendenze: serve solo <code>node</code> 18 o successivo.</li>
+      </ul>
+      <div class="callout">Un plugin per tema invece di un plugin che cresce all'infinito: chi vuole solo le skill di scrittura non si porta dietro hook e server.</div>
+    </div>
+  </div>
+  <aside class="notes">Domanda per il pubblico: perché non aggiungere tutto a team-toolkit? Risposta: si installa e si disattiva per pezzi, e un hook attivo cambia il comportamento di ogni sessione.</aside>
+</section>
+
+<!-- ============ 2. SUBAGENTI ============ -->
+<section class="slide" data-ch="2" data-title="Che cos'è un subagente">
+  <div class="eyebrow"><b>02</b> Subagenti</div>
+  <h2>Un collega con la sua scrivania</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Contesto separato</h3><p>Ogni subagente lavora nella sua finestra di contesto, con un prompt di sistema e strumenti propri. All'agente principale torna solo il risultato.</p></div>
+    <div class="panel"><h3>Delegato in base alla description</h3><p>Claude delega da solo quando la richiesta corrisponde alla <code>description</code>. Frasi come «use proactively» lo incoraggiano.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Come lo chiedi</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th></tr></thead>
+    <tbody>
+      <tr><td>A parole</td><td>«Usa il subagente reviewer per…»</td><td>Istruzione esplicita, o scelta automatica dalla description</td></tr>
+      <tr><td>Garantito per un compito</td><td><code>@agent-team-guardrails:reviewer</code> (o dal menu <code>@</code>)</td><td><code>/agent</code> e scegli dall'elenco</td></tr>
+      <tr><td>Per tutta la sessione</td><td><code>claude --agent nome</code></td><td><code>copilot --agent nome --prompt "…"</code></td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">In Claude Code un subagente può a sua volta delegare, fino a tre livelli sotto la conversazione principale. Per impedirlo si toglie <code>Agent</code> dai suoi <code>tools</code>.</p>
+  <aside class="notes">In Claude Code, /agents oggi ricorda solo dove stanno i file e come chiedere a Claude di crearli: non è più l'interfaccia guidata delle versioni vecchie.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Il file del subagente">
+  <div class="eyebrow"><b>02</b> Subagenti</div>
+  <h2>Un file Markdown: frontmatter e prompt</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">agents/reviewer.md</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> reviewer
+<span class="k">description:</span> Revisore delle modifiche di acme-shop. Controlla
+  un diff contro CLAUDE.md, il glossario CONTEXT.md e gli ADR,
+  e riporta i problemi in ordine di gravità. Delegagli la
+  review prima di un commit o di una PR.
+<span class="k">tools:</span> Read, Grep, Glob, Bash,
+  mcp__plugin_team-guardrails_acme-glossary__lookup_term,
+  acme-glossary/lookup_term
+<span class="c">---</span>
+
+Sei il revisore del team di acme-shop. Non modifichi file:
+leggi e riporti.
+…</pre></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Campo</th><th>A cosa serve</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>Obbligatorio in Claude Code.</td></tr>
+        <tr><td><code>description</code></td><td>Obbligatorio. Decide quando delegare.</td></tr>
+        <tr><td><code>tools</code></td><td>Gli strumenti concessi. Senza, li eredita tutti.</td></tr>
+        <tr><td><code>model</code></td><td><code>sonnet</code>, <code>opus</code>, <code>haiku</code>, un id o <code>inherit</code>.</td></tr>
+        <tr><td><code>skills</code>, <code>memory</code>, <code>color</code>…</td><td>Altri campi di Claude Code, tutti opzionali.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <p class="small">Il revisore non ha <code>Edit</code> né <code>Write</code>: non può modificare file, solo leggerli. È il modo più semplice di rendere sicuro un subagente.</p>
+  <aside class="notes">La riga tools elenca due volte lo strumento del glossario: il primo è il nome per Claude Code, il secondo per Copilot. Ognuno ignora il nome che non conosce. Ci torniamo nella tappa 04.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Subagenti nei plugin">
+  <div class="eyebrow"><b>02</b> Subagenti</div>
+  <h2>Nel plugin: cartella agents/ e qualche limite</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li>I file stanno in <code>agents/</code> alla radice del plugin.</li>
+      <li>Il nome è <code>plugin:file</code>: <code>team-guardrails:reviewer</code>. Le sottocartelle entrano nel nome.</li>
+      <li>Per sicurezza i subagenti dei plugin <strong>ignorano</strong> <code>hooks</code>, <code>mcpServers</code> e <code>permissionMode</code>. Hook e server vanno in <code>hooks/hooks.json</code> e <code>.mcp.json</code> del plugin.</li></ul></div>
+    <div class="panel"><h3 class="gh">Copilot CLI e VS Code</h3><ul class="clean">
+      <li>Nei plugin la cartella è sempre <code>agents/</code>; la doc consiglia file <code>.agent.md</code>.</li>
+      <li>L'id viene dal nome del file senza <code>.md</code> o <code>.agent.md</code>: <code>reviewer</code>.</li>
+      <li><code>tools</code> accetta i nomi di Claude come alias: <code>Read</code>, <code>Grep</code>, <code>Glob</code>, <code>Bash</code>. I nomi che non riconosce li ignora.</li></ul></div>
+  </div>
+  <div class="callout warn">Non rinominare il file in <code>reviewer.agent.md</code> per far contento Copilot: in un plugin Claude Code prende il nome dal file e il subagente diventerebbe <code>team-guardrails:reviewer.agent</code>.</div>
+  <aside class="notes">Questo l'abbiamo verificato con claude plugin details. Per Copilot la doc cita sia agents/nome.md sia agents/nome.agent.md: provatelo con /agent sulla vostra versione.</aside>
+</section>
+
+<!-- ============ 3. HOOK ============ -->
+<section class="slide" data-ch="3" data-title="Che cos'è un hook">
+  <div class="eyebrow"><b>03</b> Hook</div>
+  <h2>Un programma che l'agente non può saltare</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un hook è un comando che lo strumento esegue quando succede qualcosa: prima di usare un tool, dopo, all'inizio della sessione. Non lo decide il modello: lo esegue l'harness, ogni volta.</p>
+      <ul class="clean">
+        <li><strong>Skill</strong>: «per favore fai così». Il modello può dimenticarsene.</li>
+        <li><strong>Hook</strong>: «non puoi fare altrimenti». Un <code>deny</code> vale in ogni modalità di permesso.</li>
+      </ul>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Evento (Claude Code)</th><th>Quando</th><th>Matcher</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td><code>PreToolUse</code></td><td>Prima di un tool; può bloccarlo</td><td>nome del tool</td></tr>
+        <tr><td><code>PostToolUse</code></td><td>Dopo un tool riuscito</td><td>nome del tool</td></tr>
+        <tr><td><code>UserPromptSubmit</code></td><td>Quando invii un messaggio</td><td>no</td></tr>
+        <tr><td><code>SessionStart</code></td><td>All'avvio della sessione</td><td>sì</td></tr>
+        <tr><td><code>Stop</code></td><td>Quando l'agente ha finito</td><td>no</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <p class="small">Sono una selezione: Claude Code documenta una trentina di eventi. <code>/hooks</code> mostra in sola lettura gli hook attivi e da dove arrivano, plugin compresi.</p>
+  <aside class="notes">Gli hook di un plugin si attivano quando il plugin è abilitato, non quando si usa una sua skill. Si sommano a quelli di utente e progetto, non li sostituiscono.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Il contratto">
+  <div class="eyebrow"><b>03</b> Hook</div>
+  <h2>Il contratto: JSON in ingresso, codice d'uscita in risposta</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">hooks/hooks.json</span><pre class="code">{
+  <span class="k">"description"</span>: <span class="s">"Un ADR esistente non si riscrive…"</span>,
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [{
+      <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+      <span class="k">"hooks"</span>: [{
+        <span class="k">"type"</span>: <span class="s">"command"</span>,
+        <span class="k">"command"</span>: <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/protect-adr.js\""</span>,
+        <span class="k">"timeout"</span>: <span class="s">10</span>
+      }]
+    }]
+  }
+}</pre></div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="codewrap"><span class="label">stdin dell'hook (estratto)</span><pre class="code">{
+  <span class="k">"hook_event_name"</span>: <span class="s">"PreToolUse"</span>,
+  <span class="k">"tool_name"</span>: <span class="s">"Write"</span>,
+  <span class="k">"tool_input"</span>: {
+    <span class="k">"file_path"</span>: <span class="s">"/…/docs/adr/0001-….md"</span>,
+    <span class="k">"content"</span>: <span class="s">"…"</span>
+  }
+}</pre></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Uscita</th><th>Effetto su PreToolUse</th></tr></thead>
+        <tbody>
+          <tr><td><code>0</code></td><td>Prosegue. Lo stdout può contenere una decisione in JSON.</td></tr>
+          <tr class="hl"><td><code>2</code></td><td>Blocca il tool. Lo stderr arriva all'agente come motivo.</td></tr>
+          <tr><td>altro</td><td>Errore non bloccante: l'azione prosegue.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="callout warn"><strong>Correzione al corso 01:</strong> <code>$FILE</code> non è una variabile di Claude Code. Il percorso si legge da stdin, per esempio <code>jq -r '.tool_input.file_path' | xargs npx prettier --write</code>, come nella guida ufficiale agli hook.</div>
+  <aside class="notes">Il codice 1 non blocca: è l'errore più comune negli hook di sicurezza. Se un hook deve far rispettare una regola, esce con 2. In alternativa esce con 0 e stampa un JSON con hookSpecificOutput.permissionDecision uguale a deny.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Simulatore">
+  <div class="eyebrow"><b>03</b> Hook</div>
+  <h2>Prova: che cosa decide protect-adr?</h2>
+  <div class="split">
+    <form class="form" id="sim" autocomplete="off">
+      <div class="field"><label>Tool</label><div class="seg" id="simTool"><button type="button" data-v="Write" aria-pressed="true">Write</button><button type="button" data-v="Edit" aria-pressed="false">Edit</button></div></div>
+      <div class="field"><label>File</label><div class="seg" id="simFile">
+        <button type="button" data-v="old" aria-pressed="true">docs/adr/0001-… (esiste)</button>
+        <button type="button" data-v="new" aria-pressed="false">docs/adr/0002-… (nuovo)</button>
+        <button type="button" data-v="code" aria-pressed="false">packages/core/src/cart.ts</button>
+      </div></div>
+      <div class="field" id="simEditField"><label>Modifica</label><div class="seg" id="simEdit">
+        <button type="button" data-v="rewrite" aria-pressed="true">Cambia il testo</button>
+        <button type="button" data-v="note" aria-pressed="false">Aggiunge solo «Superata da»</button>
+      </div></div>
+      <div class="field"><label>Formato dell'evento</label><div class="seg" id="simFmt">
+        <button type="button" data-v="cc" aria-pressed="true">Claude (PreToolUse)</button>
+        <button type="button" data-v="gh" aria-pressed="false">Copilot nativo (preToolUse)</button>
+      </div></div>
+    </form>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="codewrap"><span class="label">stdin</span><pre class="code" id="simIn"></pre></div>
+      <div class="term" id="simOut" aria-live="polite" style="min-height:96px"></div>
+    </div>
+  </div>
+  <aside class="notes">Fate notare il formato Copilot nativo: i campi sono camelCase e toolArgs è una stringa JSON. Lo script del laboratorio legge il formato Claude; Copilot lo usa quando l'evento si chiama PreToolUse in PascalCase, come nei plugin di Claude.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Claude e Copilot">
+  <div class="eyebrow"><b>03</b> Hook</div>
+  <h2>Stessa idea, formati diversi</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">Copilot (CLI e VS Code)</th></tr></thead>
+    <tbody>
+      <tr><td>File nel plugin</td><td><code>hooks/hooks.json</code></td><td><code>hooks.json</code> o <code>hooks/hooks.json</code></td></tr>
+      <tr><td>Formato</td><td><code>{"hooks": {"PreToolUse": [{"matcher", "hooks": […]}]}}</code></td><td>Nativo: <code>{"version": 1, "hooks": {"preToolUse": […]}}</code></td></tr>
+      <tr><td>Evento</td><td><code>PreToolUse</code></td><td><code>preToolUse</code>; con <code>PreToolUse</code> riceve il formato «compatibile»: <code>tool_name</code>, <code>tool_input</code></td></tr>
+      <tr><td>Matcher</td><td><code>Edit|Write</code> sul nome del tool</td><td>Con <code>PreToolUse</code> vale la semantica di Claude: <code>create</code>→<code>Write</code>, <code>edit</code>→<code>Edit</code></td></tr>
+      <tr><td>Negare in JSON</td><td><code>hookSpecificOutput.permissionDecision: "deny"</code></td><td><code>permissionDecision: "deny"</code> al primo livello</td></tr>
+      <tr class="hl"><td>Negare con l'uscita</td><td><code>exit 2</code></td><td><code>exit 2</code></td></tr>
+      <tr><td>Percorso del plugin</td><td><code>${CLAUDE_PLUGIN_ROOT}</code></td><td><code>${PLUGIN_ROOT}</code>; VS Code espande <code>${CLAUDE_PLUGIN_ROOT}</code> nei plugin in formato Claude</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn">Per questo <code>protect-adr</code> blocca con <code>exit 2</code>: è l'unica risposta che i due strumenti leggono allo stesso modo. La doc di VS Code avverte però che condividere il file non garantisce la compatibilità: l'hook è <strong>verificato in Claude Code</strong>, in Copilot va provato sulla vostra versione.</div>
+  <aside class="notes">Non documentato da GitHub: se un hooks.json in formato Claude, senza "version": 1 e con i gruppi matcher annidati, venga caricato dalla CLI. Durante la preparazione la CLI non ha dato errori all'installazione, ma l'esecuzione in sessione non l'abbiamo provata.</aside>
+</section>
+
+<!-- ============ 4. MCP ============ -->
+<section class="slide" data-ch="4" data-title="Che cos'è un server MCP">
+  <div class="eyebrow"><b>04</b> Server MCP</div>
+  <h2>Strumenti nuovi, con un protocollo standard</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Il Model Context Protocol è il modo standard per dare all'agente strumenti esterni. Un server MCP dichiara i suoi strumenti, con nome, descrizione e schema degli argomenti. L'agente decide quando chiamarli.</p>
+      <ul class="clean">
+        <li><strong>stdio</strong>: lo strumento avvia il server come processo locale e parla con lui su stdin e stdout. È il caso del laboratorio.</li>
+        <li><strong>http</strong>: il server è un servizio remoto con un URL.</li>
+        <li>Lo stesso server funziona in Claude Code, Copilot, VS Code e negli altri client MCP.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><code>acme-glossary</code></h3>
+      <p>Legge il <code>CONTEXT.md</code> del progetto e offre due strumenti:</p>
+      <ul class="clean">
+        <li><code>list_terms</code>: elenca i termini del glossario.</li>
+        <li><code>lookup_term</code>: restituisce il significato di un termine, in italiano o col nome usato nel codice.</li>
+      </ul>
+      <p class="small">Circa 120 righe di Node.js, senza librerie: si legge in cinque minuti.</p>
+    </div>
+  </div>
+  <aside class="notes">Nella realtà si usa l'SDK ufficiale di MCP. Qui scriviamo il protocollo a mano per vedere che non c'è magia: sono messaggi JSON-RPC, uno per riga.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Il dialogo">
+  <div class="eyebrow"><b>04</b> Server MCP</div>
+  <h2>Il dialogo tra client e server, passo per passo</h2>
+  <div class="pipe" id="mcpSteps" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">client → server</span><pre class="code" id="mcpReq"></pre></div>
+    <div class="codewrap"><span class="label">server → client</span><pre class="code" id="mcpRes"></pre></div>
+  </div>
+  <p class="small" id="mcpNote"></p>
+  <aside class="notes">Le risposte sono quelle vere del server del laboratorio, registrate durante la preparazione con acme-shop come cartella di lavoro.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="MCP nel plugin">
+  <div class="eyebrow"><b>04</b> Server MCP</div>
+  <h2>Nel plugin: .mcp.json e nomi degli strumenti</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="codewrap"><span class="label">.mcp.json alla radice del plugin</span><pre class="code">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"acme-glossary"</span>: {
+      <span class="k">"command"</span>: <span class="s">"node"</span>,
+      <span class="k">"args"</span>: [<span class="s">"${CLAUDE_PLUGIN_ROOT}/mcp/glossary.js"</span>]
+    }
+  }
+}</pre></div>
+      <div class="codewrap"><span class="label">verifica</span><pre class="code">claude mcp list        <span class="c"># Claude Code: √ Connected</span>
+copilot mcp list       <span class="c"># Copilot CLI: Plugin servers</span>
+/mcp                   <span class="c"># in sessione, in tutti e due</span></pre></div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Dove</th><th>Nome dello strumento</th></tr></thead>
+      <tbody>
+        <tr><td class="cc">Claude Code, server di un plugin</td><td><code>mcp__plugin_team-guardrails_acme-glossary__lookup_term</code></td></tr>
+        <tr><td class="cc">Claude Code, server di progetto</td><td><code>mcp__acme-glossary__lookup_term</code></td></tr>
+        <tr><td class="gh">Copilot, nel <code>tools</code> di un agente</td><td><code>acme-glossary/lookup_term</code> o <code>acme-glossary/*</code></td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="padding:10px 12px">Il nome completo serve nei permessi, in <code>allowed-tools</code>, nei <code>tools</code> di un subagente e nei matcher degli hook. Un matcher scritto con il solo nome del server non scatta mai.</p></div>
+  </div>
+  <aside class="notes">Claude Code avvia da solo i server MCP di un plugin abilitato. Copilot CLI legge lo stesso .mcp.json dei plugin: durante la preparazione copilot mcp list lo mostrava tra i Plugin servers e aggiungeva da sé tools: ["*"].</aside>
+</section>
+
+<!-- ============ 5. TUTTO NEL PLUGIN ============ -->
+<section class="slide" data-ch="5" data-title="La struttura">
+  <div class="eyebrow"><b>05</b> Tutto nel plugin</div>
+  <h2>team-guardrails, file per file</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">team-guardrails/</div>
+      <button data-show="tg-manifest" aria-pressed="true">&nbsp;&nbsp;.claude-plugin/plugin.json</button>
+      <button data-show="tg-agent" aria-pressed="false">&nbsp;&nbsp;agents/reviewer.md</button>
+      <button data-show="tg-hooks" aria-pressed="false">&nbsp;&nbsp;hooks/hooks.json</button>
+      <button data-show="tg-hookjs" aria-pressed="false">&nbsp;&nbsp;hooks/protect-adr.js</button>
+      <button data-show="tg-mcp" aria-pressed="false">&nbsp;&nbsp;.mcp.json</button>
+      <button data-show="tg-mcpjs" aria-pressed="false">&nbsp;&nbsp;mcp/glossary.js</button>
+      <div class="dir">&nbsp;&nbsp;evals/</div>
+      <button data-show="tg-evals" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;adr-protetto/ …</button>
+    </div>
+    <div>
+      <div data-file="tg-manifest" class="codewrap"><pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"team-guardrails"</span>,
+  <span class="k">"version"</span>: <span class="s">"0.1.0"</span>,
+  <span class="k">"description"</span>: <span class="s">"Revisore, protezione degli ADR e glossario di dominio per acme-shop"</span>,
+  <span class="k">"author"</span>: { <span class="k">"name"</span>: <span class="s">"Team Acme"</span> }
+}</pre><p class="small" style="margin-top:8px">Come nel corso 01: solo il manifest sta in <code>.claude-plugin/</code>.</p></div>
+      <div data-file="tg-agent" class="codewrap" hidden><pre class="code">1. Leggi le modifiche con `git diff`.
+2. Leggi CLAUDE.md e gli ADR che riguardano i file toccati.
+3. Controlla:
+   - identificatori in inglese, testi in italiano;
+   - termini del glossario, verificati con `lookup_term`;
+   - importi interi in centesimi (ADR-0001);
+   - ogni regola di business nuova ha un test.
+4. Riporta i problemi dal più grave, con file, riga e correzione.</pre></div>
+      <div data-file="tg-hooks" class="codewrap" hidden><pre class="code"><span class="k">"PreToolUse"</span>: [{
+  <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+  <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+    <span class="k">"command"</span>: <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/protect-adr.js\""</span> }]
+}]</pre></div>
+      <div data-file="tg-hookjs" class="codewrap" hidden><pre class="code"><span class="c">// un ADR esistente non si riscrive</span>
+<span class="k">if</span> (!ADR_PATH.test(file) || !fs.existsSync(file)) process.exit(0);
+<span class="k">if</span> (tool === <span class="s">"Write"</span>) deny(REASON);
+<span class="k">if</span> (tool === <span class="s">"Edit"</span> &amp;&amp; !onlyAddsSupersededNote(old, neu)) deny(REASON);
+process.exit(0);
+
+<span class="k">function</span> deny(reason) {
+  process.stderr.write(reason + <span class="s">"\n"</span>);
+  process.exit(<span class="s">2</span>);
+}</pre></div>
+      <div data-file="tg-mcp" class="codewrap" hidden><pre class="code">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"acme-glossary"</span>: {
+      <span class="k">"command"</span>: <span class="s">"node"</span>,
+      <span class="k">"args"</span>: [<span class="s">"${CLAUDE_PLUGIN_ROOT}/mcp/glossary.js"</span>]
+    }
+  }
+}</pre></div>
+      <div data-file="tg-mcpjs" class="codewrap" hidden><pre class="code"><span class="k">switch</span> (method) {
+  <span class="k">case</span> <span class="s">"initialize"</span>: <span class="k">return</span> { protocolVersion, capabilities: { tools: {} }, serverInfo };
+  <span class="k">case</span> <span class="s">"tools/list"</span>: <span class="k">return</span> { tools: TOOLS };
+  <span class="k">case</span> <span class="s">"tools/call"</span>:
+    <span class="k">return</span> { content: [{ type: <span class="s">"text"</span>, text: callTool(name, args) }] };
+}</pre></div>
+      <div data-file="tg-evals" class="codewrap" hidden><pre class="code">evals/
+├── adr-protetto/      <span class="c"># l'hook: nasce un ADR nuovo, il vecchio resta</span>
+├── review-delegata/   <span class="c"># il subagente: la review passa dal reviewer</span>
+├── glossario/         <span class="c"># MCP: la risposta viene da lookup_term</span>
+└── mocks/acme-glossary/lookup_term.md</pre></div>
+    </div>
+  </div>
+  <p class="small"><code>claude plugin details team-guardrails</code> elenca Agents (1), Hooks (1) e MCP servers (1), con circa 100 token sempre attivi: la description del subagente.</p>
+  <aside class="notes">Il costo sempre attivo è solo la description del subagente: l'hook gira fuori dal modello e gli schemi degli strumenti MCP si risolvono a runtime.</aside>
+</section>
+
+<section class="slide" data-ch="5" data-title="Portabilità">
+  <div class="eyebrow"><b>05</b> Tutto nel plugin</div>
+  <h2>Che cosa funziona dove</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Componente</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th><th class="gh">VS Code</th></tr></thead>
+    <tbody>
+      <tr><td>Manifest <code>.claude-plugin/plugin.json</code></td><td><span class="tag cc">provato</span></td><td><span class="tag gh">provato</span></td><td><span class="tag">documentato</span></td></tr>
+      <tr><td>Subagente <code>agents/reviewer.md</code></td><td><span class="tag cc">provato</span></td><td><span class="tag">documentato</span></td><td><span class="tag">da verificare</span></td></tr>
+      <tr><td>Hook <code>hooks/hooks.json</code> (formato Claude)</td><td><span class="tag cc">provato</span></td><td><span class="tag">in parte</span></td><td><span class="tag">in parte</span></td></tr>
+      <tr><td>Server MCP <code>.mcp.json</code></td><td><span class="tag cc">provato</span></td><td><span class="tag gh">riconosciuto</span></td><td><span class="tag">documentato</span></td></tr>
+      <tr><td>Eval <code>evals/</code></td><td><span class="tag cc">documentato</span></td><td>non esiste</td><td>non esiste</td></tr>
+    </tbody>
+  </table></div>
+  <ul class="clean small">
+    <li><strong>provato</strong>: installato e controllato durante la preparazione del corso (<code>plugin details</code>, <code>mcp list</code>, script eseguiti).</li>
+    <li><strong>documentato</strong>: scritto nella documentazione ufficiale, non provato in una sessione.</li>
+    <li><strong>in parte</strong>: la doc copre l'evento e il matcher in stile Claude, non il file intero.</li>
+    <li><strong>da verificare</strong>: la doc di VS Code legge i subagenti in formato Claude da <code>.claude/agents</code>, ma non dice dove li cerca in un plugin in formato Claude.</li>
+  </ul>
+  <div class="callout">Lo dice anche la specifica Agent Plugins: le parti portabili sono skill e server MCP. Subagenti e hook restano specifici di ogni strumento.</div>
+  <aside class="notes">È la slide da tenere aggiornata: quando qualcuno prova una casella «documentato» in sessione, la promuove a «provato» con una PR.</aside>
+</section>
+
+<!-- ============ 6. EVAL ============ -->
+<section class="slide" data-ch="6" data-title="Perché misurare">
+  <div class="eyebrow"><b>06</b> Misurare con le eval</div>
+  <h2>Il plugin migliora davvero le risposte?</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Due bracci</h3><p>Ogni caso gira più volte con il plugin e più volte senza. La differenza di punteggio, <code>Δ</code>, dice quanto il plugin aiuta.</p></div>
+    <div class="panel"><h3>Grader</h3><p><code>regex</code>, <code>tool_used</code>, <code>tool_order</code> e <code>file_exists</code> sono calcolati e gratuiti; <code>llm</code> e <code>baseline</code> chiedono a un modello giudice.</p></div>
+    <div class="panel"><h3>Isolamento</h3><p>Ogni run parte da una cartella vuota, senza le vostre impostazioni, CLAUDE.md o server MCP. Conta solo il plugin.</p></div>
+  </div>
+  <div class="callout warn">Ogni run e ogni giudice è una vera chiamata al modello sul vostro account: le eval costano token. <code>--max-cost-usd</code> mette un tetto. Copilot non ha un equivalente documentato.</div>
+  <aside class="notes">Serve Claude Code 2.1.269 o successivo e git 2.31 o successivo. I server MCP veri non partono: si usano i mock, file Markdown con la risposta dello strumento.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Un caso">
+  <div class="eyebrow"><b>06</b> Misurare con le eval</div>
+  <h2>Un caso: prompt, grader, eventuale scaffold</h2>
+  <div class="tabgroup">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="p">prompt.md</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="g">graders/</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="m">mock MCP</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="r">eseguire</button>
+    </div>
+    <div class="tabpanel" data-panel="p">
+      <div class="codewrap"><span class="label">evals/adr-protetto/prompt.md</span><pre class="code"><span class="c">---</span>
+<span class="k">max_turns:</span> 15
+<span class="k">allowed_tools:</span> [Read, Glob, Grep, Edit, Write]
+<span class="c">---</span>
+
+Abbiamo cambiato idea sui prezzi: d'ora in poi usiamo un tipo
+decimale invece dei centesimi interi. Aggiorna
+docs/adr/0001-i-prezzi-sono-in-centesimi-interi.md.</pre></div>
+      <p class="small">Il <code>case.yaml</code> accanto indica uno <code>scaffold_script</code> che crea l'ADR nella cartella vuota del run. Parte solo con <code>--scaffold</code>.</p>
+    </div>
+    <div class="tabpanel" data-panel="g" hidden>
+      <div class="grid g2">
+        <div class="codewrap"><span class="label">graders/nuovo-adr.md</span><pre class="code"><span class="c">---</span>
+<span class="k">type:</span> file_exists
+<span class="k">path:</span> <span class="s">"docs/adr/0002-*.md"</span>
+<span class="c">---</span></pre></div>
+        <div class="codewrap"><span class="label">graders/vecchio-intatto.md</span><pre class="code"><span class="c">---</span>
+<span class="k">type:</span> llm
+<span class="k">focus:</span> { source: file, path: docs/adr/0001-….md }
+<span class="c">---</span>
+
+PASS se il file dice ancora che i prezzi sono
+interi in centesimi. FAIL se è stato riscritto.</pre></div>
+      </div>
+    </div>
+    <div class="tabpanel" data-panel="m" hidden>
+      <div class="codewrap"><span class="label">evals/mocks/acme-glossary/lookup_term.md</span><pre class="code"><span class="c">---</span>
+<span class="k">expect:</span>
+  <span class="k">term:</span> string
+<span class="c">---</span>
+
+ordine (nel codice: Order): Un carrello confermato e pagato.</pre></div>
+      <p class="small">Il nome della cartella è quello del server nel <code>.mcp.json</code>. Con un mock lo strumento è concesso senza <code>--allow-tools</code>.</p>
+    </div>
+    <div class="tabpanel" data-panel="r" hidden>
+      <div class="codewrap"><pre class="code">cd team-marketplace/plugins/team-guardrails
+claude plugin eval . --scaffold --allow-tools Write Edit "Bash(git diff *)" --max-cost-usd 2
+<span class="c"># un caso solo, una volta, senza braccio di confronto:</span>
+claude plugin eval . --case adr-protetto --runs 1 --ablation none --scaffold --allow-tools Write Edit</pre></div>
+      <p class="small">Il risultato: una tabella <code>CASE · WITH · W/OUT · Δ</code>, un <code>report.html</code> e un <code>aggregate-result.json</code> in <code>results/</code>.</p>
+    </div>
+  </div>
+  <aside class="notes">Il braccio senza plugin non trova team-guardrails:reviewer e Claude Code lo segnala come «Agent type not found»: è atteso. Per questo i grader che controllano la delega hanno arm: with-only.</aside>
+</section>
+
+<!-- ============ 7. LAB ============ -->
+<section class="slide" data-ch="7" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>07</b> Laboratorio</div>
+  <h2>Costruiamo team-guardrails</h2>
+  <p class="lead">Un subagente che rivede, un hook che protegge gli ADR, un server MCP che risponde col glossario. Poi li impacchettiamo nel marketplace del corso 01 e scriviamo le eval.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">subagente</span><h3><code>reviewer</code></h3><p>Legge il diff e lo confronta con le regole del progetto. Non può modificare file.</p></div>
+    <div class="panel"><span class="tag acc">hook</span><h3><code>protect-adr</code></h3><p>Blocca la riscrittura di un ADR esistente. Lascia passare solo la nota «Superata da».</p></div>
+    <div class="panel"><span class="tag acc">MCP</span><h3><code>acme-glossary</code></h3><p>Due strumenti sul <code>CONTEXT.md</code> del progetto: <code>list_terms</code> e <code>lookup_term</code>.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: Claude Code, Node.js 18 o successivo, Git, la cartella <code>~/skill-lab</code> del corso 01 con <code>acme-shop</code> e <code>team-marketplace</code>. Copilot CLI se volete provare anche lì.</p>
+  <aside class="notes">Chi non ha la cartella del corso 01 la ricrea copiando acme-shop come spiegato nel README del lab 01.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Passo 1 · Il subagente">
+  <div class="eyebrow"><b>07</b> Laboratorio · Passo 1</div>
+  <h2>Scrivi il revisore come subagente di progetto</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">~/skill-lab/acme-shop</span><pre class="code">mkdir -p .claude/agents
+<span class="c"># copia agents/reviewer.md dalla soluzione,</span>
+<span class="c"># oppure scrivilo partendo dalla slide 6</span>
+$EDITOR .claude/agents/reviewer.md</pre></div>
+    <div class="codewrap"><span class="label cc">prova in Claude Code</span><pre class="code"><span class="c"># fai una modifica da rivedere:</span>
+<span class="c"># un messaggio d'errore in inglese in coupon.ts</span>
+
+fammi una review della modifica prima del commit
+<span class="c"># → deve partire il subagente reviewer</span>
+
+@agent-reviewer rivedi packages/core/src/coupon.ts</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span>Ho creato <code>.claude/agents/reviewer.md</code></span></label>
+    <label class="check"><input type="checkbox" id="lab2"><span>Una richiesta di review delega al subagente senza che io lo nomini</span></label>
+  </div>
+  <aside class="notes">Partiamo dal progetto e non dal plugin, come nel corso 01: il file non cambia quando lo spostiamo. Lo strumento del glossario non c'è ancora: per ora il revisore lo ignora.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Passo 2 · L'hook">
+  <div class="eyebrow"><b>07</b> Laboratorio · Passo 2</div>
+  <h2>Proteggi gli ADR con un hook</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">prova lo script da solo, senza agente</span><pre class="code">ADR=$PWD/docs/adr/0001-i-prezzi-sono-in-centesimi-interi.md
+echo "{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$ADR\"}}" \
+  | node protect-adr.js
+echo "exit=$?"      <span class="c"># → il motivo su stderr ed exit=2</span></pre></div>
+    <div class="codewrap"><span class="label cc">prova in Claude Code, dentro il plugin (Passo 4)</span><pre class="code">riscrivi l'ADR 0001: ora i prezzi sono decimali
+<span class="c"># → l'hook blocca Write/Edit sul vecchio file;</span>
+<span class="c">#   l'agente propone un ADR 0002 e la nota «Superata da»</span>
+
+/hooks              <span class="c"># l'hook compare, con la sua origine</span></pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab3"><span>Lo script esce con 2 su un ADR esistente e con 0 su un ADR nuovo</span></label>
+    <label class="check"><input type="checkbox" id="lab4"><span>In sessione la riscrittura viene bloccata e nasce un ADR nuovo</span></label>
+  </div>
+  <aside class="notes">Provare lo script fuori dall'agente è la buona abitudine principale: un hook che va in errore con codice 1 lascia passare tutto senza dirlo.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Passo 3 · Il server MCP">
+  <div class="eyebrow"><b>07</b> Laboratorio · Passo 3</div>
+  <h2>Collega il glossario come server MCP</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">parla al server a mano</span><pre class="code">printf '%s\n' \
+ '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
+ '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"lookup_term","arguments":{"term":"Cart"}}}' \
+ | node glossary.js</pre></div>
+    <div class="codewrap"><span class="label cc">registralo per il progetto e provalo</span><pre class="code">claude mcp add --scope project acme-glossary -- node /percorso/glossary.js
+claude mcp list         <span class="c"># ⏸ Pending approval finché non lo approvi</span>
+claude                  <span class="c"># approva il server di progetto</span>
+
+che cosa intendiamo per «ordine» in acme-shop?
+<span class="c"># → deve usare lookup_term</span></pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab5"><span>Il server risponde a mano con la definizione di «carrello»</span></label>
+    <label class="check"><input type="checkbox" id="lab6"><span><code>claude mcp list</code> mostra <code>acme-glossary</code> connesso</span></label>
+  </div>
+  <aside class="notes">Il server cerca CONTEXT.md nella cartella di lavoro e risale. Claude Code lo avvia nella cartella del progetto. Se il vostro client lo avvia altrove, impostate GLOSSARY_FILE.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Passo 4 · Il plugin">
+  <div class="eyebrow"><b>07</b> Laboratorio · Passo 4</div>
+  <h2>Impacchetta e aggiungi al marketplace</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">~/skill-lab/team-marketplace</span><pre class="code">plugins/team-guardrails/
+├── .claude-plugin/plugin.json
+├── agents/reviewer.md
+├── hooks/hooks.json
+├── hooks/protect-adr.js
+├── .mcp.json
+└── mcp/glossary.js</pre>
+      <p class="small" style="margin-top:8px">Togli <code>.claude/agents/reviewer.md</code> e il server di progetto dal Passo 3, per non averli doppi.</p></div>
+    <div class="codewrap"><span class="label">aggiungi la voce in .claude-plugin/marketplace.json e installa</span><pre class="code">{ <span class="k">"name"</span>: <span class="s">"team-guardrails"</span>,
+  <span class="k">"source"</span>: <span class="s">"./plugins/team-guardrails"</span>,
+  <span class="k">"description"</span>: <span class="s">"Revisore, protezione degli ADR e glossario"</span> }
+
+claude plugin validate ./team-marketplace
+claude plugin marketplace update team-marketplace
+claude plugin install team-guardrails@team-marketplace
+claude plugin details team-guardrails
+
+copilot plugin marketplace update team-marketplace
+copilot plugin install team-guardrails@team-marketplace
+copilot mcp list</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab7"><span><code>claude plugin validate</code> passa</span></label>
+    <label class="check"><input type="checkbox" id="lab8"><span><code>plugin details</code> mostra 1 agente, 1 hook e 1 server MCP</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span>Il revisore usa <code>lookup_term</code>: nel plugin il suo nome è <code>mcp__plugin_team-guardrails_acme-glossary__lookup_term</code></span></label>
+  </div>
+  <aside class="notes">Nel plugin il percorso dello script diventa ${CLAUDE_PLUGIN_ROOT}/mcp/glossary.js. Nell'hook il comando va tra virgolette, altrimenti claude plugin validate dà un avviso.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Passo 5 · Le eval">
+  <div class="eyebrow"><b>07</b> Laboratorio · Passo 5</div>
+  <h2>Scrivi un caso e misuralo</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">un caso vuoto, senza eseguire nulla</span><pre class="code">cd plugins/team-guardrails
+claude plugin eval init --bare glossario
+<span class="c"># scrivi prompt.md e graders/ come nella slide 18</span>
+<span class="c"># e il mock in evals/mocks/acme-glossary/lookup_term.md</span></pre></div>
+    <div class="codewrap"><span class="label">esegui (consuma token)</span><pre class="code">claude plugin eval . --case glossario --runs 1 --max-cost-usd 1
+<span class="c"># Δ positivo: con il plugin la risposta viene da lookup_term</span></pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab10"><span>Ho scritto almeno un caso con un grader <code>tool_used</code> e uno <code>llm</code></span></label>
+    <label class="check"><input type="checkbox" id="lab11"><span>Ho letto il <code>report.html</code> e capito perché un grader è fallito</span></label>
+  </div>
+  <aside class="notes">Se il budget non lo consente, fermatevi a init --bare e alla scrittura del caso: anche solo scriverlo obbliga a dire che cosa significa «funziona».</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Quiz">
+  <div class="eyebrow"><b>07</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Come nel corso 01: ognuno risponde a voce, poi si clicca.</aside>
+</section>
+
+<section class="slide" data-ch="7" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagenti</a></li>
+      <li><a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener">Riferimento degli hook</a> · <a href="https://code.claude.com/docs/en/hooks-guide" target="_blank" rel="noopener">guida</a></li>
+      <li><a href="https://code.claude.com/docs/en/mcp" target="_blank" rel="noopener">MCP</a></li>
+      <li><a href="https://code.claude.com/docs/en/plugins/components" target="_blank" rel="noopener">Componenti dei plugin</a></li>
+      <li><a href="https://code.claude.com/docs/en/plugin-evals" target="_blank" rel="noopener">Eval dei plugin</a></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/reference/custom-agents-configuration" target="_blank" rel="noopener">Custom agent</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/hooks-reference" target="_blank" rel="noopener">Riferimento degli hook</a></li>
+      <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers" target="_blank" rel="noopener">MCP in Copilot CLI</a></li>
+      <li><a href="https://code.visualstudio.com/docs/agent-customization/hooks" target="_blank" rel="noopener">Hook in VS Code</a> · <a href="https://code.visualstudio.com/docs/agent-customization/custom-agents" target="_blank" rel="noopener">custom agent</a></li></ul></div>
+    <div class="panel"><h3>Standard</h3><ul class="clean">
+      <li><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a></li>
+      <li><a href="https://agentskills.io" target="_blank" rel="noopener">Agent Skills</a></li></ul></div>
+    <div class="panel"><h3>Nel repo</h3><ul class="clean">
+      <li><code>corsi/02-subagenti-hook-mcp/lab/</code>: la soluzione completa</li>
+      <li><code>team-guardrails@courses-ai</code>: il plugin, installabile</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Oltre le skill","Subagenti","Hook","Server MCP","Tutto nel plugin","Misurare con le eval","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    if (pre.id === 'bOut') return;
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+
+  // ---- simulatore dell'hook protect-adr (stessa logica di hooks/protect-adr.js)
+  const SIM = { tool: 'Write', file: 'old', edit: 'rewrite', fmt: 'cc' };
+  const ROOT = '/home/dev/acme-shop/';
+  const FILES = { old: 'docs/adr/0001-i-prezzi-sono-in-centesimi-interi.md', new: 'docs/adr/0002-i-prezzi-sono-decimali.md', code: 'packages/core/src/cart.ts' };
+  const TITLE = '# I prezzi sono numeri interi in centesimi';
+  const NOTE = '> **Superata da ADR-0002** su 5 novembre 2026. Il resto resta in vigore.';
+  const REASON = 'Un ADR esistente non si riscrive. Scrivi un nuovo ADR con la decisione aggiornata e in cima a quello vecchio aggiungi solo la riga «> **Superata da ADR-NNNN** su …. Il resto resta in vigore.»';
+  function simInput(){
+    const path = ROOT + FILES[SIM.file];
+    if (SIM.tool === 'Write') return { file_path: path, content: SIM.file === 'code' ? 'export …' : TITLE.replace('numeri interi in centesimi', 'decimali') + '\n…' };
+    const neu = SIM.edit === 'note' ? NOTE + '\n\n' + TITLE : '# I prezzi sono decimali';
+    return { file_path: path, old_string: TITLE, new_string: neu };
+  }
+  function simDecide(input){
+    const isAdr = /docs\/adr\/\d{4}-[^/]+\.md$/.test(input.file_path);
+    if (!isAdr) return [0, 'non è un ADR: passa'];
+    if (SIM.file === 'new') return [0, 'ADR nuovo, il file non esiste ancora: passa'];
+    if (SIM.tool === 'Write') return [2, REASON];
+    const onlyNote = input.new_string.includes(input.old_string) && /^> \*\*Superata da ADR-\d{4}\*\*/m.test(input.new_string.replace(input.old_string, ''));
+    return onlyNote ? [0, 'aggiunge solo la nota «Superata da»: passa'] : [2, REASON];
+  }
+  function renderSim(){
+    $('#simEditField').hidden = SIM.tool !== 'Edit';
+    const input = simInput();
+    const ev = SIM.fmt === 'cc'
+      ? { hook_event_name: 'PreToolUse', cwd: ROOT.replace(/\/$/, ''), tool_name: SIM.tool, tool_input: input }
+      : { timestamp: 1767225600000, cwd: ROOT.replace(/\/$/, ''), toolName: SIM.tool === 'Write' ? 'create' : 'edit', toolArgs: JSON.stringify(input) };
+    $('#simIn').textContent = JSON.stringify(ev, null, 2);
+    const out = $('#simOut');
+    if (SIM.fmt === 'gh'){
+      out.innerHTML = '<span class="c"># formato nativo di Copilot: camelCase, toolArgs è una stringa JSON</span>\n' +
+        'protect-adr.js legge tool_name e tool_input: con questo formato non trova i campi ed esce con 0.\n' +
+        '<span class="c"># per questo nel plugin l\'evento si chiama PreToolUse, in PascalCase:</span>\n' +
+        '<span class="c"># Copilot allora invia il formato compatibile con Claude</span>';
+      return;
+    }
+    const [code, msg] = simDecide(input);
+    out.innerHTML = '<span class="c">$</span> <span class="k">node protect-adr.js</span>\n' +
+      (code === 2 ? '<span class="k">stderr:</span> ' + esc(msg) + '\n<span class="k">exit 2</span> → il tool è bloccato, l\'agente legge il motivo'
+                  : '<span class="c"># ' + esc(msg) + '</span>\n<span class="k">exit 0</span> → il tool procede');
+  }
+  segInit('simTool', v => { SIM.tool = v; renderSim(); });
+  segInit('simFile', v => { SIM.file = v; renderSim(); });
+  segInit('simEdit', v => { SIM.edit = v; renderSim(); });
+  segInit('simFmt', v => { SIM.fmt = v; renderSim(); });
+  $('#sim').addEventListener('submit', e => e.preventDefault());
+  renderSim();
+
+  // ---- dialogo MCP (risposte registrate dal server del laboratorio)
+  const MCP = [
+    ['1 · initialize', 'Stretta di mano', {jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'client',version:'1.0'}}},
+      {jsonrpc:'2.0',id:1,result:{protocolVersion:'2025-06-18',capabilities:{tools:{}},serverInfo:{name:'acme-glossary',version:'0.1.0'}}},
+      'Il client propone una versione del protocollo; il server risponde con le sue capacità: qui solo tools.'],
+    ['2 · initialized', 'Notifica', {jsonrpc:'2.0',method:'notifications/initialized'}, null,
+      'È una notifica: non ha id e il server non risponde. Da qui in poi il client può chiedere.'],
+    ['3 · tools/list', 'Che strumenti hai?', {jsonrpc:'2.0',id:2,method:'tools/list'},
+      {jsonrpc:'2.0',id:2,result:{tools:[{name:'list_terms',description:'Elenca i termini del glossario…',inputSchema:{type:'object',properties:{}}},{name:'lookup_term',description:'Cerca un termine nel glossario…',inputSchema:{type:'object',properties:{term:{type:'string'}},required:['term']}}]}},
+      'Nome, description e schema degli argomenti: è ciò che il modello vede per decidere quando chiamare lo strumento, come la description di una skill.'],
+    ['4 · tools/call', 'Usa lookup_term', {jsonrpc:'2.0',id:3,method:'tools/call',params:{name:'lookup_term',arguments:{term:'Cart'}}},
+      {jsonrpc:'2.0',id:3,result:{content:[{type:'text',text:"carrello (nel codice: Cart): I prodotti che il cliente sta per comprare, prima dell'ordine."}]}},
+      'Il risultato è testo che entra nel contesto dell\'agente. Un errore si segnala con isError: true, non facendo cadere il server.']
+  ];
+  const mcpSteps = $('#mcpSteps');
+  MCP.forEach((m, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.innerHTML = '<span class="st">' + m[0] + '</span><span class="what">' + m[1] + '</span>';
+    b.onclick = () => { $$('#mcpSteps button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); showMcp(i); };
+    mcpSteps.appendChild(b);
+  });
+  function showMcp(i){
+    const m = MCP[i];
+    $('#mcpReq').textContent = JSON.stringify(m[2], null, 2);
+    $('#mcpRes').textContent = m[3] ? JSON.stringify(m[3], null, 2) : '(nessuna risposta)';
+    $('#mcpNote').textContent = m[4];
+  }
+  showMcp(0);
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab02.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab02.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['Un subagente di un plugin dichiara hooks nel frontmatter. Che cosa succede in Claude Code?', ['Gli hook partono quando parte il subagente','Il campo viene ignorato','Il plugin non si installa'], 1, 'Per sicurezza i subagenti dei plugin ignorano hooks, mcpServers e permissionMode: hook e server vanno in hooks/hooks.json e .mcp.json del plugin.'],
+    ['Un hook PreToolUse deve bloccare il tool sia in Claude Code sia in Copilot. Con che codice esce?', ['1','2','0 senza output'], 1, 'Con 2 tutti e due bloccano. Il codice 1 è un errore non bloccante: l\'azione prosegue.'],
+    ['Come si chiama, in Claude Code, lo strumento lookup_term del server acme-glossary del plugin team-guardrails?', ['acme-glossary/lookup_term','mcp__acme-glossary__lookup_term','mcp__plugin_team-guardrails_acme-glossary__lookup_term'], 2, 'I server dei plugin hanno il prefisso plugin_<plugin>_. acme-glossary/lookup_term è la forma di Copilot.'],
+    ['Perché ogni caso di eval gira anche senza il plugin?', ['Per controllare che il plugin si installi','Per misurare la differenza Δ che il plugin produce','Per risparmiare token'], 1, 'Il braccio senza plugin è la baseline: senza, un punteggio alto non dice se il merito è del plugin.'],
+    ['In un hook di Claude Code, da dove si legge il percorso del file che l\'agente sta per scrivere?', ['Dalla variabile $FILE','Da tool_input.file_path nel JSON su stdin','Dal primo argomento della riga di comando'], 1, '$FILE non esiste: l\'evento arriva come JSON su stdin, e per Write ed Edit tool_input.file_path è un percorso assoluto.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>
