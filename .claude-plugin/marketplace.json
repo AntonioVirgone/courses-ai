@@ -1,0 +1,14 @@
+{
+  "name": "courses-ai",
+  "owner": { "name": "Antonio Virgone" },
+  "metadata": {
+    "description": "I plugin didattici dei laboratori dei corsi su Claude Code e GitHub Copilot"
+  },
+  "plugins": [
+    {
+      "name": "team-toolkit",
+      "source": "./corsi/01-skill-e-plugin/lab/team-marketplace/plugins/team-toolkit",
+      "description": "Corso 01 · Commit, ADR e testi in italiano per il progetto di esempio acme-shop"
+    }
+  ]
+}

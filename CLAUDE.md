@@ -4,7 +4,8 @@ Questo repo raccoglie i corsi interni del team su Claude Code e GitHub Copilot. 
 
 ## Struttura
 
-- Ogni corso è una cartella autonoma `corsi/NN-slug/` con `presentazione/index.html`, `scaletta.md` e `lab/`. Un corso nuovo ha le stesse tre parti e una riga nella tabella del README.
+- Ogni corso è una cartella autonoma `corsi/NN-slug/` con `presentazione/index.html`, `scaletta.md` e `lab/` (ADR-0001). Un corso nuovo ha le stesse tre parti e una riga nella tabella del README.
+- `.claude-plugin/marketplace.json` alla radice è il marketplace `courses-ai` (ADR-0002). Ogni voce punta con un percorso relativo al plugin dentro il `lab/` di un corso: i file del plugin esistono in una sola copia. Se sposti un plugin, aggiorna la voce.
 
 ## Lingue
 
@@ -24,11 +25,19 @@ Questo repo raccoglie i corsi interni del team su Claude Code e GitHub Copilot. 
 - Il manifest di un plugin sta in `.claude-plugin/plugin.json`; `skills/`, `agents/` e `hooks/` alla radice del plugin.
 - Alza `version` in `plugin.json` a ogni modifica di un plugin.
 
-Se la CLI di Claude Code è disponibile, valida i plugin prima di committare:
+Prima di committare:
 
 ```bash
-claude plugin validate <cartella-del-plugin>
+python3 scripts/validate.py
 ```
+
+Se la CLI di Claude Code è disponibile, valida anche ogni marketplace e plugin toccato:
+
+```bash
+claude plugin validate <cartella>
+```
+
+La CI esegue entrambi i controlli su ogni PR.
 
 ## Commit e PR
 

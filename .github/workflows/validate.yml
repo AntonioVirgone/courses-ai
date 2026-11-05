@@ -1,0 +1,42 @@
+name: Validazione
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repo:
+    name: JSON, skill, plugin e corsi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml==6.0.3
+      - run: python3 scripts/validate.py
+
+  claude-plugin-validate:
+    name: claude plugin validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g @anthropic-ai/claude-code@2.1.318
+      - name: Valida marketplace e plugin
+        shell: bash
+        run: |
+          # ogni cartella che contiene .claude-plugin/ è un marketplace o un plugin
+          git ls-files '.claude-plugin/*.json' '**/.claude-plugin/*.json' \
+            | xargs -n1 dirname | xargs -n1 dirname | sort -u \
+            | while read -r dir; do
+                echo "::group::$dir"
+                claude plugin validate "$dir"
+                echo "::endgroup::"
+              done
