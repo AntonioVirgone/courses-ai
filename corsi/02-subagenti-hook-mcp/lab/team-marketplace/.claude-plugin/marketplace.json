@@ -1,0 +1,11 @@
+{
+  "name": "team-marketplace",
+  "owner": { "name": "Team Acme" },
+  "plugins": [
+    {
+      "name": "team-guardrails",
+      "source": "./plugins/team-guardrails",
+      "description": "Revisore, protezione degli ADR e glossario di dominio"
+    }
+  ]
+}
