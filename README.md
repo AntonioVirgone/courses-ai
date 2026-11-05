@@ -41,6 +41,10 @@ claude plugin marketplace add AntonioVirgone/courses-ai
 claude plugin install team-toolkit@courses-ai
 ```
 
+```bash
+claude plugin install team-guardrails@courses-ai
+```
+
 Copilot CLI:
 
 ```bash
@@ -49,6 +53,10 @@ copilot plugin marketplace add AntonioVirgone/courses-ai
 
 ```bash
 copilot plugin install team-toolkit@courses-ai
+```
+
+```bash
+copilot plugin install team-guardrails@courses-ai
 ```
 
 I plugin sono didattici: codificano le convenzioni del progetto di esempio `acme-shop`, non quelle di un progetto reale.
