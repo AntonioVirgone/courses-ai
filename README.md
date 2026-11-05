@@ -10,6 +10,8 @@ Ogni corso è una cartella autonoma in `corsi/NN-slug/` con tre parti:
 
 ## Corsi
 
+I corsi formano un percorso che porta a mettere in funzione Heimdall, il plugin che dagli alert di sicurezza arriva a una pull request pronta per la review. Il piano delle lezioni è in [docs/percorso-heimdall.md](docs/percorso-heimdall.md).
+
 | # | Corso | Argomenti |
 |---|-------|-----------|
 | 01 | [Skill e plugin per agenti di coding](corsi/01-skill-e-plugin/scaletta.md) | Skill, plugin e marketplace in Claude Code e Copilot; le skill di Matt Pocock; graphify; laboratorio `team-toolkit` |
