@@ -1199,6 +1199,38 @@ copilot plugin marketplace add ORG/team-marketplace</pre></div>
   <aside class="notes">Fare il quiz insieme, a voce: ognuno risponde, poi si clicca. La spiegazione compare sotto ogni domanda.</aside>
 </section>
 
+<section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Dove andiamo">
+  <div class="eyebrow"><b>12</b> Dove andiamo</div>
+  <h2>Il percorso porta a Heimdall</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">→</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <ul class="clean">
+        <li>Non modifica i test.</li>
+        <li>Non fa merge: l'esito è sempre una pull request da rivedere.</li>
+        <li>Ogni passo lascia una traccia leggibile.</li>
+      </ul>
+      <div class="callout"><strong>Da oggi:</strong> <code>/heimdall remediate</code> sarà una skill come <code>/conventional-commit</code>, in un plugin installato dal marketplace <code>courses-ai</code>.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr class="hl"><td><code>01</code></td><td>Skill e plugin <span class="tag acc">oggi</span></td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr><td><code>03</code></td><td>Orchestrare più agenti</td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr><td><code>04</code></td><td>Connettere i sistemi</td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr><td><code>05</code></td><td>Capire il codice</td><td>Security Analyst e piano di remediation</td></tr>
+      <tr><td><code>06</code></td><td>Vincoli e guardrail</td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Nelle lezioni Heimdall usa un ambiente simulato, con dati inventati: niente credenziali né dati reali (ADR-0004). Il suo codice vive nel repo heimdall (ADR-0003).</aside>
+</section>
+
 <section class="slide" data-ch="12" data-chname="Laboratorio" data-title="Risorse">
   <div class="eyebrow">Per approfondire</div>
   <h2>Risorse</h2>

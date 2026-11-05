@@ -2,9 +2,9 @@
 
 Come insegnare una volta sola all'agente il modo in cui lavoriamo, impacchettarlo in un plugin e distribuirlo al team. Con Claude Code e GitHub Copilot, e due raccolte pronte da usare: le skill di Matt Pocock e graphify.
 
-- **Presentazione:** [presentazione/index.html](presentazione/index.html), 36 slide. Ogni slide ha un link diretto: `index.html#s12` apre la dodicesima.
+- **Presentazione:** [presentazione/index.html](presentazione/index.html), 37 slide. Ogni slide ha un link diretto: `index.html#s12` apre la dodicesima.
 - **Laboratorio:** [lab/](lab/)
-- **Durata indicativa:** 3 ore e 40 minuti, con una pausa da 15 minuti prima del laboratorio.
+- **Durata indicativa:** 3 ore e 45 minuti, con una pausa da 15 minuti prima del laboratorio.
 - **Pubblico:** sviluppatori che usano già Claude Code o Copilot e non hanno mai scritto una skill.
 
 ## Tappe
@@ -27,7 +27,7 @@ Le durate sono una stima da tarare dopo la prima edizione.
 | 11 | Installare e usare graphify | 27–28 | 10' | Installazione e comandi |
 | — | Pausa | | 15' | |
 | 12 | Laboratorio | 29–34 | 60' | Le tre skill, il plugin `team-toolkit`, il marketplace, l'installazione nei due strumenti |
-| — | Quiz e risorse | 35–36 | 10' | Verifica a voce e link per approfondire |
+| — | Quiz, dove andiamo, risorse | 35–37 | 15' | Verifica a voce; il percorso verso Heimdall; link per approfondire |
 
 ## Da preparare prima
 
