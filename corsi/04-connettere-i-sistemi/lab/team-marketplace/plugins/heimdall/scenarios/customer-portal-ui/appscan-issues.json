@@ -1,0 +1,60 @@
+{
+  "Count": 4,
+  "Items": [
+    {
+      "Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a11",
+      "IssueType": "Cross-Site Scripting",
+      "Scanner": "SAST",
+      "Severity": "High",
+      "Status": "Open",
+      "Cwe": 79,
+      "Location": "src/app/profile/profile-card.component.ts",
+      "Line": 24,
+      "Description": "The customer's biography is passed to bypassSecurityTrustHtml and bound to innerHTML: a script in the biography runs in other customers' browsers.",
+      "FixRecommendation": "Do not pass user-controlled data to bypassSecurityTrustHtml. Bind the value to innerHTML and let Angular sanitize it.",
+      "DateCreated": "2026-10-29T08:20:37Z"
+    },
+    {
+      "Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a12",
+      "IssueType": "Vulnerable Component",
+      "Scanner": "SCA",
+      "Severity": "Medium",
+      "Status": "Open",
+      "Cwe": 1321,
+      "Location": "package.json",
+      "Line": 31,
+      "LibraryName": "acme-date-picker",
+      "LibraryVersion": "3.1.0",
+      "FixedVersion": "3.1.4",
+      "Description": "acme-date-picker 3.1.0 merges user options into a shared object without filtering __proto__ (prototype pollution).",
+      "FixRecommendation": "Upgrade acme-date-picker to version 3.1.4 or later.",
+      "DateCreated": "2026-10-29T08:20:37Z"
+    },
+    {
+      "Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a13",
+      "IssueType": "Cross-Site Scripting",
+      "Scanner": "SAST",
+      "Severity": "High",
+      "Status": "New",
+      "Cwe": 79,
+      "Location": "src/app/profile/profile-card.component.ts",
+      "Line": 24,
+      "Description": "The customer's biography is passed to bypassSecurityTrustHtml and bound to innerHTML: a script in the biography runs in other customers' browsers.",
+      "FixRecommendation": "Do not pass user-controlled data to bypassSecurityTrustHtml. Bind the value to innerHTML and let Angular sanitize it.",
+      "DateCreated": "2026-11-03T08:12:05Z"
+    },
+    {
+      "Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a14",
+      "IssueType": "Open Redirect",
+      "Scanner": "SAST",
+      "Severity": "Medium",
+      "Status": "Noise",
+      "Cwe": 601,
+      "Location": "src/app/auth/login-redirect.service.ts",
+      "Line": 12,
+      "Description": "The returnUrl parameter is used in a navigation.",
+      "FixRecommendation": "Validate returnUrl against a list of allowed paths.",
+      "DateCreated": "2026-10-29T08:20:37Z"
+    }
+  ]
+}
