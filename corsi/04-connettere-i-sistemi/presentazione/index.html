@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab 04</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+.app,.stage{grid-template-columns:minmax(0,1fr)}
+.slide{min-width:0}.slide>*{min-width:0;max-width:100%}
+.code.scroll{max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab · 04</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · corso 04 · Claude Code e GitHub Copilot</div>
+  <h1>Connettere<br>i sistemi</h1>
+  <p class="lead">Da oggi costruiamo Heimdall da zero. Il primo pezzo è il collegamento con gli scanner: un server MCP che restituisce gli alert di AppScan e SonarQube in un solo schema, con un backend simulato per il corso e uno reale per dopo. Gli agenti vedono il contratto, non le API.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>server MCP</span><span>schema comune</span><span>backend</span><span>credenziali</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Prerequisiti: i corsi 02 e 03. Servono i server MCP nei plugin, i subagenti e il contratto degli artefatti. Da questa lezione il laboratorio non lavora più su acme-shop: costruisce il plugin heimdall.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Sei tappe, dallo scanner alla tabella degli alert</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">La 02 e la 03 sono il cuore: che forma ha un alert e come la garantisce il server. La 04 parla di backend e credenziali, la 05 delle differenze tra gli strumenti, la 06 è il laboratorio.</aside>
+</section>
+
+<!-- ============ 1. PERCHÉ UN CONNETTORE ============ -->
+<section class="slide" data-ch="1" data-title="Perché un connettore">
+  <div class="eyebrow"><b>01</b> Perché un connettore</div>
+  <h2>Gli agenti non dovrebbero conoscere gli scanner</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Due scanner, due lingue</h3><p>AppScan dice <code>"Severity": "High"</code>, SonarQube <code>"severity": "BLOCKER"</code> e un elenco di <code>impacts</code>. Se l'analyst deve capirle tutte e due, ogni prompt diventa un manuale di API.</p></div>
+    <div class="panel"><h3>Un contratto stabile</h3><p>Il server MCP espone pochi strumenti con un solo schema di alert. Se domani arriva un terzo scanner, cambia il server, non gli agenti.</p></div>
+    <div class="panel"><h3>Il corso senza permessi</h3><p>Dietro gli stessi strumenti ci sono due backend: simulato in aula, reale sulla propria macchina. Si sceglie con una variabile, senza toccare prompt e skill (ADR-0004).</p></div>
+  </div>
+  <div class="codewrap"><span class="label">chi parla con chi</span><pre class="code">data-retriever ──▶ <span class="k">server MCP heimdall</span> ──▶ connettore ──▶ backend <span class="s">simulated</span>  scenari/*.json
+   (subagente)      list_projects           normalizza       backend <span class="s">real</span>       API REST di AppScan e SonarQube
+                    list_alerts             seleziona
+                    get_alert               valida
+                    backend_status</pre></div>
+  <aside class="notes">Il principio è lo stesso del corso 03: quello che deve valere sempre lo fa un programma. Lì era il contratto degli artefatti, qui è la forma degli alert. Il modello non traduce i campi degli scanner: li riceve già tradotti.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-title="Il pezzo di Heimdall">
+  <div class="eyebrow"><b>01</b> Perché un connettore</div>
+  <h2>Oggi costruiamo il primo anello della pipeline</h2>
+  <p style="line-height:2.1"><span class="tag acc">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag acc">Selezione</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">⇄</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Scenario</th><th>Stack</th><th>Scanner</th><th>L'alert che conta</th></tr></thead>
+    <tbody>
+      <tr><td><code>payments-api</code></td><td>Java 8 · Maven</td><td>AppScan</td><td>Dipendenza vulnerabile <code>acme-xml 1.4.2</code>, corretta in 2.0.0</td></tr>
+      <tr><td><code>orders-service</code></td><td>Spring Boot 3 · Java 21</td><td>SonarQube</td><td>SQL injection in <code>OrderSearchRepository.java</code></td></tr>
+      <tr><td><code>customer-portal-ui</code></td><td>Angular 21 · npm</td><td>AppScan</td><td>XSS in <code>profile-card.component.ts</code>, segnalato da due scansioni</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout">Nel corso 03 <code>alert.json</code> lo scriveva una persona. Da oggi lo produce Heimdall, con gli stessi campi: la pipeline del corso 03 lo legge senza modifiche.</div>
+  <aside class="notes">I tre scenari sono quelli della demo e torneranno in tutte le lezioni: il Java 8 per il rifiuto del Supervisor (06), l'Angular per la CI fallita (07). I dati sono inventati: niente nomi o numeri di progetti reali.</aside>
+</section>
+
+<!-- ============ 2. LO SCHEMA COMUNE ============ -->
+<section class="slide" data-ch="2" data-title="Due formati, uno schema">
+  <div class="eyebrow"><b>02</b> Lo schema comune</div>
+  <h2>Due formati entrano, uno esce</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">AppScan · payments-api</div>
+      <button data-show="f-as" aria-pressed="true">&nbsp;&nbsp;appscan-issues.json</button>
+      <button data-show="f-asn" aria-pressed="false">&nbsp;&nbsp;→ PAY-160644</button>
+      <div class="dir">SonarQube · orders-service</div>
+      <button data-show="f-sq" aria-pressed="false">&nbsp;&nbsp;sonarqube-issues.json</button>
+      <button data-show="f-sqn" aria-pressed="false">&nbsp;&nbsp;→ ORD-400928</button>
+    </div>
+    <div>
+      <div data-file="f-as" class="codewrap"><span class="label">scenarios/payments-api/appscan-issues.json · Items[0]</span><pre class="code scroll">{
+  <span class="k">"Id"</span>: <span class="s">"6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b301"</span>,
+  <span class="k">"IssueType"</span>: <span class="s">"Vulnerable Component"</span>,
+  <span class="k">"Scanner"</span>: <span class="s">"SCA"</span>,
+  <span class="k">"Severity"</span>: <span class="s">"High"</span>,
+  <span class="k">"Status"</span>: <span class="s">"Open"</span>,
+  <span class="k">"Cwe"</span>: 611,
+  <span class="k">"Location"</span>: <span class="s">"pom.xml"</span>,
+  <span class="k">"Line"</span>: 48,
+  <span class="k">"LibraryName"</span>: <span class="s">"com.acme.libs:acme-xml"</span>,
+  <span class="k">"LibraryVersion"</span>: <span class="s">"1.4.2"</span>,
+  <span class="k">"FixedVersion"</span>: <span class="s">"2.0.0"</span>,
+  <span class="k">"Description"</span>: <span class="s">"acme-xml 1.4.2 resolves external entities when it parses XML documents. An attacker who controls an uploaded statement file can read files from the server (XXE)."</span>,
+  <span class="k">"FixRecommendation"</span>: <span class="s">"Upgrade com.acme.libs:acme-xml to version 2.0.0 or later."</span>,
+  <span class="k">"DateCreated"</span>: <span class="s">"2026-10-27T15:02:11Z"</span>
+}</pre></div>
+      <div data-file="f-asn" class="codewrap" hidden><span class="label">list_alerts · lo stesso alert nello schema comune</span><pre class="code scroll">{
+  <span class="k">"id"</span>: <span class="s">"PAY-160644"</span>,
+  <span class="k">"project"</span>: <span class="s">"payments-api"</span>,
+  <span class="k">"source"</span>: <span class="s">"appscan"</span>,
+  <span class="k">"scannerId"</span>: <span class="s">"6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b301"</span>,
+  <span class="k">"kind"</span>: <span class="s">"dependency"</span>,
+  <span class="k">"rule"</span>: <span class="s">"Vulnerable Component"</span>,
+  <span class="k">"severity"</span>: <span class="s">"high"</span>,
+  <span class="k">"title"</span>: <span class="s">"Vulnerable Component: com.acme.libs:acme-xml 1.4.2"</span>,
+  <span class="k">"cwe"</span>: <span class="s">"CWE-611"</span>,
+  <span class="k">"location"</span>: {
+    <span class="k">"file"</span>: <span class="s">"pom.xml"</span>,
+    <span class="k">"line"</span>: 48
+  },
+  <span class="k">"component"</span>: {
+    <span class="k">"name"</span>: <span class="s">"com.acme.libs:acme-xml"</span>,
+    <span class="k">"version"</span>: <span class="s">"1.4.2"</span>,
+    <span class="k">"fixedIn"</span>: <span class="s">"2.0.0"</span>
+  },
+  <span class="k">"description"</span>: <span class="s">"acme-xml 1.4.2 resolves external entities when it parses XML documents. An attacker who controls an uploaded statement file can read files from the server (XXE)."</span>,
+  <span class="k">"suggestedFix"</span>: <span class="s">"Upgrade com.acme.libs:acme-xml to version 2.0.0 or later."</span>,
+  <span class="k">"detectedAt"</span>: <span class="s">"2026-10-27T15:02:11.000Z"</span>
+}</pre></div>
+      <div data-file="f-sq" class="codewrap" hidden><span class="label">scenarios/orders-service/sonarqube-issues.json · issues[0]</span><pre class="code scroll">{
+  <span class="k">"key"</span>: <span class="s">"AZK3xV1qF0d9mN2pLs01"</span>,
+  <span class="k">"rule"</span>: <span class="s">"javasecurity:S3649"</span>,
+  <span class="k">"severity"</span>: <span class="s">"BLOCKER"</span>,
+  <span class="k">"component"</span>: <span class="s">"acme_orders-service:src/main/java/com/acme/orders/repository/OrderSearchRepository.java"</span>,
+  <span class="k">"project"</span>: <span class="s">"acme_orders-service"</span>,
+  <span class="k">"line"</span>: 57,
+  <span class="k">"status"</span>: <span class="s">"OPEN"</span>,
+  <span class="k">"issueStatus"</span>: <span class="s">"OPEN"</span>,
+  <span class="k">"message"</span>: <span class="s">"Change this code to not construct SQL queries directly from user-controlled data."</span>,
+  <span class="k">"type"</span>: <span class="s">"VULNERABILITY"</span>,
+  <span class="k">"impacts"</span>: [
+    {
+      <span class="k">"softwareQuality"</span>: <span class="s">"SECURITY"</span>,
+      <span class="k">"severity"</span>: <span class="s">"BLOCKER"</span>
+    }
+  ],
+  <span class="k">"tags"</span>: [
+    "cwe",
+    "owasp-a3",
+    "sql"
+  ],
+  <span class="k">"creationDate"</span>: <span class="s">"2026-10-28T09:14:02+0000"</span>
+}</pre></div>
+      <div data-file="f-sqn" class="codewrap" hidden><span class="label">list_alerts · lo stesso alert nello schema comune</span><pre class="code scroll">{
+  <span class="k">"id"</span>: <span class="s">"ORD-400928"</span>,
+  <span class="k">"project"</span>: <span class="s">"orders-service"</span>,
+  <span class="k">"source"</span>: <span class="s">"sonarqube"</span>,
+  <span class="k">"scannerId"</span>: <span class="s">"AZK3xV1qF0d9mN2pLs01"</span>,
+  <span class="k">"kind"</span>: <span class="s">"code"</span>,
+  <span class="k">"rule"</span>: <span class="s">"javasecurity:S3649"</span>,
+  <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+  <span class="k">"title"</span>: <span class="s">"Change this code to not construct SQL queries directly from user-controlled data."</span>,
+  <span class="k">"cwe"</span>: <span class="s">"CWE-89"</span>,
+  <span class="k">"location"</span>: {
+    <span class="k">"file"</span>: <span class="s">"src/main/java/com/acme/orders/repository/OrderSearchRepository.java"</span>,
+    <span class="k">"line"</span>: 57
+  },
+  <span class="k">"component"</span>: null,
+  <span class="k">"description"</span>: <span class="s">"Change this code to not construct SQL queries directly from user-controlled data."</span>,
+  <span class="k">"suggestedFix"</span>: null,
+  <span class="k">"detectedAt"</span>: <span class="s">"2026-10-28T09:14:02.000Z"</span>
+}</pre></div>
+    </div>
+  </div>
+  <aside class="notes">Fate notare tre cose. La gravità: «High» e «BLOCKER» diventano high e critical. Il file: SonarQube lo prefissa con la chiave del progetto. I campi che mancano: SonarQube non dà la correzione né la CWE nell'issue. Il formato AppScan degli scenari è semplificato: imita l'export, non lo copia.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Campo per campo">
+  <div class="eyebrow"><b>02</b> Lo schema comune</div>
+  <h2>La traduzione, campo per campo</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Schema comune</th><th>Da AppScan</th><th>Da SonarQube</th></tr></thead>
+    <tbody>
+      <tr><td><code>severity</code></td><td><code>Severity</code>: Critical, High, Medium, Low, Informational</td><td><code>impacts[]</code> con <code>softwareQuality</code> SECURITY; se manca, <code>severity</code>: BLOCKER → critical, CRITICAL → high, MAJOR → medium…</td></tr>
+      <tr><td><code>kind</code></td><td><code>dependency</code> se c'è una libreria, altrimenti <code>code</code></td><td><code>code</code></td></tr>
+      <tr><td><code>location</code></td><td><code>Location</code> e <code>Line</code></td><td><code>component</code> senza il prefisso <code>progetto:</code>, e <code>line</code></td></tr>
+      <tr><td><code>cwe</code></td><td><code>Cwe</code> → <code>CWE-611</code></td><td>Non c'è nell'issue: una tabella dalla regola, <code>null</code> se sconosciuta</td></tr>
+      <tr><td><code>component</code></td><td>Libreria, versione, versione corretta</td><td><code>null</code></td></tr>
+      <tr><td><code>suggestedFix</code></td><td><code>FixRecommendation</code></td><td><code>null</code>: la correzione sta nella descrizione della regola</td></tr>
+      <tr><td><code>detectedAt</code></td><td><code>DateCreated</code></td><td><code>creationDate</code>, con il fuso <code>+0000</code> riscritto</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">I campi del corso 03 (<code>id</code>, <code>source</code>, <code>rule</code>, <code>severity</code>, <code>title</code>, <code>location</code>, <code>description</code>, <code>suggestedFix</code>) restano con lo stesso nome. Lo schema completo è in <code>mcp/alert.schema.json</code>.</p>
+  <aside class="notes">Un campo null è un'informazione: lo scanner non lo dà. Meglio null che un valore inventato dal modello. Il Security Analyst della lezione 05 saprà che per SonarQube la correzione va cercata altrove.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Simulatore">
+  <div class="eyebrow"><b>02</b> Lo schema comune</div>
+  <h2>Prova: che cosa diventa ogni alert grezzo?</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="chips" id="nsimList"></div>
+      <div class="codewrap"><span class="label" id="nsimRawLabel">grezzo</span><pre class="code scroll" id="nsimRaw" style="max-height:300px"></pre></div>
+    </div>
+    <div class="codewrap"><span class="label" id="nsimOutLabel">esito</span><pre class="code scroll" id="nsimOut" style="max-height:420px"></pre></div>
+  </div>
+  <aside class="notes">Dieci alert grezzi nei tre scenari, sei escono. Cliccate il quarto di customer-portal-ui: è lo stesso XSS del primo, da una scansione successiva, con un altro Id. Gli esiti sono calcolati dal normalizzatore vero, quello di mcp/alerts.js.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Id e selezione">
+  <div class="eyebrow"><b>02</b> Lo schema comune</div>
+  <h2>Un id stabile, e che cosa si scarta</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>L'id nasce da che cosa segnala</h3>
+      <p>Non dall'<code>Id</code> dello scanner, che cambia da una scansione all'altra. Il server prende scanner, regola, file, riga e libreria, ne calcola l'hash e lo accorcia: <code>PAY-160644</code>.</p>
+      <ul class="clean">
+        <li>Lo stesso problema ha lo stesso id a ogni lettura: la pipeline non lo prende in carico due volte.</li>
+        <li>Due scansioni dello stesso XSS danno un id solo: il secondo è un duplicato.</li>
+        <li>Il formato <code>PAY-160644</code> è quello che l'hook del corso 03 si aspetta in <code>.pipeline/</code>.</li>
+      </ul></div>
+    <div class="panel"><h3>La selezione</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Scartato</th><th>Quando</th></tr></thead>
+        <tbody>
+          <tr><td>chiuso</td><td>AppScan <code>Fixed</code>, <code>Noise</code>…; SonarQube risolto o accettato</td></tr>
+          <tr><td>non di sicurezza</td><td>SonarQube <code>CODE_SMELL</code> senza impatto SECURITY</td></tr>
+          <tr><td>duplicato</td><td>Lo stesso id di un alert già preso</td></tr>
+          <tr><td>sotto soglia</td><td>Meno grave di <code>min_severity</code></td></tr>
+        </tbody>
+      </table></div>
+      <p class="small"><code>list_alerts</code> restituisce gli alert e il conto degli scartati per motivo: la tabella dice anche che cosa non mostra.</p></div>
+  </div>
+  <aside class="notes">Limite da dichiarare: se una modifica al codice sposta l'alert di una riga, l'id cambia. Per il corso va bene; per Heimdall in produzione è una domanda per la lezione 08, quando misuriamo.</aside>
+</section>
+
+<!-- ============ 3. IL SERVER MCP ============ -->
+<section class="slide" data-ch="3" data-title="Quattro strumenti">
+  <div class="eyebrow"><b>03</b> Il server MCP</div>
+  <h2>Quattro strumenti, nessuno che scrive</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Strumento</th><th>Argomenti</th><th>Restituisce</th></tr></thead>
+    <tbody>
+      <tr><td><code>list_projects</code></td><td>—</td><td>I progetti del backend, con stack e scanner</td></tr>
+      <tr><td><code>list_alerts</code></td><td><code>project</code>, <code>min_severity</code> facoltativo</td><td>Gli alert aperti nello schema comune, dal più grave, e gli scartati per motivo</td></tr>
+      <tr><td><code>get_alert</code></td><td><code>project</code>, <code>id</code></td><td>Un alert completo</td></tr>
+      <tr><td><code>backend_status</code></td><td>—</td><td>Il backend attivo e, per il reale, che cosa manca. Mai il valore di una credenziale</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid g2">
+    <div class="callout">Gli strumenti sono il contratto con gli agenti: nomi e argomenti non dipendono dal backend. Gli strumenti di scrittura, come l'apertura della pull request, arrivano nella lezione 07.</div>
+    <div class="callout warn">Il server è lo stesso del corso 02: Node.js senza dipendenze, una riga JSON-RPC per messaggio su stdin e stdout. Cambia quello che c'è dietro.</div>
+  </div>
+  <aside class="notes">Pochi strumenti con argomenti stretti: min_severity è un enum, non un testo libero. Più lo strumento è preciso, meno il modello deve indovinare come usarlo.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Il protocollo a mano">
+  <div class="eyebrow"><b>03</b> Il server MCP</div>
+  <h2>Il protocollo, a mano</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">printf '%s\n' \
+  '{"jsonrpc":"2.0","id":1,"method":"initialize",
+    "params":{"protocolVersion":"2025-06-18",
+    "capabilities":{},"clientInfo":{"name":"prova","version":"0"}}}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+  | node mcp/server.js</pre></div>
+    <div class="codewrap"><span class="label">risposte, una per riga</span><pre class="code">{<span class="k">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="k">"id"</span>:1,<span class="k">"result"</span>:{
+  <span class="k">"protocolVersion"</span>:<span class="s">"2025-06-18"</span>,
+  <span class="k">"capabilities"</span>:{<span class="k">"tools"</span>:{}},
+  <span class="k">"serverInfo"</span>:{<span class="k">"name"</span>:<span class="s">"heimdall"</span>,<span class="k">"version"</span>:<span class="s">"0.1.0"</span>}}}
+{<span class="k">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="k">"id"</span>:2,<span class="k">"result"</span>:{<span class="k">"tools"</span>:[
+  {<span class="k">"name"</span>:<span class="s">"list_projects"</span>, …},
+  {<span class="k">"name"</span>:<span class="s">"list_alerts"</span>, …}, …]}}</pre></div>
+  </div>
+  <div class="codewrap"><span class="label">con il client minimo: stretta di mano, notifications/initialized, tools/call</span><pre class="code">node scripts/mcp-call.js list_alerts '{"project":"payments-api","min_severity":"high"}'</pre></div>
+  <aside class="notes">mcp-call.js fa quello che fa l'agente: initialize, la notifica initialized, poi tools/call. È il modo più rapido di vedere che cosa riceverà il modello, prima di darglielo.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Il server garantisce il contratto">
+  <div class="eyebrow"><b>03</b> Il server MCP</div>
+  <h2>Il server garantisce il contratto</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">mcp/alerts.js · estratto</span><pre class="code"><span class="k">const</span> alert = { id, project: project.project, ...fields };
+<span class="c">// il server garantisce il contratto: un alert fuori schema non esce</span>
+<span class="k">const</span> problems = validateAlert(alert);
+<span class="k">if</span> (problems.length) {
+  <span class="k">throw new</span> Error(<span class="s">`L'alert ${fields.scannerId} di ${project.project}
+    non rispetta lo schema comune: …`</span>);
+}</pre></div>
+    <ul class="clean">
+      <li>Ogni alert passa da <code>alert.schema.json</code> prima di uscire. Un normalizzatore sbagliato produce un errore, non un dato strano che l'analyst prende per buono.</li>
+      <li>Un errore torna all'agente come risultato dello strumento, con <code>isError: true</code>: il server non cade e il Data Retriever lo riporta.</li>
+      <li>I messaggi d'errore dicono che cosa manca, mai i valori: «manca la variabile <code>HEIMDALL_SONARQUBE_TOKEN</code>», non il token.</li>
+      <li><code>alerts-table.js</code> usa lo stesso connettore senza il modello: è la tabella di riferimento.</li>
+    </ul>
+  </div>
+  <aside class="notes">Nel laboratorio lo provate: cambiate High in alta nel normalizzatore e guardate l'errore. È la stessa idea della verdict.schema.json del corso 03, spostata alla sorgente.</aside>
+</section>
+
+<!-- ============ 4. BACKEND E CREDENZIALI ============ -->
+<section class="slide" data-ch="4" data-title="Due backend">
+  <div class="eyebrow"><b>04</b> Backend e credenziali</div>
+  <h2>Due backend, la stessa uscita</h2>
+  <div class="grid g2">
+    <div class="panel"><span class="tag acc">simulated</span><h3>Gli scenari</h3><p>Legge <code>scenarios/&lt;progetto&gt;/</code>: <code>project.json</code> e l'export dello scanner. Nessuna rete, nessuna credenziale, sempre lo stesso risultato. È il backend predefinito.</p></div>
+    <div class="panel"><span class="tag acc">real</span><h3>Le API degli scanner</h3><p>SonarQube: <code>GET api/issues/search</code> con <code>components</code>. AppScan on Cloud: <code>POST api/v4/Account/ApiKeyLogin</code>, poi <code>GET api/v4/Issues/Application/{id}</code>. Restituisce gli stessi dati grezzi: normalizzazione e selezione sono comuni.</p></div>
+  </div>
+  <div class="codewrap"><span class="label">si sceglie con una variabile</span><pre class="code">HEIMDALL_BACKEND=real node scripts/alerts-table.js orders-service
+<span class="c"># stessi id del backend simulato: cambia da dove arrivano i dati, non che cosa diventano</span></pre></div>
+  <aside class="notes">Il backend reale chiama le API REST, non i server MCP ufficiali: lo fissa ADR-0006 e lo motiviamo tra due slide. La chiamata ad AppScan viene dal codice ufficiale di HCL ma non è provata contro il servizio vero: si verifica nella lezione 09.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Dove stanno le credenziali">
+  <div class="eyebrow"><b>04</b> Backend e credenziali</div>
+  <h2>Tre posti, tre tipi di informazione</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Che cosa</th><th>Dove</th><th>Perché lì</th></tr></thead>
+    <tbody>
+      <tr><td>Il backend</td><td>Variabile <code>HEIMDALL_BACKEND</code></td><td>Cambia da una sessione all'altra, e il predefinito è il simulato</td></tr>
+      <tr><td>Progetti e indirizzi</td><td>File locale: <code>~/.config/heimdall/config.json</code> o <code>HEIMDALL_CONFIG</code></td><td>Non è segreto ma è interno: fuori da ogni repo</td></tr>
+      <tr class="hl"><td>Le credenziali</td><td>Variabili <code>HEIMDALL_SONARQUBE_TOKEN</code>, <code>HEIMDALL_APPSCAN_KEY_ID</code>, <code>HEIMDALL_APPSCAN_KEY_SECRET</code></td><td>Restano sulla macchina, non si copiano con un file, non finiscono in un commit</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">.mcp.json del plugin · estratto</span><pre class="code"><span class="k">"env"</span>: {
+  <span class="k">"HEIMDALL_BACKEND"</span>: <span class="s">"${HEIMDALL_BACKEND:-simulated}"</span>,
+  <span class="k">"HEIMDALL_SONARQUBE_TOKEN"</span>: <span class="s">"${HEIMDALL_SONARQUBE_TOKEN:-}"</span>,
+  …
+}</pre></div>
+    <div class="panel"><h3>Mai</h3><ul class="clean">
+      <li>nel plugin, nel repo, in <code>config.example.json</code>;</li>
+      <li>in un prompt o nella delega a un subagente;</li>
+      <li>nella risposta di uno strumento: <code>backend_status</code> dice «impostata» o «manca».</li></ul></div>
+  </div>
+  <aside class="notes">Il plugin contiene solo i nomi delle variabili, i valori arrivano dall'ambiente di chi avvia claude o copilot. Passiamo ogni variabile in env perché nessuna delle due documentazioni dice che il server erediti tutto l'ambiente della sessione.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="I server ufficiali">
+  <div class="eyebrow"><b>04</b> Backend e credenziali</div>
+  <h2>E i server MCP ufficiali?</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Sistema</th><th>Server ufficiale</th><th>Che cosa sappiamo</th></tr></thead>
+    <tbody>
+      <tr><td>SonarQube</td><td><code>SonarSource/sonarqube-mcp-server</code></td><td>Server e Cloud; <code>SONARQUBE_TOKEN</code> con <code>SONARQUBE_URL</code> o <code>SONARQUBE_ORG</code>; immagine Docker <code>sonarsource/sonarqube-mcp</code>; strumento <code>search_sonar_issues_in_projects</code></td></tr>
+      <tr><td>AppScan</td><td>Una pagina della documentazione HCL, per AppScan on Cloud e AppScan 360°</td><td>Non siamo riusciti a leggerla: configurazione e strumenti non verificati</td></tr>
+      <tr><td>Azure DevOps</td><td><code>microsoft/azure-devops-mcp</code></td><td>Remoto <code>https://mcp.dev.azure.com/{organization}</code>, in anteprima, o locale con <code>npx -y @azure-devops/mcp {organization}</code>; strumenti per repo, pull request, pipeline e log. Serve nella lezione 07</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>La scelta (ADR-0006):</strong> per gli scanner il backend reale chiama le API REST. Usare i server ufficiali vorrebbe dire un client MCP dentro il nostro server, un processo in più per scanner, Docker per SonarQube, e strumenti di terzi da tradurre a ogni loro rilascio. Gli agenti non li vedono comunque (ADR-0004).</div>
+  <aside class="notes">Era una domanda aperta del percorso. Per Azure DevOps la stessa scelta si rifà nella lezione 07, quando serve aprire le pull request: lì il server ufficiale copre molto di più di due chiamate.</aside>
+</section>
+
+<!-- ============ 5. NEI DUE STRUMENTI ============ -->
+<section class="slide" data-ch="5" data-title="Il server nel plugin">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Il server MCP nel plugin, in Claude Code e Copilot CLI</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th></tr></thead>
+    <tbody>
+      <tr><td>Dove si dichiara</td><td><code>.mcp.json</code> alla radice del plugin, o <code>mcpServers</code> in <code>plugin.json</code></td><td>Con il manifest in <code>.claude-plugin/</code>: <code>.mcp.json</code>, <code>.github/mcp.json</code> o <code>mcpServers</code></td></tr>
+      <tr><td>Percorso del plugin</td><td><code>${CLAUDE_PLUGIN_ROOT}</code></td><td><code>${CLAUDE_PLUGIN_ROOT}</code> documentato solo nel frontmatter degli agenti</td></tr>
+      <tr><td>Variabili in <code>env</code></td><td><code>${VAR}</code>, <code>${VAR:-default}</code></td><td><code>$VAR</code>, <code>${VAR}</code>, <code>${VAR:-default}</code></td></tr>
+      <tr><td>Elenco dei server</td><td><code>claude mcp list</code>: <code>plugin:heimdall:heimdall</code></td><td><code>copilot mcp list</code>: raggruppati per origine, compresi i plugin</td></tr>
+      <tr><td>Nome di uno strumento</td><td><code>mcp__plugin_heimdall_heimdall__list_alerts</code></td><td><code>heimdall/list_alerts</code>, come nel corso 02</td></tr>
+      <tr><td>Credenziali nel portachiavi</td><td><code>userConfig</code> con <code>sensitive: true</code></td><td>Non documentato</td></tr>
+    </tbody>
+  </table></div>
+  <div class="codewrap"><span class="label cc">Claude Code · userConfig, non usato nel laboratorio</span><pre class="code"><span class="c">// plugin.json</span>
+<span class="k">"userConfig"</span>: { <span class="k">"SONARQUBE_TOKEN"</span>: { <span class="k">"type"</span>: <span class="s">"string"</span>, <span class="k">"title"</span>: <span class="s">"Token di SonarQube"</span>,
+  <span class="k">"description"</span>: <span class="s">"Token utente con il permesso Browse"</span>, <span class="k">"sensitive"</span>: true } }
+<span class="c">// .mcp.json</span>
+<span class="k">"HEIMDALL_SONARQUBE_TOKEN"</span>: <span class="s">"${user_config.SONARQUBE_TOKEN}"</span></pre></div>
+  <aside class="notes">userConfig chiede il valore quando si installa da /plugin e lo tiene nel portachiavi di macOS o in ~/.claude/.credentials.json. È comodo, ma esiste solo in Claude Code: per questo Heimdall usa le variabili d'ambiente (ADR-0006). In Copilot ${CLAUDE_PLUGIN_ROOT} nel .mcp.json di un plugin non è documentato: il corso 02 l'ha visto elencato da copilot mcp list, non l'ha provato in sessione.</aside>
+</section>
+
+<section class="slide" data-ch="5" data-title="Il Data Retriever">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Il Data Retriever vede solo il server</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">agents/data-retriever.md · frontmatter</span><pre class="code"><span class="c">---</span>
+<span class="k">name:</span> data-retriever
+<span class="k">description:</span> Data Retriever di Heimdall. Legge dal
+  server MCP heimdall gli alert di sicurezza aperti …
+<span class="k">tools:</span> mcp__plugin_heimdall_heimdall__list_projects,
+  mcp__plugin_heimdall_heimdall__list_alerts, …,
+  heimdall/list_projects, heimdall/list_alerts, …
+<span class="k">maxTurns:</span> 10
+<span class="c">---</span></pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Nessun <code>Read</code>, nessun <code>Bash</code>: non legge il codice, non propone correzioni, non cambia la gravità.</li>
+        <li>Ogni strumento compare due volte: il nome di Claude Code e quello di Copilot.</li>
+        <li>Restituisce la tabella nel formato di <code>alerts-table.js</code>: si confrontano riga per riga.</li>
+      </ul>
+      <div class="callout">La skill <code>retrieve-alerts</code> delega la lettura, poi salva l'alert scelto con <code>save-alert.js</code>. L'alert va dal connettore al file senza passare dal testo del modello: nessun campo si perde o si riscrive.</div>
+    </div>
+  </div>
+  <aside class="notes">Il perimetro del Data Retriever è quello della demo: recupera, normalizza, seleziona. Il giudizio sull'alert è del Security Analyst, nella lezione 05.</aside>
+</section>
+
+<!-- ============ 6. LABORATORIO ============ -->
+<section class="slide" data-ch="6" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>06</b> Laboratorio</div>
+  <h2>Costruiamo heimdall, il primo pezzo</h2>
+  <p class="lead">Partiamo da una cartella vuota e arriviamo a un plugin con il server MCP, i due backend e il Data Retriever. Alla fine la tabella dei tre scenari è fatta, e l'alert <code>PAY-160644</code> è pronto per la pipeline.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">Passi 1–3</span><h3>Senza agente</h3><p>Scheletro e scenari, schema e normalizzatore, il server provato a mano.</p></div>
+    <div class="panel"><span class="tag acc">Passo 4</span><h3>Con l'agente</h3><p>Il plugin installato e il Data Retriever che produce la tabella.</p></div>
+    <div class="panel"><span class="tag acc">Passi 5–6</span><h3>Verso il reale</h3><p>Il backend reale contro un finto SonarQube, poi l'alert salvato in <code>.pipeline/</code>.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: il repo <code>courses-ai</code> clonato, Claude Code e/o Copilot CLI, Node.js 18 o successivo, Git. I passi con l'agente consumano token sul vostro account.</p>
+  <aside class="notes">Ogni passo copia file dalla soluzione: l'obiettivo è leggerli e capirli mentre il plugin cresce, non scriverli a memoria. Chi finisce prima può aggiungere un quarto scenario con un alert SonarQube chiuso.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 1 · Lo scheletro">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 1</div>
+  <h2>Lo scheletro e gli scenari</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">dalla radice di courses-ai</span><pre class="code">export H="$PWD/corsi/04-connettere-i-sistemi/lab/team-marketplace/plugins/heimdall"
+mkdir -p ~/heimdall-lab/heimdall
+cd ~/heimdall-lab/heimdall &amp;&amp; git init</pre></div>
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">mkdir -p .claude-plugin
+cp "$H/.claude-plugin/plugin.json" .claude-plugin/
+cp -r "$H/scenarios" .</pre></div>
+  </div>
+  <p>Aprite <code>scenarios/payments-api/appscan-issues.json</code> e <code>scenarios/orders-service/sonarqube-issues.json</code>: stessa informazione, nomi e valori diversi.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span>Ho contato gli alert grezzi dei tre scenari: 10</span></label>
+  </div>
+  <aside class="notes">Se qualcuno ha installato heimdall@courses-ai, va disinstallato per la durata del laboratorio: due plugin con lo stesso nome si confondono.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 2 · Il normalizzatore">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 2</div>
+  <h2>Lo schema e il normalizzatore, senza il modello</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">mkdir -p mcp/backends scripts
+cp "$H"/mcp/{alert.schema.json,schema.js,alerts.js,config.js,connector.js} mcp/
+cp "$H"/mcp/backends/*.js mcp/backends/ &amp;&amp; cp "$H/scripts/alerts-table.js" scripts/
+node scripts/alerts-table.js</pre></div>
+  <div class="term">| ORD-400928 | orders-service | sonarqube | critical | code | CWE-89 | …/OrderSearchRepository.java:57 |
+| CPU-145827 | customer-portal-ui | appscan | high | code | CWE-79 | …/profile-card.component.ts:24 |
+| PAY-160644 | payments-api | appscan | high | dependency | CWE-611 | com.acme.libs:acme-xml 1.4.2 (pom.xml:48) |
+…
+<span class="k">6 alert · backend simulated</span>
+- customer-portal-ui: 2 aperti, scartati 1 chiusi, 1 duplicati
+- orders-service: 2 aperti, scartati 1 non di sicurezza
+- payments-api: 2 aperti, scartati 1 chiusi</div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab2"><span>La tabella ha 6 alert e ho trovato nei file grezzi i 4 scartati</span></label>
+    <label class="check"><input type="checkbox" id="lab3"><span>Con <code>High: "alta"</code> in <code>alerts.js</code> ho visto l'errore dello schema su <code>severity</code>, poi ho rimesso <code>"high"</code></span></label>
+  </div>
+  <aside class="notes">Il passo più importante del laboratorio, e senza token: la forma degli alert si decide e si prova qui, prima che un agente la veda.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 3 · Il server a mano">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 3</div>
+  <h2>Il server MCP, provato a mano</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">cp "$H/mcp/server.js" mcp/ &amp;&amp; cp "$H/scripts/mcp-call.js" scripts/
+node scripts/mcp-call.js
+node scripts/mcp-call.js list_alerts '{"project":"payments-api","min_severity":"high"}'
+node scripts/mcp-call.js get_alert '{"project":"payments-api","id":"PAY-1"}'; echo "exit=$?"</pre></div>
+  <div class="grid g2">
+    <ul class="clean">
+      <li>Senza argomenti, <code>mcp-call.js</code> elenca i quattro strumenti con la loro descrizione: è quello che legge il modello.</li>
+      <li>Con la soglia <code>high</code>: 1 alert, <code>PAY-160644</code>; scartati 1 chiuso e 1 sotto soglia.</li>
+    </ul>
+    <div class="term">L'alert «PAY-1» non è tra gli alert aperti di payments-api.
+Usa list_alerts per vedere gli id.
+<span class="k">exit=1</span></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab4"><span>Ho visto le risposte di <code>initialize</code> e <code>tools/list</code> con <code>printf … | node mcp/server.js</code></span></label>
+    <label class="check"><input type="checkbox" id="lab5"><span><code>get_alert</code> con un id sbagliato risponde con un errore dello strumento, e il server non cade</span></label>
+  </div>
+  <aside class="notes">Il messaggio d'errore è scritto per l'agente: gli dice che cosa fare invece. Vale per gli strumenti come per gli hook del corso 03.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 4 · Il Data Retriever">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 4</div>
+  <h2>Il plugin e il Data Retriever</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">il plugin e un marketplace locale</span><pre class="code">cp "$H/.mcp.json" . &amp;&amp; cp -r "$H/agents" "$H/skills" .
+cp "$H/scripts/save-alert.js" scripts/
+mkdir -p ~/heimdall-lab/.claude-plugin
+<span class="c"># marketplace.json: name heimdall-lab, source ./heimdall</span>
+claude plugin marketplace add ~/heimdall-lab
+claude plugin install heimdall@heimdall-lab
+claude plugin details heimdall &amp;&amp; claude mcp list</pre></div>
+    <div class="codewrap"><span class="label">da ~/heimdall-lab</span><pre class="code"><span class="c"># Claude Code</span>
+/heimdall:retrieve-alerts tutti
+
+<span class="c"># Copilot CLI</span>
+copilot plugin marketplace add "$HOME/heimdall-lab"
+copilot plugin install heimdall@heimdall-lab
+/retrieve-alerts tutti</pre></div>
+  </div>
+  <p class="small">Il comando completo per <code>marketplace.json</code> è nel README del laboratorio. Quando la skill chiede quale alert prendere in carico, rispondete «nessuno».</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab6"><span><code>plugin details</code> elenca 1 skill, 1 agente e 1 server MCP; <code>claude mcp list</code> mostra <code>plugin:heimdall:heimdall</code> connesso</span></label>
+    <label class="check"><input type="checkbox" id="lab7"><span>La tabella del Data Retriever coincide con <code>node heimdall/scripts/alerts-table.js</code></span></label>
+  </div>
+  <aside class="notes">Se le tabelle non coincidono, ha ragione lo script: il modello ha riordinato, riassunto o tradotto. È il momento di guardare insieme le istruzioni del subagente. Espandete la chiamata al subagente per vedere quali strumenti ha usato.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 5 · Il backend reale">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 5</div>
+  <h2>Il backend reale, contro un finto SonarQube</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">terminale 2 · da ~/heimdall-lab/heimdall</span><pre class="code">cp "$H/config.example.json" .
+cp "$H/scripts/fake-sonarqube.js" scripts/
+cp config.example.json ~/heimdall-lab/config.json
+FAKE_SONARQUBE_TOKEN=token-inventato \
+  node scripts/fake-sonarqube.js</pre></div>
+    <div class="codewrap"><span class="label">terminale 1 · da ~/heimdall-lab/heimdall</span><pre class="code">export HEIMDALL_BACKEND=real
+export HEIMDALL_CONFIG="$HOME/heimdall-lab/config.json"
+node scripts/mcp-call.js backend_status
+HEIMDALL_SONARQUBE_TOKEN=token-inventato \
+  node scripts/alerts-table.js orders-service</pre></div>
+  </div>
+  <div class="grid g2">
+    <ul class="clean">
+      <li><code>backend_status</code>: <code>"HEIMDALL_SONARQUBE_TOKEN": "manca"</code>, mai un valore.</li>
+      <li>Gli id sono gli stessi del simulato: <code>ORD-400928</code>, <code>ORD-823859</code>.</li>
+    </ul>
+    <ul class="clean">
+      <li>Token sbagliato: «accesso negato (HTTP 401)».</li>
+      <li>Server spento: «non riesco a raggiungere http://localhost:9000».</li>
+    </ul>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab8"><span>Con il token giusto la tabella di <code>orders-service</code> ha gli stessi id del backend simulato</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span>Ho tolto le variabili con <code>unset HEIMDALL_BACKEND HEIMDALL_CONFIG HEIMDALL_SONARQUBE_TOKEN</code></span></label>
+  </div>
+  <aside class="notes">Il finto server è un'altra simulazione, ma esercita il codice vero del backend reale: URL, autenticazione, errori. Per l'agente, avviate claude o copilot nello stesso terminale con il token esportato: il server MCP lo riceve tramite env in .mcp.json.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 6 · Verso la pipeline">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 6</div>
+  <h2>Dall'alert alla pipeline</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code · da ~/heimdall-lab/payments-api</span><pre class="code">mkdir -p ~/heimdall-lab/payments-api
+cd ~/heimdall-lab/payments-api
+claude
+
+/heimdall:retrieve-alerts payments-api
+<span class="c"># scegliete PAY-160644</span></pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI · lo script a mano</span><pre class="code">node ~/heimdall-lab/heimdall/scripts/save-alert.js \
+  payments-api PAY-160644; echo "exit=$?"</pre></div>
+  </div>
+  <div class="term">Salvato .pipeline/PAY-160644/alert.json · high · Vulnerable Component: com.acme.libs:acme-xml 1.4.2
+<span class="c">… e la seconda volta:</span>
+.pipeline/PAY-160644/alert.json esiste già: l'alert PAY-160644 è già in carico.
+<span class="k">exit=3</span></div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab10"><span><code>.pipeline/PAY-160644/alert.json</code> esiste, e il secondo salvataggio esce con 3</span></label>
+  </div>
+  <aside class="notes">Il codice di payments-api arriva nella lezione 05, insieme al Security Analyst che lo legge. Oggi la pipeline si ferma all'alert: il primo artefatto del contratto del corso 03.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Quiz">
+  <div class="eyebrow"><b>06</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Come nei corsi precedenti: ognuno risponde a voce, poi si clicca.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Dove andiamo">
+  <div class="eyebrow"><b>06</b> Dove andiamo</div>
+  <h2>Heimdall, un pezzo alla volta</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag acc">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">→</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <div class="callout"><strong>Da oggi:</strong> Heimdall esiste. Ha il server MCP con lo schema comune, due backend e il Data Retriever. La lezione 05 gli dà il codice dei progetti e il Security Analyst.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr><td><code>01</code></td><td>Skill e plugin</td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr><td><code>03</code></td><td>Orchestrare più agenti</td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr class="hl"><td><code>04</code></td><td>Connettere i sistemi <span class="tag acc">oggi</span></td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr><td><code>05</code></td><td>Capire il codice</td><td>Security Analyst e piano di remediation</td></tr>
+      <tr><td><code>06</code></td><td>Vincoli e guardrail</td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Heimdall si costruisce da zero nei laboratori di questo repo (ADR-0005), con un ambiente simulato e dati inventati (ADR-0004). Il backend reale chiama le API REST degli scanner (ADR-0006).</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/mcp" target="_blank" rel="noopener">MCP</a>: espansione delle variabili in <code>.mcp.json</code></li>
+      <li><a href="https://code.claude.com/docs/en/plugins-reference" target="_blank" rel="noopener">Riferimento dei plugin</a>: server MCP, <code>userConfig</code></li>
+      <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagenti</a>: il campo <code>tools</code></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference" target="_blank" rel="noopener">Riferimento dei plugin della CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers" target="_blank" rel="noopener">Server MCP nella CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference" target="_blank" rel="noopener">Riferimento dei comandi</a>: <code>copilot mcp</code></li></ul></div>
+    <div class="panel"><h3>Server MCP ufficiali</h3><ul class="clean">
+      <li><a href="https://github.com/SonarSource/sonarqube-mcp-server" target="_blank" rel="noopener">SonarSource/sonarqube-mcp-server</a></li>
+      <li><a href="https://github.com/microsoft/azure-devops-mcp" target="_blank" rel="noopener">microsoft/azure-devops-mcp</a></li>
+      <li><a href="https://modelcontextprotocol.io/specification/2025-06-18" target="_blank" rel="noopener">La specifica MCP 2025-06-18</a></li></ul></div>
+    <div class="panel"><h3>Nel repo</h3><ul class="clean">
+      <li><code>corsi/04-connettere-i-sistemi/lab/</code>: la soluzione</li>
+      <li><code>heimdall@courses-ai</code>: il plugin, installabile</li>
+      <li><code>docs/adr/0005-…</code>, <code>docs/adr/0006-…</code>: le decisioni di oggi</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Perché un connettore","Lo schema comune","Il server MCP","Backend e credenziali","Nei due strumenti","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    if (pre.id === 'bOut') return;
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+
+  // ---- simulatore del normalizzatore (esiti calcolati da mcp/alerts.js sugli scenari del laboratorio)
+  const NSIM = [{"project": "payments-api", "source": "appscan", "raw": {"Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b301", "IssueType": "Vulnerable Component", "Scanner": "SCA", "Severity": "High", "Status": "Open", "Cwe": 611, "Location": "pom.xml", "Line": 48, "LibraryName": "com.acme.libs:acme-xml", "LibraryVersion": "1.4.2", "FixedVersion": "2.0.0", "Description": "acme-xml 1.4.2 resolves external entities when it parses XML documents. An attacker who controls an uploaded statement file can read files from the server (XXE).", "FixRecommendation": "Upgrade com.acme.libs:acme-xml to version 2.0.0 or later.", "DateCreated": "2026-10-27T15:02:11Z"}, "alert": {"id": "PAY-160644", "project": "payments-api", "source": "appscan", "scannerId": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b301", "kind": "dependency", "rule": "Vulnerable Component", "severity": "high", "title": "Vulnerable Component: com.acme.libs:acme-xml 1.4.2", "cwe": "CWE-611", "location": {"file": "pom.xml", "line": 48}, "component": {"name": "com.acme.libs:acme-xml", "version": "1.4.2", "fixedIn": "2.0.0"}, "description": "acme-xml 1.4.2 resolves external entities when it parses XML documents. An attacker who controls an uploaded statement file can read files from the server (XXE).", "suggestedFix": "Upgrade com.acme.libs:acme-xml to version 2.0.0 or later.", "detectedAt": "2026-10-27T15:02:11.000Z"}}, {"project": "payments-api", "source": "appscan", "raw": {"Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b302", "IssueType": "Cookie Without Secure Attribute", "Scanner": "SAST", "Severity": "Low", "Status": "Open", "Cwe": 614, "Location": "src/main/java/com/acme/payments/web/SessionCookieFilter.java", "Line": 31, "Description": "The session cookie is created without the Secure attribute and can be sent over plain HTTP.", "FixRecommendation": "Call setSecure(true) on the session cookie.", "DateCreated": "2026-10-27T15:02:11Z"}, "alert": {"id": "PAY-195647", "project": "payments-api", "source": "appscan", "scannerId": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b302", "kind": "code", "rule": "Cookie Without Secure Attribute", "severity": "low", "title": "Cookie Without Secure Attribute", "cwe": "CWE-614", "location": {"file": "src/main/java/com/acme/payments/web/SessionCookieFilter.java", "line": 31}, "component": null, "description": "The session cookie is created without the Secure attribute and can be sent over plain HTTP.", "suggestedFix": "Call setSecure(true) on the session cookie.", "detectedAt": "2026-10-27T15:02:11.000Z"}}, {"project": "payments-api", "source": "appscan", "raw": {"Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b303", "IssueType": "Log Injection", "Scanner": "SAST", "Severity": "Medium", "Status": "Fixed", "Cwe": 117, "Location": "src/main/java/com/acme/payments/audit/AuditLogger.java", "Line": 19, "Description": "User input is written to the audit log without neutralizing line breaks.", "FixRecommendation": "Encode CR and LF characters before logging user input.", "DateCreated": "2026-09-30T10:41:52Z"}, "discarded": "closed"}, {"project": "orders-service", "source": "sonarqube", "raw": {"key": "AZK3xV1qF0d9mN2pLs01", "rule": "javasecurity:S3649", "severity": "BLOCKER", "component": "acme_orders-service:src/main/java/com/acme/orders/repository/OrderSearchRepository.java", "project": "acme_orders-service", "line": 57, "status": "OPEN", "issueStatus": "OPEN", "message": "Change this code to not construct SQL queries directly from user-controlled data.", "type": "VULNERABILITY", "impacts": [{"softwareQuality": "SECURITY", "severity": "BLOCKER"}], "tags": ["cwe", "owasp-a3", "sql"], "creationDate": "2026-10-28T09:14:02+0000"}, "alert": {"id": "ORD-400928", "project": "orders-service", "source": "sonarqube", "scannerId": "AZK3xV1qF0d9mN2pLs01", "kind": "code", "rule": "javasecurity:S3649", "severity": "critical", "title": "Change this code to not construct SQL queries directly from user-controlled data.", "cwe": "CWE-89", "location": {"file": "src/main/java/com/acme/orders/repository/OrderSearchRepository.java", "line": 57}, "component": null, "description": "Change this code to not construct SQL queries directly from user-controlled data.", "suggestedFix": null, "detectedAt": "2026-10-28T09:14:02.000Z"}}, {"project": "orders-service", "source": "sonarqube", "raw": {"key": "AZK3xV1qF0d9mN2pLs02", "rule": "java:S5547", "severity": "CRITICAL", "component": "acme_orders-service:src/main/java/com/acme/orders/export/ReceiptSigner.java", "project": "acme_orders-service", "line": 23, "status": "OPEN", "issueStatus": "OPEN", "message": "Use a strong cipher algorithm.", "type": "VULNERABILITY", "impacts": [{"softwareQuality": "SECURITY", "severity": "MEDIUM"}], "tags": ["cwe", "owasp-a2"], "creationDate": "2026-10-28T09:14:02+0000"}, "alert": {"id": "ORD-823859", "project": "orders-service", "source": "sonarqube", "scannerId": "AZK3xV1qF0d9mN2pLs02", "kind": "code", "rule": "java:S5547", "severity": "medium", "title": "Use a strong cipher algorithm.", "cwe": "CWE-327", "location": {"file": "src/main/java/com/acme/orders/export/ReceiptSigner.java", "line": 23}, "component": null, "description": "Use a strong cipher algorithm.", "suggestedFix": null, "detectedAt": "2026-10-28T09:14:02.000Z"}}, {"project": "orders-service", "source": "sonarqube", "raw": {"key": "AZK3xV1qF0d9mN2pLs03", "rule": "java:S1192", "severity": "MINOR", "component": "acme_orders-service:src/main/java/com/acme/orders/api/OrderController.java", "project": "acme_orders-service", "line": 88, "status": "OPEN", "issueStatus": "OPEN", "message": "Define a constant instead of duplicating this literal \"orderId\" 4 times.", "type": "CODE_SMELL", "impacts": [{"softwareQuality": "MAINTAINABILITY", "severity": "LOW"}], "tags": ["design"], "creationDate": "2026-10-28T09:14:02+0000"}, "discarded": "notSecurity"}, {"project": "customer-portal-ui", "source": "appscan", "raw": {"Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a11", "IssueType": "Cross-Site Scripting", "Scanner": "SAST", "Severity": "High", "Status": "Open", "Cwe": 79, "Location": "src/app/profile/profile-card.component.ts", "Line": 24, "Description": "The customer's biography is passed to bypassSecurityTrustHtml and bound to innerHTML: a script in the biography runs in other customers' browsers.", "FixRecommendation": "Do not pass user-controlled data to bypassSecurityTrustHtml. Bind the value to innerHTML and let Angular sanitize it.", "DateCreated": "2026-10-29T08:20:37Z"}, "alert": {"id": "CPU-145827", "project": "customer-portal-ui", "source": "appscan", "scannerId": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a11", "kind": "code", "rule": "Cross-Site Scripting", "severity": "high", "title": "Cross-Site Scripting", "cwe": "CWE-79", "location": {"file": "src/app/profile/profile-card.component.ts", "line": 24}, "component": null, "description": "The customer's biography is passed to bypassSecurityTrustHtml and bound to innerHTML: a script in the biography runs in other customers' browsers.", "suggestedFix": "Do not pass user-controlled data to bypassSecurityTrustHtml. Bind the value to innerHTML and let Angular sanitize it.", "detectedAt": "2026-10-29T08:20:37.000Z"}}, {"project": "customer-portal-ui", "source": "appscan", "raw": {"Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a12", "IssueType": "Vulnerable Component", "Scanner": "SCA", "Severity": "Medium", "Status": "Open", "Cwe": 1321, "Location": "package.json", "Line": 31, "LibraryName": "acme-date-picker", "LibraryVersion": "3.1.0", "FixedVersion": "3.1.4", "Description": "acme-date-picker 3.1.0 merges user options into a shared object without filtering __proto__ (prototype pollution).", "FixRecommendation": "Upgrade acme-date-picker to version 3.1.4 or later.", "DateCreated": "2026-10-29T08:20:37Z"}, "alert": {"id": "CPU-545297", "project": "customer-portal-ui", "source": "appscan", "scannerId": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a12", "kind": "dependency", "rule": "Vulnerable Component", "severity": "medium", "title": "Vulnerable Component: acme-date-picker 3.1.0", "cwe": "CWE-1321", "location": {"file": "package.json", "line": 31}, "component": {"name": "acme-date-picker", "version": "3.1.0", "fixedIn": "3.1.4"}, "description": "acme-date-picker 3.1.0 merges user options into a shared object without filtering __proto__ (prototype pollution).", "suggestedFix": "Upgrade acme-date-picker to version 3.1.4 or later.", "detectedAt": "2026-10-29T08:20:37.000Z"}}, {"project": "customer-portal-ui", "source": "appscan", "raw": {"Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a13", "IssueType": "Cross-Site Scripting", "Scanner": "SAST", "Severity": "High", "Status": "New", "Cwe": 79, "Location": "src/app/profile/profile-card.component.ts", "Line": 24, "Description": "The customer's biography is passed to bypassSecurityTrustHtml and bound to innerHTML: a script in the biography runs in other customers' browsers.", "FixRecommendation": "Do not pass user-controlled data to bypassSecurityTrustHtml. Bind the value to innerHTML and let Angular sanitize it.", "DateCreated": "2026-11-03T08:12:05Z"}, "discarded": "duplicate", "of": "CPU-145827"}, {"project": "customer-portal-ui", "source": "appscan", "raw": {"Id": "c47a91d0-3e25-4b8f-a6d2-0f9e1b7c4a14", "IssueType": "Open Redirect", "Scanner": "SAST", "Severity": "Medium", "Status": "Noise", "Cwe": 601, "Location": "src/app/auth/login-redirect.service.ts", "Line": 12, "Description": "The returnUrl parameter is used in a navigation.", "FixRecommendation": "Validate returnUrl against a list of allowed paths.", "DateCreated": "2026-10-29T08:20:37Z"}, "discarded": "closed"}];
+  const WHY = {
+    closed: 'Scartato: chiuso. Lo stato dello scanner non è tra quelli aperti.',
+    notSecurity: 'Scartato: non di sicurezza. È un CODE_SMELL senza impatto SECURITY.',
+    duplicate: 'Scartato: duplicato. Scanner, regola, file e riga sono quelli di '
+  };
+  const hlj = o => esc(JSON.stringify(o, null, 2))
+    .replace(/^(\s*)"([^"]+)":/gm, '$1<span class="k">"$2"</span>:')
+    .replace(/: "((?:[^"\\]|\\.)*)"/g, ': <span class="s">"$1"</span>');
+  const counts = {};
+  NSIM.forEach((it, i) => {
+    counts[it.project] = (counts[it.project] || 0) + 1;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', 'false');
+    b.textContent = it.project + ' · ' + counts[it.project];
+    b.title = it.source === 'appscan' ? 'AppScan' : 'SonarQube';
+    b.onclick = () => showN(i);
+    $('#nsimList').appendChild(b);
+  });
+  function showN(i){
+    const it = NSIM[i];
+    $$('#nsimList .chip').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+    $('#nsimRawLabel').textContent = it.project + ' · ' + (it.source === 'appscan' ? 'appscan-issues.json' : 'sonarqube-issues.json');
+    $('#nsimRaw').innerHTML = hlj(it.raw);
+    if (it.alert){
+      $('#nsimOutLabel').textContent = 'esce come ' + it.alert.id;
+      $('#nsimOut').innerHTML = hlj(it.alert);
+    } else {
+      $('#nsimOutLabel').textContent = 'non esce';
+      $('#nsimOut').innerHTML = '<span class="k">' + esc(WHY[it.discarded] + (it.of ? it.of + ', già preso: stesso id.' : '')) + '</span>';
+    }
+  }
+  showN(0);
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab04.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab04.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['Perché il Data Retriever non chiama direttamente le API di AppScan e SonarQube?', ['Perché un agente non può chiamare un\'API','Perché così dipende da un contratto stabile, e il backend cambia senza toccare i prompt','Per risparmiare token'], 1, 'Gli strumenti del server MCP sono il contratto: simulato o reale, AppScan o SonarQube, gli agenti vedono lo stesso schema.'],
+    ['Due scansioni segnalano lo stesso XSS con due Id diversi. Che cosa restituisce list_alerts?', ['Due alert, uno per Id','Un alert, e un duplicato tra gli scartati','Un errore dello schema'], 1, 'L\'id nasce da scanner, regola, file, riga e libreria: le due segnalazioni hanno lo stesso id, e la seconda conta come duplicato.'],
+    ['Dove va il token di SonarQube?', ['In config.example.json, accanto all\'indirizzo','Nel .mcp.json del plugin','In una variabile d\'ambiente, che .mcp.json passa al server per nome'], 2, 'Il plugin contiene solo il nome HEIMDALL_SONARQUBE_TOKEN. Il valore resta sulla macchina e non entra in nessun file del repo.'],
+    ['Come si scrive list_alerts nel campo tools di un subagente di Claude Code?', ['list_alerts','heimdall:list_alerts','mcp__plugin_heimdall_heimdall__list_alerts'], 2, 'Gli strumenti dei server dei plugin si chiamano mcp__plugin_<plugin>_<server>__<strumento>. In Copilot si usa heimdall/list_alerts.'],
+    ['Perché alert.json lo scrive save-alert.js e non il modello con Write?', ['Perché il modello non può scrivere in .pipeline/','Perché così l\'alert va dal connettore al file senza passare dal testo: nessun campo si perde o si riscrive','Perché Write non scrive JSON'], 1, 'Lo stesso principio della timeline del corso 03: quello che deve essere esatto lo produce un programma.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>
