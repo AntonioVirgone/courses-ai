@@ -13,6 +13,7 @@ Ogni corso è una cartella autonoma in `corsi/NN-slug/` con tre parti:
 | # | Corso | Argomenti |
 |---|-------|-----------|
 | 01 | [Skill e plugin per agenti di coding](corsi/01-skill-e-plugin/scaletta.md) | Skill, plugin e marketplace in Claude Code e Copilot; le skill di Matt Pocock; graphify; laboratorio `team-toolkit` |
+| 02 | [Subagenti, hook e server MCP nel plugin](corsi/02-subagenti-hook-mcp/scaletta.md) | Subagenti, hook e server MCP in Claude Code e Copilot; eval dei plugin; laboratorio `team-guardrails` |
 
 ## Aprire una presentazione
 
