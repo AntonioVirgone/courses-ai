@@ -96,7 +96,21 @@ Oppure dal marketplace del repo, insieme a `team-toolkit`:
 claude plugin install team-guardrails@courses-ai
 ```
 
-Con Copilot CLI i comandi sono gli stessi, con `copilot plugin` al posto di `claude plugin`.
+Con Copilot CLI il marketplace locale va aggiunto con il percorso assoluto, perché `./cartella` viene letto come `owner/repo` di GitHub:
+
+```bash
+copilot plugin marketplace add "$PWD/corsi/02-subagenti-hook-mcp/lab/team-marketplace"
+```
+
+```bash
+copilot plugin install team-guardrails@team-marketplace
+```
+
+Dal marketplace del repo il comando è lo stesso, con `copilot plugin` al posto di `claude plugin`:
+
+```bash
+copilot plugin install team-guardrails@courses-ai
+```
 
 ## Che cosa è verificato
 
