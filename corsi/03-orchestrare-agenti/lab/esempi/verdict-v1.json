@@ -1,0 +1,11 @@
+{
+  "alert": "ACME-101",
+  "plan": 1,
+  "decision": "rejected",
+  "violations": [
+    { "constraint": "Nessuna dipendenza nuova", "detail": "Il piano installa date-fns in packages/core e lo importa in coupon.ts." },
+    { "constraint": "Perimetro", "detail": "Il piano modifica packages/core/package.json, che non è il file indicato dall'alert." },
+    { "constraint": "Testi in italiano", "detail": "Il messaggio d'errore «Coupon expired» arriva al cliente ed è in inglese." }
+  ],
+  "notes": "La diagnosi è corretta e il test previsto va bene."
+}

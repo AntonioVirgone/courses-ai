@@ -1,0 +1,7 @@
+{
+  "alert": "ACME-101",
+  "plan": 2,
+  "decision": "approved",
+  "violations": [],
+  "notes": "Il confronto con getTime() non aggiunge dipendenze e lascia invariata la firma di applyCoupon."
+}

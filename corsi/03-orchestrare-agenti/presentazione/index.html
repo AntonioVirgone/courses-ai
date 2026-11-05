@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab 03</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+.code.scroll{max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab · 03</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · corso 03 · Claude Code e GitHub Copilot</div>
+  <h1>Orchestrare<br>più agenti</h1>
+  <p class="lead">Chi scrive il piano non dovrebbe anche approvarlo. Oggi dividiamo il lavoro tra due agenti con contesti separati, che si passano alert, piano e verdetto come file. Un piano rifiutato si rielabora, fino a un limite che decide un programma e non il modello.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>subagenti</span><span>artefatti</span><span>hook</span><span>claude -p</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Prerequisito: il corso 02. Servono subagenti, hook PreToolUse e plugin. Tenete aperto un terminale con Claude Code e, se volete, uno con Copilot CLI.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Sei tappe, da un agente a una pipeline</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">Le tappe 02 e 03 sono il cuore: che cosa si passano gli agenti e come si gestisce un rifiuto. La 04 confronta i due modi di orchestrare, la 05 le differenze tra gli strumenti, la 06 è il laboratorio.</aside>
+</section>
+
+<!-- ============ 1. DA UN AGENTE A UNA PIPELINE ============ -->
+<section class="slide" data-ch="1" data-title="Perché più agenti">
+  <div class="eyebrow"><b>01</b> Da un agente a una pipeline</div>
+  <h2>Un agente solo si dà ragione da solo</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Chi scrive non approva</h3><p>Se lo stesso agente scrive il piano e poi lo controlla, il controllo parte dalle stesse premesse. Un secondo agente con un altro compito trova quello che il primo dava per scontato.</p></div>
+    <div class="panel"><h3>Un contesto per ruolo</h3><p>L'analyst ha in testa il codice, il supervisor i vincoli. Separati, ognuno lavora su poco testo e le istruzioni dell'uno non confondono l'altro.</p></div>
+    <div class="panel"><h3>Il lavoro passa per file</h3><p>Alert, piano, verdetto: ogni passaggio lascia un file. Si legge dopo, lo controlla un programma, e la pipeline riparte da dove si era fermata.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Dal corso 02</th><th>Oggi diventa</th><th>Nel laboratorio</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Subagente</strong>: contesto separato</td><td>Due ruoli che si passano il lavoro</td><td><code>analyst</code>, <code>supervisor</code></td></tr>
+      <tr><td><strong>Hook</strong>: regola che non si discute</td><td>Il contratto degli artefatti e il limite dei tentativi</td><td><code>guard-pipeline</code></td></tr>
+      <tr><td><strong>Skill</strong>: istruzioni su richiesta</td><td>La regia: chi chiamare, in che ordine, quando fermarsi</td><td><code>remediation-plan</code></td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Domanda per il pubblico: vi è mai capitato che l'agente dica «ho verificato, funziona» e non fosse vero? È il problema dell'autovalutazione. Un secondo agente non è infallibile, ma ha un compito diverso.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-title="Il pezzo di Heimdall">
+  <div class="eyebrow"><b>01</b> Da un agente a una pipeline</div>
+  <h2>Oggi costruiamo il cuore della pipeline</h2>
+  <p style="line-height:2.1"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag acc">Security Analyst</span> <span aria-hidden="true">⇄</span> <span class="tag acc">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Oggi, su acme-shop</th><th>In Heimdall</th><th>Lezione</th></tr></thead>
+    <tbody>
+      <tr><td><code>alert.json</code> scritto a mano, dati inventati</td><td>Alert normalizzati da AppScan e SonarQube</td><td>04</td></tr>
+      <tr><td>L'analyst legge il file dell'alert</td><td>Pertinenza, AST e dipendenze, Remediation Plan</td><td>05</td></tr>
+      <tr><td>Il supervisor legge <code>vincoli.md</code></td><td>Vincoli di progetto, per esempio Java 8; perimetro; test intoccabili</td><td>06</td></tr>
+      <tr class="hl"><td>Piano v1 rifiutato, v2 approvato, al massimo tre piani</td><td>Lo stesso ciclo, nello scenario <code>payments-api</code></td><td>03</td></tr>
+      <tr><td>Ci si ferma al piano approvato</td><td>Resolver: branch, commit, pull request</td><td>07</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Lo scenario di oggi ricalca quello Java 8 di Heimdall: lo scanner suggerisce una correzione che viola un vincolo del progetto, il supervisor la rifiuta, l'analyst trova un'altra strada. Qui il vincolo è «nessuna dipendenza nuova».</aside>
+</section>
+
+<!-- ============ 2. RUOLI E ARTEFATTI ============ -->
+<section class="slide" data-ch="2" data-title="I ruoli">
+  <div class="eyebrow"><b>02</b> Ruoli e artefatti</div>
+  <h2>Quattro ruoli, ognuno con il suo perimetro</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Ruolo</th><th>Legge</th><th>Produce</th><th>Non fa</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Orchestratore</strong><br><span class="small">skill <code>remediation-plan</code></span></td><td>Le risposte dei due agenti</td><td>Salva piani e verdetti in <code>.pipeline/</code></td><td>Non scrive piani né verdetti, non tocca il codice</td></tr>
+      <tr><td><strong>Analyst</strong><br><span class="small">subagente, solo lettura</span></td><td><code>alert.json</code>, il codice, il verdetto precedente</td><td>Il piano, come testo</td><td>Non decide se il piano va bene</td></tr>
+      <tr><td><strong>Supervisor</strong><br><span class="small">subagente, solo lettura</span></td><td><code>vincoli.md</code>, il piano, l'alert, il codice</td><td>Il verdetto, in JSON</td><td>Non propone piani, non corregge</td></tr>
+      <tr><td><strong>Persona</strong></td><td>La timeline, i verdetti</td><td><code>vincoli.md</code>, <code>alert.json</code>; la decisione dopo tre rifiuti</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout">I due subagenti hanno solo <code>Read</code>, <code>Grep</code> e <code>Glob</code>. Scrive solo l'orchestratore, e ogni sua scrittura in <code>.pipeline/</code> passa dall'hook.</div>
+  <aside class="notes">L'analyst non legge vincoli.md di proposito: pensa a correggere il problema, i vincoli li conosce il supervisor. È la stessa divisione di Heimdall, ed è ciò che rende il rifiuto possibile e istruttivo.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Gli artefatti">
+  <div class="eyebrow"><b>02</b> Ruoli e artefatti</div>
+  <h2>Un giro completo, file per file</h2>
+  <div class="explorer" data-explorer>
+    <div class="tree">
+      <div class="dir">.pipeline/</div>
+      <button data-show="a-vincoli" aria-pressed="true">&nbsp;&nbsp;vincoli.md</button>
+      <div class="dir">&nbsp;&nbsp;ACME-101/</div>
+      <button data-show="a-alert" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;alert.json</button>
+      <button data-show="a-p1" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;plan-v1.md</button>
+      <button data-show="a-v1" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;verdict-v1.json</button>
+      <button data-show="a-p2" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;plan-v2.md</button>
+      <button data-show="a-v2" aria-pressed="false">&nbsp;&nbsp;&nbsp;&nbsp;verdict-v2.json</button>
+    </div>
+    <div>
+      <div data-file="a-vincoli" class="codewrap"><pre class="code scroll"><span class="k"># Vincoli della pipeline per acme-shop</span>
+
+Il supervisor approva un piano solo se li rispetta tutti. Ogni vincolo ha un nome in grassetto: il verdetto lo cita così com'è nel campo `constraint`.
+
+1. **Importi in centesimi.** Ogni importo resta un numero intero di centesimi (ADR-0001). Niente virgola mobile in euro, niente tipi decimali.
+2. **Nessuna dipendenza nuova.** `packages/core` non ha dipendenze esterne e resta così: niente pacchetti npm nuovi, niente import da pacchetti esterni.
+3. **Perimetro.** Il piano modifica solo il file indicato dall'alert in `location.file`. Può aggiungere un file di test accanto.
+4. **Firma pubblica.** Le funzioni esportate mantengono nome, parametri e tipo di ritorno: chi le chiama non deve cambiare.
+5. **Test.** I test esistenti non si modificano. Una regola di business nuova ha un test nuovo.
+6. **Testi in italiano.** Un messaggio per il cliente è in italiano e usa i termini di `CONTEXT.md`.</pre></div>
+      <div data-file="a-alert" class="codewrap" hidden><pre class="code scroll">{
+  <span class="k">"id"</span>: <span class="s">"ACME-101"</span>,
+  <span class="k">"source"</span>: <span class="s">"scanner simulato"</span>,
+  <span class="k">"rule"</span>: <span class="s">"expired-coupon-accepted"</span>,
+  <span class="k">"severity"</span>: <span class="s">"high"</span>,
+  <span class="k">"title"</span>: <span class="s">"Un coupon scaduto applica comunque lo sconto"</span>,
+  <span class="k">"location"</span>: { <span class="k">"file"</span>: <span class="s">"packages/core/src/coupon.ts"</span>, <span class="k">"line"</span>: 9 },
+  <span class="k">"description"</span>: <span class="s">"applyCoupon riceve la data corrente in now ma non la confronta con coupon.expiresAt: un coupon scaduto applica lo sconto come uno valido."</span>,
+  <span class="k">"suggestedFix"</span>: <span class="s">"Confronta now ed expiresAt con isAfter di date-fns e, se il coupon è scaduto, lancia un errore."</span>
+}</pre></div>
+      <div data-file="a-p1" class="codewrap" hidden><pre class="code scroll"><span class="c">---</span>
+<span class="k">alert:</span> ACME-101
+<span class="k">version:</span> 1
+<span class="c">---</span>
+<span class="k"># Piano v1 · ACME-101</span>
+
+<span class="k">## Diagnosi</span>
+
+`applyCoupon` in `packages/core/src/coupon.ts` riceve `now` ma non lo confronta con `coupon.expiresAt`. Un coupon scaduto applica lo sconto.
+
+<span class="k">## Modifiche</span>
+
+1. Installare `date-fns` in `packages/core`.
+2. In `applyCoupon`, prima del calcolo: `if (isAfter(now, coupon.expiresAt)) throw new Error("Coupon expired");`
+3. Aggiungere `packages/core/src/coupon.test.ts` con un caso per il coupon valido e uno per il coupon scaduto.
+
+<span class="k">## File toccati</span>
+
+- `packages/core/src/coupon.ts`
+- `packages/core/src/coupon.test.ts` (nuovo)
+- `packages/core/package.json`
+
+<span class="k">## Dipendenze</span>
+
+- `date-fns`, per `isAfter`.
+
+<span class="k">## Rischi</span>
+
+- Chi chiama `applyCoupon` con un coupon scaduto ora riceve un errore: va gestito nel carrello.</pre></div>
+      <div data-file="a-v1" class="codewrap" hidden><pre class="code scroll">{
+  <span class="k">"alert"</span>: <span class="s">"ACME-101"</span>,
+  <span class="k">"plan"</span>: 1,
+  <span class="k">"decision"</span>: <span class="s">"rejected"</span>,
+  <span class="k">"violations"</span>: [
+    { <span class="k">"constraint"</span>: <span class="s">"Nessuna dipendenza nuova"</span>, <span class="k">"detail"</span>: <span class="s">"Il piano installa date-fns in packages/core e lo importa in coupon.ts."</span> },
+    { <span class="k">"constraint"</span>: <span class="s">"Perimetro"</span>, <span class="k">"detail"</span>: <span class="s">"Il piano modifica packages/core/package.json, che non è il file indicato dall'alert."</span> },
+    { <span class="k">"constraint"</span>: <span class="s">"Testi in italiano"</span>, <span class="k">"detail"</span>: <span class="s">"Il messaggio d'errore «Coupon expired» arriva al cliente ed è in inglese."</span> }
+  ],
+  <span class="k">"notes"</span>: <span class="s">"La diagnosi è corretta e il test previsto va bene."</span>
+}</pre></div>
+      <div data-file="a-p2" class="codewrap" hidden><pre class="code scroll"><span class="c">---</span>
+<span class="k">alert:</span> ACME-101
+<span class="k">version:</span> 2
+<span class="c">---</span>
+<span class="k"># Piano v2 · ACME-101</span>
+
+<span class="k">## Diagnosi</span>
+
+`applyCoupon` in `packages/core/src/coupon.ts` riceve `now` ma non lo confronta con `coupon.expiresAt`. Un coupon scaduto applica lo sconto.
+
+<span class="k">## Modifiche</span>
+
+1. In `applyCoupon`, prima del calcolo: `if (now.getTime() &gt; coupon.expiresAt.getTime()) throw new Error(`Il coupon ${coupon.code} è scaduto: toglilo dal carrello e riprova.`);`
+2. Aggiungere `packages/core/src/coupon.test.ts` con un caso per il coupon valido e uno per il coupon scaduto.
+
+<span class="k">## File toccati</span>
+
+- `packages/core/src/coupon.ts`
+- `packages/core/src/coupon.test.ts` (nuovo)
+
+<span class="k">## Dipendenze</span>
+
+Nessuna.
+
+<span class="k">## Rischi</span>
+
+- Chi chiama `applyCoupon` con un coupon scaduto ora riceve un errore. In `packages/core` non ci sono altri chiamanti.
+
+<span class="k">## Risposta al verdetto v1</span>
+
+- **Nessuna dipendenza nuova:** niente `date-fns`. Il confronto usa `getTime()` delle due date.
+- **Perimetro:** `package.json` non si tocca più. Restano `coupon.ts` e il suo test nuovo.
+- **Testi in italiano:** il messaggio è in italiano e usa «coupon» e «carrello» di `CONTEXT.md`.</pre></div>
+      <div data-file="a-v2" class="codewrap" hidden><pre class="code scroll">{
+  <span class="k">"alert"</span>: <span class="s">"ACME-101"</span>,
+  <span class="k">"plan"</span>: 2,
+  <span class="k">"decision"</span>: <span class="s">"approved"</span>,
+  <span class="k">"violations"</span>: [],
+  <span class="k">"notes"</span>: <span class="s">"Il confronto con getTime() non aggiunge dipendenze e lascia invariata la firma di applyCoupon."</span>
+}</pre></div>
+    </div>
+  </div>
+  <aside class="notes">Seguite il filo: l'alert suggerisce date-fns, il piano v1 lo segue, il verdetto v1 elenca tre violazioni, il piano v2 risponde a ognuna nella sezione «Risposta al verdetto v1». Sono i file di lab/esempi.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Il contratto">
+  <div class="eyebrow"><b>02</b> Ruoli e artefatti</div>
+  <h2>Il contratto: che cosa si scrive, quando, in che forma</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Le regole</h3><ul class="clean">
+      <li>Un artefatto esistente non si riscrive: una rielaborazione è una <strong>versione nuova</strong>.</li>
+      <li>I piani sono consecutivi, e <code>plan-v2.md</code> richiede <code>verdict-v1.json</code> rifiutato.</li>
+      <li>Al massimo <strong>tre piani</strong>. Dopo il terzo rifiuto decide una persona.</li>
+      <li>Il verdetto ha uno schema: <code>alert</code>, <code>plan</code>, <code>decision</code>, <code>violations</code>.</li>
+      <li>Gli input, <code>vincoli.md</code> e <code>alert.json</code>, non li scrive un agente.</li></ul></div>
+    <div class="panel"><h3>Perché file e non conversazione</h3><ul class="clean">
+      <li>Un subagente <strong>non vede la conversazione</strong>: riceve solo il messaggio di delega. I percorsi dei file sono il modo più sicuro di passargli il lavoro.</li>
+      <li>I file restano dopo la sessione: sono la traccia leggibile di Heimdall.</li>
+      <li>Un programma li può controllare. Una frase in chat, no.</li>
+      <li>Se la sessione si interrompe, si riparte dall'ultimo file.</li></ul></div>
+  </div>
+  <div class="codewrap"><span class="label">scripts/verdict.schema.json · estratto</span><pre class="code"><span class="k">"required"</span>: [<span class="s">"alert"</span>, <span class="s">"plan"</span>, <span class="s">"decision"</span>, <span class="s">"violations"</span>],
+<span class="k">"decision"</span>: { <span class="k">"enum"</span>: [<span class="s">"approved"</span>, <span class="s">"rejected"</span>] },
+<span class="k">"violations"</span>: { <span class="k">"type"</span>: <span class="s">"array"</span>, <span class="k">"items"</span>: { <span class="k">"required"</span>: [<span class="s">"constraint"</span>, <span class="s">"detail"</span>] } }</pre></div>
+  <aside class="notes">In Claude Code il subagente riceve il suo prompt e i dettagli dell'ambiente, non il system prompt né la conversazione. In Copilot ha il suo contesto e, di default, nemmeno le istruzioni del repo. In entrambi i casi la delega deve contenere tutto ciò che serve.</aside>
+</section>
+
+<!-- ============ 3. RIFIUTI E TENTATIVI ============ -->
+<section class="slide" data-ch="3" data-title="Il ciclo">
+  <div class="eyebrow"><b>03</b> Rifiuti e tentativi</div>
+  <h2>Il ciclo: piano, verdetto, rielaborazione</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">lo stato è nei file</span><pre class="code">N = 1
+<span class="k">ripeti</span>
+  analyst    → plan-vN.md
+  supervisor → verdict-vN.json
+  <span class="k">se</span> approved  → <span class="s">fine: il piano vN passa al Resolver</span>
+  <span class="k">se</span> N = 3     → <span class="s">fine: decide una persona</span>
+  N = N + 1   <span class="c"># l'analyst riceve verdict-v(N-1)</span></pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Il verdetto elenca <strong>tutte</strong> le violazioni, non solo la prima: il piano successivo le risolve insieme.</li>
+        <li>Il piano rielaborato ha una sezione <code>## Risposta al verdetto vN</code>, una riga per violazione. L'hook la pretende.</li>
+        <li>Tre piani e non infiniti: ogni giro costa token e tempo, e un terzo rifiuto di solito vuol dire che manca un'informazione, non un tentativo.</li>
+      </ul>
+      <div class="callout">In Heimdall c'è un secondo ciclo, uguale nella forma: la CI fallisce e il Resolver riprova, al massimo due volte. Lo vediamo nella lezione 07.</div>
+    </div>
+  </div>
+  <aside class="notes">Il numero tre è una scelta del corso, non una regola universale: l'importante è che il limite esista e che lo faccia rispettare un programma.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Simulatore">
+  <div class="eyebrow"><b>03</b> Rifiuti e tentativi</div>
+  <h2>Prova: che cosa lascia passare guard-pipeline?</h2>
+  <div class="split">
+    <form class="form" id="psim" autocomplete="off">
+      <div class="field"><label>Il supervisor sul piano v1</label><div class="seg" id="ps1"><button type="button" data-v="ko" aria-pressed="true">Rifiuta</button><button type="button" data-v="ok" aria-pressed="false">Approva</button><button type="button" data-v="bad" aria-pressed="false">Risponde con testo intorno al JSON</button></div></div>
+      <div class="field"><label>Sul piano v2</label><div class="seg" id="ps2"><button type="button" data-v="ok" aria-pressed="true">Approva</button><button type="button" data-v="ko" aria-pressed="false">Rifiuta</button></div></div>
+      <div class="field"><label>Sul piano v3</label><div class="seg" id="ps3"><button type="button" data-v="ok" aria-pressed="false">Approva</button><button type="button" data-v="ko" aria-pressed="true">Rifiuta</button></div></div>
+      <div class="field"><label>Dopo il primo rifiuto, l'orchestratore…</label><div class="seg" id="psx"><button type="button" data-v="ok" aria-pressed="true">segue la skill</button><button type="button" data-v="edit" aria-pressed="false">corregge plan-v1.md</button><button type="button" data-v="skip" aria-pressed="false">scrive plan-v3.md</button></div></div>
+    </form>
+    <div class="term" id="psOut" aria-live="polite" style="min-height:300px"></div>
+  </div>
+  <aside class="notes">Fate provare due combinazioni: rifiuta, rifiuta, rifiuta, per vedere il limite; poi «corregge plan-v1.md», per vedere perché la traccia non si riscrive. I messaggi sono quelli dello script vero.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Chi conta i tentativi">
+  <div class="eyebrow"><b>03</b> Rifiuti e tentativi</div>
+  <h2>Chi conta i tentativi? Non il modello</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Se lo lasciamo al modello…</th><th>…può succedere che</th><th>Lo impedisce</th></tr></thead>
+    <tbody>
+      <tr><td>«Riprova finché il supervisor approva»</td><td>Il ciclo non finisce, o finisce quando il contesto è pieno</td><td>Il quarto piano è bloccato</td></tr>
+      <tr><td>«Correggi il piano»</td><td>Riscrive <code>plan-v1.md</code>: il verdetto v1 non corrisponde più al testo che ha giudicato</td><td>Un artefatto esistente non si riscrive</td></tr>
+      <tr><td>«Fai valutare il piano»</td><td>Salta il supervisor e scrive il piano successivo, o un verdetto suo</td><td><code>plan-vN</code> richiede <code>verdict-v(N-1)</code>; il verdetto deve avere lo schema</td></tr>
+      <tr><td>«Rispondi in JSON»</td><td>Aggiunge «Ecco il verdetto:» prima dell'oggetto</td><td>Il verdetto deve essere JSON valido</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><strong>Il limite dell'hook:</strong> guarda solo <code>Write</code> ed <code>Edit</code>. Un <code>rm</code> lanciato con Bash non lo vede. Per questo la skill concede senza chiedere solo <code>node …/timeline.js</code>: ogni altro comando segue i permessi della sessione.</div>
+  <aside class="notes">La regola di fondo, già vista nel corso 02: quello che deve valere sempre lo fa rispettare un programma. Il modello resta libero sul contenuto del piano, non sulla forma del processo.</aside>
+</section>
+
+<!-- ============ 4. CHI ORCHESTRA ============ -->
+<section class="slide" data-ch="4" data-title="Due strade">
+  <div class="eyebrow"><b>04</b> Chi orchestra</div>
+  <h2>Due strade: una skill o uno script</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">skills/remediation-plan/SKILL.md · estratto</span><pre class="code">Ciclo, con N che parte da 1:
+
+1. Delega all'`analyst` il piano vN. Passagli la
+   cartella dell'alert e N; se N è maggiore di 1,
+   anche il percorso di `verdict-v&lt;N-1&gt;.json`.
+2. Salva la sua risposta così com'è in
+   `.pipeline/&lt;ALERT&gt;/plan-vN.md`, con Write.
+3. Delega al `supervisor` il verdetto. …
+4. Salva la sua risposta così com'è in
+   `.pipeline/&lt;ALERT&gt;/verdict-vN.json`, con Write.
+5. Se il verdetto è `approved`, la pipeline è
+   finita. Se è `rejected`, ripeti con N+1.</pre></div>
+    <div class="codewrap"><span class="label">scripts/run-pipeline.sh · estratto</span><pre class="code"><span class="k">for</span> v <span class="k">in</span> $(seq 1 <span class="s">"$MAX_PLANS"</span>); <span class="k">do</span>
+  plan=<span class="s">"$(claude -p --agent team-pipeline:analyst \
+    --max-turns 15 "Scrivi il piano v$v …")"</span>
+  guard <span class="s">"$DIR/plan-v$v.md"</span> <span class="s">"$plan"</span> || exit 2
+  printf '%s\n' <span class="s">"$plan"</span> &gt; <span class="s">"$DIR/plan-v$v.md"</span>
+
+  verdict=<span class="s">"$(claude -p --agent team-pipeline:supervisor \
+    --output-format json --json-schema "$SCHEMA" …)"</span>
+  guard <span class="s">"$DIR/verdict-v$v.json"</span> <span class="s">"$verdict"</span> || exit 2
+  …
+  [ <span class="s">"$decision"</span> = approved ] &amp;&amp; <span class="k">break</span>
+<span class="k">done</span></pre></div>
+  </div>
+  <p class="small">A sinistra il ciclo è una lista di istruzioni che il modello segue. A destra è un <code>for</code>: il modello scrive piani e verdetti, ma l'ordine e il limite sono codice. <code>guard</code> passa ogni file a <code>guard-pipeline.js</code>, lo stesso script dell'hook.</p>
+  <aside class="notes">È la decisione aperta del percorso Heimdall: la skill guida l'agente principale, oppure uno script chiama l'agente a ogni fase. Oggi le proviamo tutte e due sugli stessi artefatti.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Il confronto">
+  <div class="eyebrow"><b>04</b> Chi orchestra</div>
+  <h2>Che cosa cambia tra le due strade</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Aspetto</th><th>Skill e subagenti</th><th>Script con la CLI non interattiva</th></tr></thead>
+    <tbody>
+      <tr><td>Chi decide il passo successivo</td><td>Il modello, leggendo la skill</td><td>Il ciclo dello script</td></tr>
+      <tr><td>Limite dei tentativi</td><td>Lo fa rispettare l'hook</td><td>È nel codice; l'hook come controllo in più</td></tr>
+      <tr><td>Una persona nel ciclo</td><td>Sì: vede ogni passo e approva le scritture</td><td>No: corre da solo, si legge la timeline alla fine</td></tr>
+      <tr><td>Contesto</td><td>L'agente principale accumula le risposte dei due agenti</td><td>Ogni fase è una sessione nuova, con i soli file</td></tr>
+      <tr><td>Uscita strutturata</td><td>Il testo del supervisor, controllato dall'hook</td><td><code>--json-schema</code> in Claude Code; in Copilot solo il controllo dello script</td></tr>
+      <tr><td>Due strumenti</td><td>La stessa skill in Claude Code e Copilot</td><td>Uno script per strumento: i flag sono diversi</td></tr>
+      <tr><td>Dove serve</td><td>Lavoro interattivo, in aula, nel quotidiano</td><td>Lavori senza persona davanti: CI, eval (lezione 08)</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Nessuna delle due è sbagliata. La skill è più vicina alla demo di Heimdall e più semplice da portare tra gli strumenti; lo script rende deterministici i cicli. Chiedete al pubblico quale userebbe per un job notturno su cento alert.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="La strada mista">
+  <div class="eyebrow"><b>04</b> Chi orchestra</div>
+  <h2>Nel laboratorio: la strada mista</h2>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">skill</span><h3>La regia</h3><p><code>remediation-plan</code> dice all'agente principale chi chiamare, che cosa passargli e dove salvare. È la parte che deve adattarsi: un piano «non pertinente», un formato da correggere.</p></div>
+    <div class="panel"><span class="tag acc">hook</span><h3>Il contratto</h3><p><code>guard-pipeline.js</code> decide che cosa si può scrivere in <code>.pipeline/</code>: versioni, limite, schema. È la parte che deve valere sempre.</p></div>
+    <div class="panel"><span class="tag acc">script</span><h3>La traccia</h3><p><code>timeline.js</code> racconta la pipeline leggendo i file, senza il modello. Così il riassunto non può abbellire ciò che è successo.</p></div>
+  </div>
+  <div class="callout">Lo stesso <code>guard-pipeline.js</code> fa da hook per la skill e da controllo per <code>run-pipeline.sh</code>: un solo contratto, due orchestratori. Quale strada usa Heimdall si decide in un ADR del repo <code>heimdall</code>, dopo questa lezione.</div>
+  <aside class="notes">Il principio della strada mista: al modello il giudizio, ai programmi le regole e la memoria. È anche ciò che rende la pipeline misurabile nella lezione 08.</aside>
+</section>
+
+<!-- ============ 5. NEI DUE STRUMENTI ============ -->
+<section class="slide" data-ch="5" data-title="Delegare">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Delegare in Claude Code e in Copilot CLI</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th></tr></thead>
+    <tbody>
+      <tr><td>Nome di un agente del plugin</td><td><code>team-pipeline:analyst</code></td><td><code>analyst</code>, dal nome del file; uno omonimo di progetto o utente lo nasconde</td></tr>
+      <tr><td>Chiedere la delega</td><td>«Usa il subagente team-pipeline:analyst…» o <code>@agent-team-pipeline:analyst</code></td><td>«Use the analyst agent…», <code>/agent</code>, <code>--agent</code></td></tr>
+      <tr><td>Che cosa vede il subagente</td><td>Il suo prompt e la delega, non la conversazione</td><td>Un contesto suo; di default nemmeno le istruzioni del repo</td></tr>
+      <tr><td><code>tools: Read, Grep, Glob</code></td><td>Nomi nativi</td><td>Accettati come alias di <code>read</code> e <code>search</code></td></tr>
+      <tr><td>Limite di turni dell'agente</td><td><code>maxTurns</code> nel frontmatter</td><td>Non documentato</td></tr>
+      <tr><td>Argomenti nella skill</td><td><code>$ARGUMENTS</code>, <code>${CLAUDE_PLUGIN_ROOT}</code> sostituiti</td><td>Nessuna sostituzione: l'argomento arriva come testo dopo il comando</td></tr>
+      <tr><td>Invocare la skill</td><td><code>/team-pipeline:remediation-plan ACME-101</code></td><td><code>/remediation-plan ACME-101</code></td></tr>
+      <tr class="hl"><td>Hook <code>PreToolUse</code></td><td><code>exit 2</code> blocca</td><td><code>exit 2</code> blocca; in PascalCase riceve <code>tool_name</code> e <code>tool_input</code></td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">In Copilot la delega ai custom agent dei plugin e l'hook sono documentati ma non provati in sessione durante la preparazione. Il comando <code>node …/timeline.js</code> della skill usa <code>${CLAUDE_PLUGIN_ROOT}</code>: in Copilot lanciatelo a mano.</p>
+  <aside class="notes">Gli strumenti divergono soprattutto sui nomi: il prefisso del plugin c'è in Claude Code e manca in Copilot. Per questo la skill nomina tutti e due.</aside>
+</section>
+
+<section class="slide" data-ch="5" data-title="Modalità non interattiva">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Una fase alla volta, dalla riga di comando</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code</span><pre class="code">claude -p --agent team-pipeline:supervisor \
+  --max-turns 15 \
+  --output-format json \
+  --json-schema "$(cat verdict.schema.json)" \
+  "Valuta il piano .pipeline/ACME-101/plan-v1.md"
+
+<span class="c"># il verdetto validato è nel campo structured_output</span></pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">copilot -p "Valuta il piano .pipeline/ACME-101/plan-v1.md" \
+  --agent supervisor \
+  --silent
+
+<span class="c"># --silent: solo la risposta, senza statistiche</span>
+<span class="c"># --output-format=json produce JSONL, un evento per riga</span></pre></div>
+  </div>
+  <ul class="clean small">
+    <li><code>-p</code>: esegue il prompt ed esce. <code>--agent</code>: l'agente della sessione. Esistono in tutti e due.</li>
+    <li><code>--max-turns</code> e <code>--json-schema</code> esistono solo in Claude Code. In Copilot il limite e lo schema li controlla lo script.</li>
+    <li>Senza <code>--bare</code>, <code>claude -p</code> carica i plugin installati e i loro hook: nello script il contratto vale due volte.</li>
+  </ul>
+  <aside class="notes">Non verificato: la documentazione di Claude Code non ha un esempio con -p e --agent insieme, sul nome di un agente di plugin. I due flag sono documentati singolarmente. Provatelo sulla vostra versione prima di farlo in aula.</aside>
+</section>
+
+<!-- ============ 6. LABORATORIO ============ -->
+<section class="slide" data-ch="6" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>06</b> Laboratorio</div>
+  <h2>Facciamo girare team-pipeline</h2>
+  <p class="lead">L'alert <code>ACME-101</code> segnala che un coupon scaduto applica lo sconto. Lo scanner suggerisce <code>date-fns</code>, ma <code>packages/core</code> non accetta dipendenze nuove. Vediamo il piano rifiutato, la rielaborazione e la traccia.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">Passi 1–2</span><h3>Preparare e provare l'hook</h3><p>Una copia nuova di <code>acme-shop</code>, gli input della pipeline, il plugin installato, il contratto provato a mano.</p></div>
+    <div class="panel"><span class="tag acc">Passi 3–5</span><h3>La pipeline</h3><p>Il supervisor da solo su un piano sbagliato, poi la skill dall'alert al piano approvato, poi la timeline.</p></div>
+    <div class="panel"><span class="tag">Passo 6</span><h3>Da script</h3><p>La stessa pipeline guidata da <code>run-pipeline.sh</code>, per confrontare. Facoltativo, solo Claude Code.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: il repo <code>courses-ai</code> clonato, Claude Code e/o Copilot CLI, Node.js 18 o successivo, Git. I passi con il modello consumano token sul vostro account.</p>
+  <aside class="notes">Il laboratorio non chiede di scrivere gli agenti da zero: il focus è il processo. Chi finisce prima può aggiungere un vincolo a vincoli.md e rilanciare.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 1 · Prepara">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 1</div>
+  <h2>Prepara acme-shop e installa il plugin</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">dalla radice di courses-ai</span><pre class="code">export P="$PWD/corsi/03-orchestrare-agenti/lab/team-marketplace/plugins/team-pipeline"
+export E="$PWD/corsi/03-orchestrare-agenti/lab/esempi"
+mkdir -p ~/pipeline-lab
+cp -r corsi/01-skill-e-plugin/lab/acme-shop ~/pipeline-lab/
+cp -r corsi/03-orchestrare-agenti/lab/starter/.pipeline ~/pipeline-lab/acme-shop/
+cd ~/pipeline-lab/acme-shop &amp;&amp; git init &amp;&amp; git add . \
+  &amp;&amp; git commit -m "chore: progetto di partenza con l'alert ACME-101"</pre></div>
+    <div class="codewrap"><span class="label">il plugin, dal marketplace del corso 01</span><pre class="code">claude plugin marketplace update courses-ai
+claude plugin install team-pipeline@courses-ai
+claude plugin details team-pipeline
+<span class="c"># 1 skill, 2 agenti, 1 hook PreToolUse</span>
+
+copilot plugin marketplace update courses-ai
+copilot plugin install team-pipeline@courses-ai</pre></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span><code>~/pipeline-lab/acme-shop</code> ha <code>.pipeline/vincoli.md</code> e <code>.pipeline/ACME-101/alert.json</code></span></label>
+    <label class="check"><input type="checkbox" id="lab2"><span><code>plugin details</code> elenca <code>remediation-plan</code>, <code>analyst</code>, <code>supervisor</code> e l'hook</span></label>
+  </div>
+  <aside class="notes">Una copia nuova anche per chi ha fatto il corso 01: l'esercizio su coupon.ts di quel laboratorio corregge proprio il problema dell'alert, e l'analyst lo troverebbe già risolto.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 2 · L'hook a mano">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 2</div>
+  <h2>Prova il contratto prima di darlo all'agente</h2>
+  <div class="codewrap"><span class="label">da ~/pipeline-lab/acme-shop</span><pre class="code">echo "{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$PWD/.pipeline/ACME-101/plan-v2.md\",\"content\":\"x\"}}" \
+  | node "$P/hooks/guard-pipeline.js"; echo "exit=$?"</pre></div>
+  <div class="term">Il prossimo piano di ACME-101 è plan-v1.md, non plan-v2.md.
+<span class="k">exit=2</span></div>
+  <div class="grid g2">
+    <ul class="clean">
+      <li>Con <code>.pipeline/vincoli.md</code>: bloccato, è un input.</li>
+      <li>Con <code>packages/core/src/coupon.ts</code>: <code>exit=0</code>, fuori da <code>.pipeline/</code> l'hook non interviene.</li>
+    </ul>
+    <ul class="clean">
+      <li>Con <code>plan-v1.md</code> e <code>"content":"x"</code>: bloccato, manca il frontmatter.</li>
+      <li>Ogni motivo è scritto per l'agente: gli dice che cosa fare invece.</li>
+    </ul>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab3"><span>Ho visto un <code>exit=2</code> con il motivo e un <code>exit=0</code></span></label>
+  </div>
+  <aside class="notes">Lo stesso esercizio del corso 02 con protect-adr: un hook si prova fuori dall'agente, con l'evento scritto a mano. È il modo più rapido di capire che cosa farà in sessione.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 3 · Il supervisor da solo">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 3</div>
+  <h2>Fai valutare un piano sbagliato al supervisor</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code</span><pre class="code">cp "$E/plan-v1.md" piano-di-prova.md
+claude
+
+Usa il subagente team-pipeline:supervisor per
+valutare piano-di-prova.md contro .pipeline/vincoli.md;
+l'alert è .pipeline/ACME-101/alert.json.</pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">cp "$E/plan-v1.md" piano-di-prova.md
+copilot
+
+Use the supervisor agent to evaluate
+piano-di-prova.md against .pipeline/vincoli.md;
+the alert is .pipeline/ACME-101/alert.json.</pre></div>
+  </div>
+  <p class="small">Atteso: <code>"decision": "rejected"</code>, con almeno «Nessuna dipendenza nuova» e «Testi in italiano». Confronta con <code>esempi/verdict-v1.json</code>, poi cancella <code>piano-di-prova.md</code>.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab4"><span>Il supervisor ha rifiutato il piano e ha risposto solo con il JSON</span></label>
+    <label class="check"><input type="checkbox" id="lab5"><span>Le violazioni citano i nomi dei vincoli come sono in <code>vincoli.md</code></span></label>
+  </div>
+  <aside class="notes">Se il supervisor approva questo piano, la sua description o le sue istruzioni non bastano: è un buon momento per guardarle insieme. Se aggiunge testo intorno al JSON, nella pipeline l'hook lo farà correggere.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 4 · La pipeline">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 4</div>
+  <h2>Dall'alert al piano approvato</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label cc">Claude Code</span><pre class="code">/team-pipeline:remediation-plan ACME-101</pre></div>
+    <div class="codewrap"><span class="label gh">Copilot CLI</span><pre class="code">/remediation-plan ACME-101</pre></div>
+  </div>
+  <div class="grid g2">
+    <div class="panel"><h3>Che cosa guardare</h3><ul class="clean">
+      <li>Le due deleghe: che cosa passa l'orchestratore a ogni agente?</li>
+      <li>Le richieste di permesso per i Write in <code>.pipeline/ACME-101/</code>.</li>
+      <li>Un eventuale blocco dell'hook, e come l'orchestratore reagisce.</li></ul></div>
+    <div class="panel"><h3>Se il v1 viene approvato</h3><p>Succede: l'analyst a volte evita <code>date-fns</code> da solo. Va bene lo stesso, il rifiuto l'avete visto al Passo 3. Per rivederlo, ricominciate con una copia nuova e chiedete all'analyst di seguire alla lettera il suggerimento dell'alert.</p></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab6"><span>In <code>.pipeline/ACME-101/</code> c'è un verdetto <code>approved</code></span></label>
+    <label class="check"><input type="checkbox" id="lab7"><span>Ho letto almeno un messaggio di delega</span></label>
+  </div>
+  <aside class="notes">In Claude Code espandete le chiamate al subagente per vedere il prompt di delega: deve contenere i percorsi. Se non li contiene, il subagente va a cercare i file da solo, e si vede.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 5 · La traccia">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 5</div>
+  <h2>Leggi la traccia, poi prova a romperla</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">node "$P/scripts/timeline.js" · esempio</span><pre class="code">ACME-101 · Un coupon scaduto applica comunque lo sconto (high)
+        packages/core/src/coupon.ts:9 · da scanner simulato
+10:02:11  v1  analyst     piano scritto        plan-v1.md
+10:03:40  v1  supervisor  rifiutato            verdict-v1.json
+                              · Nessuna dipendenza nuova
+                              · Perimetro
+                              · Testi in italiano
+10:05:02  v2  analyst     piano scritto        plan-v2.md
+10:06:15  v2  supervisor  approvato            verdict-v2.json
+Esito: piano v2 approvato. Il prossimo passo è il Resolver.</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <ul class="clean">
+        <li>Ogni violazione del v1 ha una riga in «Risposta al verdetto v1»?</li>
+        <li>Il codice di uscita dice l'esito: 0 approvato, 1 aperta, 3 limite raggiunto.</li>
+      </ul>
+      <div class="callout warn">Ora chiedete all'agente: «Correggi plan-v1.md togliendo date-fns». L'hook deve bloccarlo con «esiste già e non si riscrive».</div>
+    </div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab8"><span>La timeline corrisponde ai file che ho aperto</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span>L'hook ha bloccato la riscrittura di un piano</span></label>
+  </div>
+  <aside class="notes">La timeline è scritta da un programma che legge i file: se il riassunto dell'agente dice una cosa diversa, ha ragione la timeline.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 6 · Da script">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 6</div>
+  <h2>La stessa pipeline, guidata da uno script</h2>
+  <div class="codewrap"><span class="label cc">Claude Code · facoltativo</span><pre class="code">rm .pipeline/ACME-101/plan-v* .pipeline/ACME-101/verdict-v*
+bash "$P/scripts/run-pipeline.sh" ACME-101; echo "exit=$?"</pre></div>
+  <div class="grid g2">
+    <div class="panel"><h3>Che cosa cambia</h3><ul class="clean">
+      <li>Ogni fase è un <code>claude -p</code>: due chiamate per versione del piano.</li>
+      <li>Il verdetto arriva già validato da <code>--json-schema</code>.</li>
+      <li>Nessuno approva le scritture: le fa lo script, dopo <code>guard</code>.</li></ul></div>
+    <div class="panel"><h3>Da discutere</h3><ul class="clean">
+      <li>Chi ha deciso quando fermarsi, nei due casi?</li>
+      <li>Che cosa vi è mancato senza una persona nel ciclo?</li>
+      <li>Quale strada usereste per cento alert in una notte?</li></ul></div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab10"><span>Lo script è finito con <code>exit=0</code> o <code>exit=3</code> e la timeline coincide con i file</span></label>
+  </div>
+  <aside class="notes">Lo script parte solo da una pipeline nuova: se trova dei piani, si rifiuta. Senza Claude Code autenticato, mostratelo sul vostro schermo.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Quiz">
+  <div class="eyebrow"><b>06</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Come nei corsi precedenti: ognuno risponde a voce, poi si clicca.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Dove andiamo">
+  <div class="eyebrow"><b>06</b> Dove andiamo</div>
+  <h2>Il percorso porta a Heimdall</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">→</span> <span class="tag">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <ul class="clean">
+        <li>Non modifica i test.</li>
+        <li>Non fa merge: l'esito è sempre una pull request da rivedere.</li>
+        <li>Ogni passo lascia una traccia leggibile.</li>
+      </ul>
+      <div class="callout"><strong>Da oggi:</strong> la pipeline di Heimdall ha il suo scheletro: artefatti versionati, un verdetto con uno schema, un limite ai tentativi. Le lezioni 04–07 mettono al posto di alert e agenti di prova quelli veri.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr><td><code>01</code></td><td>Skill e plugin</td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr class="hl"><td><code>03</code></td><td>Orchestrare più agenti <span class="tag acc">oggi</span></td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr><td><code>04</code></td><td>Connettere i sistemi</td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr><td><code>05</code></td><td>Capire il codice</td><td>Security Analyst e piano di remediation</td></tr>
+      <tr><td><code>06</code></td><td>Vincoli e guardrail</td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Nelle lezioni Heimdall usa un ambiente simulato, con dati inventati: niente credenziali né dati reali (ADR-0004). Il suo codice vive nel repo heimdall (ADR-0003).</aside>
+</section>
+
+
+<section class="slide" data-ch="6" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagenti</a></li>
+      <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Skill</a>: sostituzioni e <code>allowed-tools</code></li>
+      <li><a href="https://code.claude.com/docs/en/headless" target="_blank" rel="noopener">Modalità non interattiva</a> · <a href="https://code.claude.com/docs/en/cli-reference" target="_blank" rel="noopener">riferimento della CLI</a></li>
+      <li><a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener">Riferimento degli hook</a></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli" target="_blank" rel="noopener">Custom agent nella CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference" target="_blank" rel="noopener">Riferimento dei comandi</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference" target="_blank" rel="noopener">Uso programmatico</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/hooks-reference" target="_blank" rel="noopener">Riferimento degli hook</a></li></ul></div>
+    <div class="panel"><h3>Nel repo</h3><ul class="clean">
+      <li><code>corsi/03-orchestrare-agenti/lab/</code>: la soluzione e gli esempi</li>
+      <li><code>team-pipeline@courses-ai</code>: il plugin, installabile</li>
+      <li><code>docs/percorso-heimdall.md</code>: il piano del percorso</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Da un agente a una pipeline","Ruoli e artefatti","Rifiuti e tentativi","Chi orchestra","Nei due strumenti","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    if (pre.id === 'bOut') return;
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+
+  // ---- simulatore della pipeline (stessi messaggi di hooks/guard-pipeline.js)
+  const PS = { 1: 'ko', 2: 'ok', 3: 'ko', x: 'ok' };
+  const MSG = {
+    exists: n => n + ' esiste già e non si riscrive: ogni passo della pipeline resta come traccia. Una rielaborazione è una versione nuova.',
+    order: (next, v) => 'Il prossimo piano di ACME-101 è plan-v' + next + '.md, non plan-v' + v + '.md.',
+    notJson: v => 'verdict-v' + v + '.json non è JSON valido. Scrivi solo l\'oggetto del verdetto, senza testo intorno.',
+    limit: 'Limite raggiunto: 3 piani per ACME-101, tutti rifiutati. Non scrivere altri piani: fermati, riassumi i verdetti e passa la decisione a una persona.'
+  };
+  function renderPsim(){
+    const out = [], tl = [];
+    const ok = (who, file) => out.push('<span class="c">' + who + '</span> Write ' + file + '  <span class="k">exit 0</span>');
+    const no = (who, file, why) => out.push('<span class="c">' + who + '</span> ' + file + '  <span class="k">exit 2</span>\n             <span class="c">↳</span> ' + esc(why));
+    let approved = 0;
+    for (let v = 1; v <= 3; v++){
+      ok('analyst    ', 'plan-v' + v + '.md');
+      let d = PS[v];
+      if (d === 'bad'){
+        no('supervisor ', 'Write verdict-v' + v + '.json', MSG.notJson(v));
+        out.push('<span class="c">             l\'orchestratore rimanda il motivo al supervisor, che risponde con il solo JSON</span>');
+        d = 'ko';
+      }
+      ok('supervisor ', 'verdict-v' + v + '.json');
+      tl.push('v' + v + ' ' + (d === 'ok' ? 'approvato' : 'rifiutato'));
+      if (d === 'ok'){ approved = v; break; }
+      if (v === 1 && PS.x === 'edit') no('orchestr.  ', 'Edit plan-v1.md', MSG.exists('plan-v1.md'));
+      if (v === 1 && PS.x === 'skip') no('orchestr.  ', 'Write plan-v3.md', MSG.order(2, 3));
+    }
+    if (!approved) no('analyst    ', 'Write plan-v4.md', MSG.limit);
+    out.push('');
+    out.push('<span class="k">timeline</span>  ' + tl.join(' · '));
+    out.push('<span class="k">esito</span>     ' + (approved ? 'piano v' + approved + ' approvato → Resolver' : '3 piani rifiutati → decide una persona'));
+    $('#psOut').innerHTML = out.join('\n');
+  }
+  segInit('ps1', v => { PS[1] = v; renderPsim(); });
+  segInit('ps2', v => { PS[2] = v; renderPsim(); });
+  segInit('ps3', v => { PS[3] = v; renderPsim(); });
+  segInit('psx', v => { PS.x = v; renderPsim(); });
+  $('#psim').addEventListener('submit', e => e.preventDefault());
+  renderPsim();
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab03.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab03.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['L\'orchestratore delega all\'analyst in Claude Code. Che cosa riceve il subagente?', ['Tutta la conversazione fino a quel punto','Il suo prompt e il messaggio di delega','Solo il file della skill'], 1, 'Il subagente non vede la conversazione: per questo la skill mette nella delega i percorsi dei file da leggere.'],
+    ['Chi deve far rispettare il limite di tre piani?', ['Il supervisor, rifiutando il quarto','Il modello, seguendo la skill','Un programma: l\'hook o lo script'], 2, 'Il modello può perdere il conto o farsi convincere a «provare ancora». Un limite che deve valere sempre lo fa rispettare un programma.'],
+    ['Perché il piano v1 non si corregge sul posto?', ['Perché i file Markdown non si modificano con Edit','Perché il verdetto v1 giudica quel testo: riscriverlo cancella la traccia','Per risparmiare token'], 1, 'Ogni artefatto resta com\'era quando è stato giudicato. Una rielaborazione è plan-v2.md, con la risposta a ogni violazione.'],
+    ['Come si chiama, in Copilot CLI, l\'agente analyst del plugin team-pipeline?', ['team-pipeline:analyst','analyst','/team-pipeline/analyst'], 1, 'In Copilot l\'ID viene dal nome del file, senza prefisso del plugin. Il prefisso team-pipeline: è di Claude Code.'],
+    ['Che cosa dà lo script rispetto alla skill?', ['Il ciclo e il limite sono codice, non istruzioni per il modello','Una persona che approva ogni passo','Funziona uguale in Claude Code e Copilot senza modifiche'], 0, 'Con lo script l\'ordine delle fasi e il limite non dipendono dal modello. In cambio si perde la persona nel ciclo, e i flag cambiano da uno strumento all\'altro.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>

@@ -47,13 +47,13 @@ Gli scenari della demo sono tre, e diventano gli scenari del corso:
 
 ## Lezioni
 
-Ogni lezione dura circa 3 ore e 30 minuti e ha la struttura di sempre: presentazione, scaletta, laboratorio (ADR-0001). Dalla lezione 03 il laboratorio parte da uno stato noto del repo `heimdall` e porta allo stato successivo.
+Ogni lezione dura circa 3 ore e 30 minuti e ha la struttura di sempre: presentazione, scaletta, laboratorio (ADR-0001). La lezione 03 lavora ancora su `acme-shop`, con un plugin didattico in questo repo. Dalla lezione 04 il laboratorio parte da uno stato noto del repo `heimdall` e porta allo stato successivo.
 
 | # | Lezione | Pezzo di Heimdall | Laboratorio | Stato |
 |---|---------|-------------------|-------------|-------|
 | 01 | [Skill e plugin](../corsi/01-skill-e-plugin/scaletta.md) | La skill `/heimdall`, il plugin, il marketplace | `team-toolkit` | fatto |
 | 02 | [Subagenti, hook e server MCP](../corsi/02-subagenti-hook-mcp/scaletta.md) | I mattoni: agenti, guard, connettori | `team-guardrails` | fatto |
-| 03 | Orchestrare più agenti | La pipeline: chi chiama chi, quali artefatti si passano gli agenti (alert, piano, verdetto), i cicli di rifiuto e di retry | Analyst e Supervisor su `acme-shop`, con un rifiuto e una rielaborazione | da fare |
+| 03 | [Orchestrare più agenti](../corsi/03-orchestrare-agenti/scaletta.md) | La pipeline: chi chiama chi, quali artefatti si passano gli agenti (alert, piano, verdetto), i cicli di rifiuto e di retry | `team-pipeline`: Analyst e Supervisor su `acme-shop`, con un rifiuto e una rielaborazione | fatto |
 | 04 | Connettere i sistemi | Data Retriever e server MCP di Heimdall: lo schema comune degli alert, il backend simulato, la configurazione delle credenziali | Il Data Retriever produce la tabella degli alert normalizzati dei tre scenari | da fare |
 | 05 | Capire il codice | Security Analyst: pertinenza dell'alert, AST e dipendenze, Remediation Plan | Il piano v1 su `payments-api` | da fare |
 | 06 | Vincoli e guardrail | Supervisor e hook: vincoli di progetto (per esempio la versione di Java), perimetro della modifica, test intoccabili, niente merge | Lo scenario Java 8: v1 rifiutato, v2 approvato | da fare |
@@ -75,5 +75,5 @@ Da verificare nella lezione 04:
   - la skill `/heimdall` guida l'agente principale, che delega ai subagenti;
   - uno script deterministico richiama l'agente a ogni fase, per esempio con la modalità non interattiva della CLI.
 
-  La prima è più vicina alla demo. La seconda rende più affidabili i cicli (rifiuto, retry al massimo 2) e la timeline. La lezione 03 le confronta e la scelta va in un ADR del repo `heimdall`.
+  La prima è più vicina alla demo. La seconda rende più affidabili i cicli (rifiuto, retry al massimo 2) e la timeline. La lezione 03 le confronta e il suo laboratorio usa una strada mista: la skill guida l'agente principale, che delega ai subagenti, mentre un hook fa rispettare il contratto degli artefatti e il limite dei tentativi. La scelta per Heimdall va in un ADR del repo `heimdall`.
 - **Come si esegue la CI simulata** (lezione 07): esiti prestabiliti negli scenari, oppure build e test veri dei progetti di esempio. I secondi richiedono JDK 8, JDK 21, Gradle e Node.js su ogni macchina.

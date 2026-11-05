@@ -1,0 +1,13 @@
+{
+  "description": "Il contratto degli artefatti in .pipeline/: si scrivono una volta, versioni consecutive, al massimo tre piani, verdetti secondo lo schema",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-pipeline.js\"", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}

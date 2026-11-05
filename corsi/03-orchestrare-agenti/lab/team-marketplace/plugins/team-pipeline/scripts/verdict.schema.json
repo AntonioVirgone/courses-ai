@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Verdetto del supervisor su un piano",
+  "type": "object",
+  "required": ["alert", "plan", "decision", "violations"],
+  "additionalProperties": false,
+  "properties": {
+    "alert": { "type": "string", "pattern": "^[A-Z]+-[0-9]+$" },
+    "plan": { "type": "integer", "minimum": 1 },
+    "decision": { "enum": ["approved", "rejected"] },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["constraint", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "constraint": { "type": "string", "minLength": 1 },
+          "detail": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}
