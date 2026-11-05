@@ -59,9 +59,18 @@ CLAUDE.md                 istruzioni per gli agenti (AGENTS.md rimanda qui)
 CONTEXT.md                glossario
 .claude-plugin/           il marketplace courses-ai
 docs/adr/                 le decisioni del repo
+scripts/validate.py       controlli su JSON, skill, plugin e corsi
 corsi/NN-slug/            un corso
 ```
 
 ## Contribuire
 
 Un branch per ogni modifica e una PR verso `main`. Commit e PR in italiano, in formato conventional commits, con lo scope del corso o dell'area: `feat(corso-01): …`, `docs: …`, `ci: …`. I dettagli sono in [CLAUDE.md](CLAUDE.md).
+
+Prima di aprire una PR (serve PyYAML):
+
+```bash
+python3 scripts/validate.py
+```
+
+La stessa verifica, più `claude plugin validate` su ogni marketplace e plugin, gira in CI su ogni PR.

@@ -25,11 +25,19 @@ Questo repo raccoglie i corsi interni del team su Claude Code e GitHub Copilot. 
 - Il manifest di un plugin sta in `.claude-plugin/plugin.json`; `skills/`, `agents/` e `hooks/` alla radice del plugin.
 - Alza `version` in `plugin.json` a ogni modifica di un plugin.
 
-Se la CLI di Claude Code è disponibile, valida i plugin prima di committare:
+Prima di committare:
 
 ```bash
-claude plugin validate <cartella-del-plugin>
+python3 scripts/validate.py
 ```
+
+Se la CLI di Claude Code è disponibile, valida anche ogni marketplace e plugin toccato:
+
+```bash
+claude plugin validate <cartella>
+```
+
+La CI esegue entrambi i controlli su ogni PR.
 
 ## Commit e PR
 
