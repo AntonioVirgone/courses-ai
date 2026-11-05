@@ -16,6 +16,11 @@
       "name": "team-guardrails",
       "source": "./corsi/02-subagenti-hook-mcp/lab/team-marketplace/plugins/team-guardrails",
       "description": "Corso 02 · Revisore, protezione degli ADR e glossario di dominio per il progetto di esempio acme-shop"
+    },
+    {
+      "name": "team-pipeline",
+      "source": "./corsi/03-orchestrare-agenti/lab/team-marketplace/plugins/team-pipeline",
+      "description": "Corso 03 · Pipeline di remediation con analyst e supervisor, rifiuto e rielaborazione del piano, per il progetto di esempio acme-shop"
     }
   ]
 }
