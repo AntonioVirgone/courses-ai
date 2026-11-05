@@ -1,3 +1,5 @@
+> **Superata da ADR-0005** su dove vive il codice di Heimdall e da dove partono i laboratori. Il resto resta in vigore.
+
 # Il percorso dei corsi porta a Heimdall, che vive in un repo separato
 
 I corsi di questo repo formano un percorso. L'ultima lezione mette in funzione Heimdall, il plugin che parte da un alert di AppScan o SonarQube e arriva a una pull request su Azure DevOps pronta per la review umana. Le prime lezioni insegnano gli strumenti con cui è costruito: skill, plugin, subagenti, hook e server MCP. Le successive costruiscono Heimdall un pezzo alla volta. Il piano è in [docs/percorso-heimdall.md](../percorso-heimdall.md). Heimdall funziona sia in GitHub Copilot CLI sia in Claude Code.

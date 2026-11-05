@@ -1,0 +1,6 @@
+{
+  "name": "heimdall",
+  "version": "0.1.0",
+  "description": "Heimdall, primo pezzo: il server MCP degli alert di sicurezza, con backend simulato e reale, e il Data Retriever",
+  "author": { "name": "Team Heimdall" }
+}

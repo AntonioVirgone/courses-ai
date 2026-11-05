@@ -21,6 +21,11 @@
       "name": "team-pipeline",
       "source": "./corsi/03-orchestrare-agenti/lab/team-marketplace/plugins/team-pipeline",
       "description": "Corso 03 · Pipeline di remediation con analyst e supervisor, rifiuto e rielaborazione del piano, per il progetto di esempio acme-shop"
+    },
+    {
+      "name": "heimdall",
+      "source": "./corsi/04-connettere-i-sistemi/lab/team-marketplace/plugins/heimdall",
+      "description": "Corso 04 · Heimdall, primo pezzo: server MCP degli alert di AppScan e SonarQube, con backend simulato e reale, e Data Retriever"
     }
   ]
 }

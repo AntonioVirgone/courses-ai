@@ -1,0 +1,47 @@
+{
+  "Count": 3,
+  "Items": [
+    {
+      "Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b301",
+      "IssueType": "Vulnerable Component",
+      "Scanner": "SCA",
+      "Severity": "High",
+      "Status": "Open",
+      "Cwe": 611,
+      "Location": "pom.xml",
+      "Line": 48,
+      "LibraryName": "com.acme.libs:acme-xml",
+      "LibraryVersion": "1.4.2",
+      "FixedVersion": "2.0.0",
+      "Description": "acme-xml 1.4.2 resolves external entities when it parses XML documents. An attacker who controls an uploaded statement file can read files from the server (XXE).",
+      "FixRecommendation": "Upgrade com.acme.libs:acme-xml to version 2.0.0 or later.",
+      "DateCreated": "2026-10-27T15:02:11Z"
+    },
+    {
+      "Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b302",
+      "IssueType": "Cookie Without Secure Attribute",
+      "Scanner": "SAST",
+      "Severity": "Low",
+      "Status": "Open",
+      "Cwe": 614,
+      "Location": "src/main/java/com/acme/payments/web/SessionCookieFilter.java",
+      "Line": 31,
+      "Description": "The session cookie is created without the Secure attribute and can be sent over plain HTTP.",
+      "FixRecommendation": "Call setSecure(true) on the session cookie.",
+      "DateCreated": "2026-10-27T15:02:11Z"
+    },
+    {
+      "Id": "6b1f0c2e-8a4d-4f7e-9c11-2d5e7a90b303",
+      "IssueType": "Log Injection",
+      "Scanner": "SAST",
+      "Severity": "Medium",
+      "Status": "Fixed",
+      "Cwe": 117,
+      "Location": "src/main/java/com/acme/payments/audit/AuditLogger.java",
+      "Line": 19,
+      "Description": "User input is written to the audit log without neutralizing line breaks.",
+      "FixRecommendation": "Encode CR and LF characters before logging user input.",
+      "DateCreated": "2026-09-30T10:41:52Z"
+    }
+  ]
+}

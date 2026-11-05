@@ -17,6 +17,7 @@ I corsi formano un percorso che porta a mettere in funzione Heimdall, il plugin 
 | 01 | [Skill e plugin per agenti di coding](corsi/01-skill-e-plugin/scaletta.md) | Skill, plugin e marketplace in Claude Code e Copilot; le skill di Matt Pocock; graphify; laboratorio `team-toolkit` |
 | 02 | [Subagenti, hook e server MCP nel plugin](corsi/02-subagenti-hook-mcp/scaletta.md) | Subagenti, hook e server MCP in Claude Code e Copilot; eval dei plugin; laboratorio `team-guardrails` |
 | 03 | [Orchestrare più agenti](corsi/03-orchestrare-agenti/scaletta.md) | Ruoli e artefatti versionati, rifiuto e rielaborazione, limite dei tentativi; skill e subagenti contro uno script; laboratorio `team-pipeline` |
+| 04 | [Connettere i sistemi](corsi/04-connettere-i-sistemi/scaletta.md) | Server MCP degli alert, schema comune di AppScan e SonarQube, backend simulato e reale, credenziali; laboratorio `heimdall`, il primo pezzo di Heimdall |
 
 ## Aprire una presentazione
 
@@ -52,6 +53,10 @@ claude plugin install team-guardrails@courses-ai
 claude plugin install team-pipeline@courses-ai
 ```
 
+```bash
+claude plugin install heimdall@courses-ai
+```
+
 Copilot CLI:
 
 ```bash
@@ -70,7 +75,11 @@ copilot plugin install team-guardrails@courses-ai
 copilot plugin install team-pipeline@courses-ai
 ```
 
-I plugin sono didattici: codificano le convenzioni del progetto di esempio `acme-shop`, non quelle di un progetto reale.
+```bash
+copilot plugin install heimdall@courses-ai
+```
+
+I plugin dei corsi 01–03 sono didattici: codificano le convenzioni del progetto di esempio `acme-shop`, non quelle di un progetto reale. Dal corso 04 i laboratori costruiscono `heimdall`, un pezzo alla volta (ADR-0005); nei corsi usa solo dati inventati (ADR-0004).
 
 ## Struttura
 

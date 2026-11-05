@@ -611,7 +611,7 @@ Nessuna.
     <div class="panel"><span class="tag acc">hook</span><h3>Il contratto</h3><p><code>guard-pipeline.js</code> decide che cosa si può scrivere in <code>.pipeline/</code>: versioni, limite, schema. È la parte che deve valere sempre.</p></div>
     <div class="panel"><span class="tag acc">script</span><h3>La traccia</h3><p><code>timeline.js</code> racconta la pipeline leggendo i file, senza il modello. Così il riassunto non può abbellire ciò che è successo.</p></div>
   </div>
-  <div class="callout">Lo stesso <code>guard-pipeline.js</code> fa da hook per la skill e da controllo per <code>run-pipeline.sh</code>: un solo contratto, due orchestratori. Quale strada usa Heimdall si decide in un ADR del repo <code>heimdall</code>, dopo questa lezione.</div>
+  <div class="callout">Lo stesso <code>guard-pipeline.js</code> fa da hook per la skill e da controllo per <code>run-pipeline.sh</code>: un solo contratto, due orchestratori. Quale strada usa Heimdall si decide in un ADR di questo repo, dopo questa lezione.</div>
   <aside class="notes">Il principio della strada mista: al modello il giudizio, ai programmi le regole e la memoria. È anche ciò che rende la pipeline misurabile nella lezione 08.</aside>
 </section>
 
@@ -859,7 +859,7 @@ bash "$P/scripts/run-pipeline.sh" ACME-101; echo "exit=$?"</pre></div>
       </tbody>
     </table></div>
   </div>
-  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Nelle lezioni Heimdall usa un ambiente simulato, con dati inventati: niente credenziali né dati reali (ADR-0004). Il suo codice vive nel repo heimdall (ADR-0003).</aside>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. Nelle lezioni Heimdall usa un ambiente simulato, con dati inventati: niente credenziali né dati reali (ADR-0004). Dalla lezione 04 si costruisce da zero in questo repo (ADR-0005).</aside>
 </section>
 
 

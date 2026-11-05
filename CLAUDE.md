@@ -6,7 +6,7 @@ Questo repo raccoglie i corsi interni del team su Claude Code e GitHub Copilot. 
 
 - Ogni corso è una cartella autonoma `corsi/NN-slug/` con `presentazione/index.html`, `scaletta.md` e `lab/` (ADR-0001). Un corso nuovo ha le stesse tre parti e una riga nella tabella del README.
 - `.claude-plugin/marketplace.json` alla radice è il marketplace `courses-ai` (ADR-0002). Ogni voce punta con un percorso relativo al plugin dentro il `lab/` di un corso: i file del plugin esistono in una sola copia. Se sposti un plugin, aggiorna la voce.
-- Il piano del percorso è in `docs/percorso-heimdall.md`. Il codice di Heimdall non sta qui ma nel repo `heimdall` (ADR-0003). Nei laboratori si usa solo il suo ambiente simulato; credenziali e dati reali non entrano mai in questo repo (ADR-0004).
+- Il piano del percorso è in `docs/percorso-heimdall.md`. Dalla lezione 04 i laboratori costruiscono Heimdall da zero, qui: il plugin `heimdall` nel `lab/` della lezione 04. Per ora non si fa riferimento al repo `heimdall` (ADR-0005). Nei laboratori si usa solo il suo backend simulato; credenziali e dati reali non entrano mai in questo repo (ADR-0004, ADR-0006).
 
 ## Lingue
 
