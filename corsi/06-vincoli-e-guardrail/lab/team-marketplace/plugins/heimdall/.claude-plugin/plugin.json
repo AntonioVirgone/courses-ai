@@ -1,0 +1,8 @@
+{
+  "name": "heimdall",
+  "version": "0.3.0",
+  "description": "Heimdall, fino al Supervisor: il server MCP degli alert e dei metadati delle librerie, con backend simulato e reale, il Data Retriever, l'analisi statica del codice, il Security Analyst, il Supervisor con i vincoli del progetto e gli hook che proteggono test, branch e artefatti",
+  "author": {
+    "name": "Team Heimdall"
+  }
+}

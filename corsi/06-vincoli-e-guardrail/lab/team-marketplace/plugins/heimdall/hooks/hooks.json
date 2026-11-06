@@ -1,0 +1,21 @@
+{
+  "description": "I guardrail di Heimdall: il contratto degli artefatti in .pipeline/, i test esistenti intoccabili, niente merge e niente scritture sui branch protetti",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-pipeline.js\"", "timeout": 10 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-tests.js\"", "timeout": 10 }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-tests.js\"", "timeout": 10 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-git.js\"", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}

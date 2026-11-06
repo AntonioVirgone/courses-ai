@@ -1,0 +1,13 @@
+{
+  "name": "team-marketplace",
+  "owner": {
+    "name": "Team Heimdall"
+  },
+  "plugins": [
+    {
+      "name": "heimdall",
+      "source": "./plugins/heimdall",
+      "description": "Heimdall: server MCP degli alert, Data Retriever, analisi statica, Security Analyst, Supervisor e guardrail"
+    }
+  ]
+}

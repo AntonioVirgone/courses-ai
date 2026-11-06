@@ -1,0 +1,50 @@
+{
+  "paging": { "pageIndex": 1, "pageSize": 100, "total": 3 },
+  "issues": [
+    {
+      "key": "AZK3xV1qF0d9mN2pLs01",
+      "rule": "javasecurity:S3649",
+      "severity": "BLOCKER",
+      "component": "acme_orders-service:src/main/java/com/acme/orders/repository/OrderSearchRepository.java",
+      "project": "acme_orders-service",
+      "line": 57,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "message": "Change this code to not construct SQL queries directly from user-controlled data.",
+      "type": "VULNERABILITY",
+      "impacts": [{ "softwareQuality": "SECURITY", "severity": "BLOCKER" }],
+      "tags": ["cwe", "owasp-a3", "sql"],
+      "creationDate": "2026-10-28T09:14:02+0000"
+    },
+    {
+      "key": "AZK3xV1qF0d9mN2pLs02",
+      "rule": "java:S5547",
+      "severity": "CRITICAL",
+      "component": "acme_orders-service:src/main/java/com/acme/orders/export/ReceiptSigner.java",
+      "project": "acme_orders-service",
+      "line": 23,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "message": "Use a strong cipher algorithm.",
+      "type": "VULNERABILITY",
+      "impacts": [{ "softwareQuality": "SECURITY", "severity": "MEDIUM" }],
+      "tags": ["cwe", "owasp-a2"],
+      "creationDate": "2026-10-28T09:14:02+0000"
+    },
+    {
+      "key": "AZK3xV1qF0d9mN2pLs03",
+      "rule": "java:S1192",
+      "severity": "MINOR",
+      "component": "acme_orders-service:src/main/java/com/acme/orders/api/OrderController.java",
+      "project": "acme_orders-service",
+      "line": 88,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "message": "Define a constant instead of duplicating this literal \"orderId\" 4 times.",
+      "type": "CODE_SMELL",
+      "impacts": [{ "softwareQuality": "MAINTAINABILITY", "severity": "LOW" }],
+      "tags": ["design"],
+      "creationDate": "2026-10-28T09:14:02+0000"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "alert": "PAY-160644",
+  "plan": 2,
+  "decision": "approved",
+  "checked": ["Java 8", "Dipendenze", "Perimetro", "Test esistenti", "Nessuna scorciatoia"],
+  "violations": [],
+  "notes": "AppScan continuerà a segnalare acme-xml 1.4.2: il piano lo dice nei rischi e lascia alla review umana come chiudere l'alert. L'aggiornamento alla 2.0.0 resta legato alla migrazione a Java 11."
+}
