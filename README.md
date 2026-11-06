@@ -19,6 +19,7 @@ I corsi formano un percorso che porta a mettere in funzione Heimdall, il plugin 
 | 03 | [Orchestrare più agenti](corsi/03-orchestrare-agenti/scaletta.md) | Ruoli e artefatti versionati, rifiuto e rielaborazione, limite dei tentativi; skill e subagenti contro uno script; laboratorio `team-pipeline` |
 | 04 | [Connettere i sistemi](corsi/04-connettere-i-sistemi/scaletta.md) | Server MCP degli alert, schema comune di AppScan e SonarQube, backend simulato e reale, credenziali; laboratorio `heimdall`, il primo pezzo di Heimdall |
 | 05 | [Capire il codice](corsi/05-capire-il-codice/scaletta.md) | Pertinenza di un alert, albero sintattico contro grep, grafo delle chiamate e punti d'ingresso, dipendenze e metadati delle librerie, Remediation Plan; laboratorio `heimdall` con il Security Analyst su `payments-api` |
+| 06 | [Vincoli e guardrail](corsi/06-vincoli-e-guardrail/scaletta.md) | Vincoli di progetto nel repo, Supervisor e verdetti, piano rifiutato e rielaborato, hook PreToolUse su test, git e artefatti, dove vale un hook di plugin; laboratorio `heimdall` con lo scenario Java 8: v1 rifiutato, v2 approvato |
 
 ## Aprire una presentazione
 

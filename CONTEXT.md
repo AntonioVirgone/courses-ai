@@ -42,6 +42,11 @@ I termini che usiamo nei corsi e nel repo. Se un termine ha un nome diverso in C
 - **Catena**: la sequenza di chiamate da un punto d'ingresso al codice di un alert, con file e riga di ogni passo.
 - **Albero sintattico** (AST): la struttura di un file sorgente come la vede un parser: tipi, metodi, chiamate. Commenti e stringhe ne restano fuori.
 - **Remediation Plan**: il piano di correzione di un alert, in `.pipeline/<ID>/plan-vN.md`. Lo scrive il Security Analyst e lo valuta il Supervisor.
+- **Vincolo di progetto**: una regola che ogni piano deve rispettare in un progetto, per esempio «Java 8». Sta in `.heimdall/vincoli.md` nel repo del progetto, con un nome in grassetto, e la scrive il team che lo mantiene (ADR-0008).
+- **Verdetto**: la decisione del Supervisor su un piano, in `.pipeline/<ID>/verdict-vN.json`: approvato, oppure rifiutato con le violazioni. Elenca in `checked` tutti i vincoli controllati.
+- **Violazione**: un punto del piano che contraddice un vincolo scritto. Un gusto o un'alternativa preferita non sono violazioni.
+- **Guardrail**: un hook che impedisce un'azione dell'agente invece di chiedergli di evitarla. In Heimdall: il contratto degli artefatti, i test esistenti intoccabili, niente merge.
+- **Branch protetto**: un branch su cui Heimdall non fa commit, push o merge: `main`, `master`, `develop`, `release/*`.
 
 ## Documentazione delle decisioni
 

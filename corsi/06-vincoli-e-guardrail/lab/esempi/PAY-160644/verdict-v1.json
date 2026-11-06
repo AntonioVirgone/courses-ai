@@ -1,0 +1,17 @@
+{
+  "alert": "PAY-160644",
+  "plan": 1,
+  "decision": "rejected",
+  "checked": ["Java 8", "Dipendenze", "Perimetro", "Test esistenti", "Nessuna scorciatoia"],
+  "violations": [
+    {
+      "constraint": "Java 8",
+      "detail": "Il passo 2 di «Modifiche» porta java.version da 1.8 a 11 (pom.xml:21), e «Dipendenze» lo conferma: acme-xml 2.0.0 richiede Java 11."
+    },
+    {
+      "constraint": "Dipendenze",
+      "detail": "Il passo 1 di «Modifiche» porta acme-xml da 1.4.2 a 2.0.0 (pom.xml:22): è un cambio di major della libreria comune, che decide il team piattaforma."
+    }
+  ],
+  "notes": "Diagnosi ed evidenze tornano con il codice. L'alternativa del piano, resolveExternalEntities(false) sulla 1.4.2, non cambia né Java né la major di acme-xml."
+}

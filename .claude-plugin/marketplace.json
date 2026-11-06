@@ -24,8 +24,8 @@
     },
     {
       "name": "heimdall",
-      "source": "./corsi/05-capire-il-codice/lab/team-marketplace/plugins/heimdall",
-      "description": "Corso 05 · Heimdall fino al Security Analyst: server MCP degli alert e dei metadati delle librerie, Data Retriever, analisi statica del codice e Remediation Plan v1"
+      "source": "./corsi/06-vincoli-e-guardrail/lab/team-marketplace/plugins/heimdall",
+      "description": "Corso 06 · Heimdall fino al Supervisor: server MCP degli alert, Data Retriever, analisi statica, Security Analyst, Supervisor con i vincoli del progetto e hook su test, branch e artefatti"
     }
   ]
 }

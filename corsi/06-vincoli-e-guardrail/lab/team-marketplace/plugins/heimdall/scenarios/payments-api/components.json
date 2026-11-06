@@ -1,0 +1,39 @@
+{
+  "components": [
+    {
+      "name": "com.acme.libs:acme-xml",
+      "description": "XML reader shared by the ACME payment services.",
+      "packages": ["com.acme.xml"],
+      "versions": [
+        {
+          "version": "1.3.0",
+          "released": "2024-11-04",
+          "javaMin": "8",
+          "notes": [
+            "Adds XmlReader.builder() and XmlReader.Builder#resolveExternalEntities(boolean). The default is true, as with XmlReaderFactory.newReader()."
+          ]
+        },
+        {
+          "version": "1.4.2",
+          "released": "2025-06-17",
+          "javaMin": "8",
+          "notes": [
+            "Last release of the 1.x line. No further 1.x releases are planned."
+          ]
+        },
+        {
+          "version": "2.0.0",
+          "released": "2026-09-08",
+          "javaMin": "11",
+          "notes": [
+            "External entities are no longer resolved by default (CWE-611)."
+          ],
+          "breaking": [
+            { "api": "com.acme.xml.XmlReaderFactory", "change": "Removed. Use XmlReader.builder().build()." },
+            { "api": null, "change": "Requires Java 11 or later." }
+          ]
+        }
+      ]
+    }
+  ]
+}

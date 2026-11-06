@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Skill Lab 06</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: deck a schermo pieno — barra in alto, palco centrale che scorre, barra capitoli in basso. Cobalto come accento, ambra = Claude Code, verde acqua = Copilot. */
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --sunk:#E9EDF3; --ink:#141A24; --muted:#586273; --line:#D7DDE6;
+  --accent:#2C47D8; --accent-soft:#E3E8FD; --on-accent:#FFFFFF;
+  --cc:#A8541A; --cc-soft:#F8E9DD; --gh:#0C746B; --gh-soft:#DCF1EE;
+  --ok:#1D7A3A; --ok-soft:#DFF3E5; --bad:#B42318; --bad-soft:#FBE4E1; --warn:#8A5A00; --warn-soft:#FBF0D6;
+  --code-bg:#0F1522; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --sunk:#1B2330; --ink:#E6EAF1; --muted:#9AA4B5; --line:#2A3342;
+  --accent:#8A9BFF; --accent-soft:#1E2550; --on-accent:#0D1117;
+  --cc:#E8A06A; --cc-soft:#3A2618; --gh:#5CC7BA; --gh-soft:#143330;
+  --ok:#6FD08C; --ok-soft:#15301E; --bad:#FF8A7D; --bad-soft:#3A1B18; --warn:#E9B949; --warn-soft:#33280F;
+  --code-bg:#0A0E15; --code-fg:#DCE3F0; --code-dim:#7D889C; --code-key:#9DB2FF; --code-str:#9FD8A8;
+  color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow:hidden}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto}
+
+/* barra superiore */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-block;width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--cc) 0 50%,var(--gh) 50% 100%)}
+.chapter{color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrls{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+/* palco */
+.stage{overflow:auto;display:grid;position:relative}
+.slide{width:100%;max-width:1140px;margin:auto;padding-block:clamp(20px,4vh,48px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+@media (prefers-reduced-motion:no-preference){.slide.enter{animation:in .28s ease-out}}
+@keyframes in{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+.notes{display:none}
+
+/* tipografia */
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:10px;align-items:center}
+.eyebrow b{font-family:var(--f-mono);color:var(--accent);font-weight:600;letter-spacing:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(38px,6.4vw,76px);line-height:1.02;font-weight:800}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.08;font-weight:700}
+h3{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:68ch}
+.lead{font-size:clamp(17px,1.7vw,20px);color:var(--muted);max-width:62ch}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+ul.clean li::marker{color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:.08em .35em;border-radius:5px}
+small,.small{font-size:13.5px;color:var(--muted)}
+.cc{color:var(--cc)} .gh{color:var(--gh)}
+
+/* griglie */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.split>*{min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.panel h3{display:flex;gap:8px;align-items:baseline}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.cc{border-color:var(--cc);color:var(--cc);background:var(--cc-soft)}
+.tag.gh{border-color:var(--gh);color:var(--gh);background:var(--gh-soft)}
+.tag.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;max-width:80ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+/* codice */
+.code{position:relative;margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:13.5px;line-height:1.6;
+  padding:14px 16px;overflow-x:auto;white-space:pre;tab-size:2}
+.code .c{color:var(--code-dim)} .code .k{color:var(--code-key)} .code .s{color:var(--code-str)}
+.codewrap{position:relative;min-width:0}
+.codewrap .label{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 8px;cursor:pointer;opacity:.85}
+.copy:hover{opacity:1}
+
+/* schede */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;background:none;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);border-bottom:1px solid var(--surface)}
+.tabpanel{padding-top:14px;display:flex;flex-direction:column;gap:12px}
+
+/* tabelle */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk)}
+td:first-child{font-weight:600;white-space:nowrap}
+tr.same td{color:var(--muted)}
+tr.hl td{background:var(--accent-soft)}
+
+/* albero file */
+.explorer{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.tree{font-family:var(--f-mono);font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:1px}
+.tree .dir{color:var(--muted);padding:3px 6px}
+.tree button{all:unset;cursor:pointer;padding:3px 6px;border-radius:5px;white-space:nowrap}
+.tree button:hover{background:var(--sunk)}
+.tree button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tree button:focus-visible{outline:2px solid var(--accent)}
+
+/* copertina */
+.cover{gap:26px}
+.cover .tools{display:flex;gap:10px;flex-wrap:wrap}
+.cover .tools span{font-family:var(--f-mono);font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.keys{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface);color:var(--ink)}
+
+.agenda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:a}
+@media (max-width:860px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.agenda{grid-template-columns:minmax(0,1fr)}}
+.agenda button{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+.agenda button:hover,.agenda button:focus-visible{border-color:var(--accent)}
+.agenda .n{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:14px;min-width:22px}
+.agenda .t{font-weight:500;line-height:1.35}
+
+/* livelli progressive disclosure */
+.levels{display:grid;gap:10px}
+.level{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.level[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.level .lv{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.level .cost{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);text-align:right}
+.meter{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:3%;transition:width .35s}
+
+/* builder */
+.form{display:grid;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea,.field select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.field textarea{font-family:var(--f-mono);font-size:13px;min-height:96px;resize:vertical}
+.hint{font-size:12px;color:var(--muted)}
+.hint.err{color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.path{font-family:var(--f-mono);font-size:13px;padding:6px 10px;background:var(--sunk);border-radius:7px;overflow-x:auto;white-space:nowrap}
+.warnlist{display:grid;gap:4px;font-size:13px}
+.warnlist div{padding:5px 9px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+
+/* chips catalogo */
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;flex-direction:column;gap:5px}
+.skill .nm{font-family:var(--f-mono);font-weight:600;font-size:14px}
+.skill .ds{font-size:13.5px;color:var(--muted);line-height:1.45}
+.skill .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:860px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pipe button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.pipe button .st{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pipe button .cmd{font-family:var(--f-mono);font-weight:600;font-size:14px;color:var(--accent);overflow-wrap:anywhere}
+.pipe button .what{font-size:13.5px;line-height:1.35}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pipedetail{min-height:110px}
+
+/* grafo */
+.graphbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.graphbox svg{display:block;width:100%;height:auto;max-width:100%}
+.graphbox .edge{stroke:var(--muted);stroke-width:1.6;fill:none}
+.graphbox .edge.inf{stroke-dasharray:5 5}
+.graphbox .edge.on{stroke:var(--accent);stroke-width:3}
+.graphbox .node circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.graphbox .node.doc circle{stroke:var(--gh)}
+.graphbox .node.on circle{fill:var(--accent);stroke:var(--accent)}
+.graphbox .node.sel circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.graphbox .node text{fill:var(--ink);font-family:var(--f-mono);font-size:12px;pointer-events:none}
+.graphbox .node:focus{outline:none}
+.graphbox .node:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.term{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:13px;border-radius:var(--r);padding:12px 14px;min-height:150px;white-space:pre-wrap;overflow-wrap:anywhere}
+.term .c{color:var(--code-dim)} .term .k{color:var(--code-key)}
+
+/* checklist e quiz */
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.steps{display:grid;gap:6px}
+.labbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.labbar .meter{flex:1;max-width:260px}
+.q{display:grid;gap:8px}
+.q .opts{display:grid;gap:6px}
+.q .opt{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.q .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.q .why{font-size:13.5px;color:var(--muted)}
+.score{font-family:var(--f-display);font-weight:800;font-size:28px}
+
+/* barra capitoli */
+.bottom{border-top:1px solid var(--line);background:var(--surface);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prog{display:flex;gap:3px}
+.prog button{all:unset;cursor:pointer;flex:1;height:22px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0}
+.prog button i{display:block;height:5px;border-radius:3px;background:var(--line)}
+.prog button.past i{background:var(--accent-soft)}
+.prog button.cur i{background:var(--accent)}
+.prog button span{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:center;line-height:1}
+.prog button.cur span{color:var(--accent);font-weight:600}
+.prog button:focus-visible{outline:2px solid var(--accent)}
+
+/* overlay note / indice */
+.notespanel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 24px));max-height:45vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20}
+.notespanel h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.overview{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.overview .head{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1140px;margin:0 auto 14px}
+.ovgrid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ovgrid button{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ovgrid button:hover,.ovgrid button:focus-visible{border-color:var(--accent)}
+.ovgrid button.cur{border-color:var(--accent);background:var(--accent-soft)}
+.ovgrid .oc{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ovgrid .ot{font-weight:600;font-size:14px;line-height:1.3}
+
+@media (max-width:620px){
+  .brand span{display:none}
+  .chapter{order:3;flex-basis:100%}
+  .prog button span{display:none}
+  .prog button{height:12px}
+}
+.app,.stage{grid-template-columns:minmax(0,1fr)}
+.slide{min-width:0}.slide>*{min-width:0;max-width:100%}
+#hookList button{min-width:0;width:100%}#hookList code{overflow-wrap:anywhere;white-space:normal}
+.code.scroll{max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i><span>Skill Lab · 06</span></div>
+    <div class="chapter" id="chapter">Introduzione</div>
+    <div class="ctrls">
+      <button class="btn" id="btnOverview" title="Indice delle slide (O)">Indice</button>
+      <button class="btn" id="btnNotes" aria-pressed="false" title="Note del relatore (N)">Note</button>
+      <button class="btn" id="prev" aria-label="Slide precedente">←</button>
+      <span class="count" id="count">1 / 1</span>
+      <button class="btn primary" id="next" aria-label="Slide successiva">→</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+<!-- ============ COPERTINA ============ -->
+<section class="slide cover" data-ch="0" data-title="Copertina">
+  <div class="eyebrow">Sessione interna · corso 06 · Claude Code e GitHub Copilot</div>
+  <h1>Vincoli<br>e guardrail</h1>
+  <p class="lead">Il piano v1 della lezione 05 corregge l'alert, ma porta payments-api a Java 11. Oggi Heimdall impara a dire di no: il Supervisor confronta ogni piano con i vincoli scritti dal team del progetto, e tre hook fanno rispettare le regole che non si lasciano a un modello.</p>
+  <div class="tools"><span class="cc">Claude Code</span><span class="gh">GitHub Copilot</span><span>vincoli di progetto</span><span>Supervisor</span><span>hook PreToolUse</span><span>niente merge</span></div>
+  <div class="keys"><span><kbd>←</kbd> <kbd>→</kbd> naviga</span><span><kbd>N</kbd> note del relatore</span><span><kbd>O</kbd> indice</span><span><kbd>Esc</kbd> chiudi</span></div>
+  <aside class="notes">Prerequisiti: le lezioni 03 e 05. Servono il ciclo di rifiuto e rielaborazione del corso 03, il plugin heimdall 0.2.0 e il piano v1 di PAY-160644 scritto alla fine della lezione 05.</aside>
+</section>
+
+<section class="slide" data-ch="0" data-title="Agenda">
+  <div class="eyebrow">Agenda</div>
+  <h2>Sei tappe, dal piano v1 al piano approvato</h2>
+  <div class="agenda" id="agenda"></div>
+  <aside class="notes">La 02 è la materia prima: i vincoli, scritti dal team. La 03 chi li applica ai piani, la 04 chi li applica alle azioni degli agenti. Poi le differenze tra gli strumenti e il laboratorio.</aside>
+</section>
+
+<!-- ============ 1. PERCHÉ I VINCOLI ============ -->
+<section class="slide" data-ch="1" data-title="Un piano onesto e ineseguibile">
+  <div class="eyebrow"><b>01</b> Perché i vincoli</div>
+  <h2>Un piano può essere giusto e non eseguibile</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Il piano v1 è onesto</h3><p>acme-xml 2.0.0 corregge l'XXE, e il piano dice che cosa costa: Java da 1.8 a 11, <code>XmlReaderFactory</code> sparisce da due file. Nessun costo nascosto.</p></div>
+    <div class="panel"><h3>Il progetto ha dei limiti</h3><p>payments-api gira su Java 8 nei server della piattaforma pagamenti. acme-xml è la libreria comune dei servizi di pagamento: la major la decide il team piattaforma.</p></div>
+    <div class="panel"><h3>Chi lo sa?</h3><p>Non lo scanner e non l'analisi del codice. Lo sa il team che mantiene il progetto. Se non lo scrive, Heimdall apre una PR che nessuno può approvare.</p></div>
+  </div>
+  <div class="codewrap"><span class="label">chi fa che cosa, oggi</span><pre class="code">plan-v1.md ──▶ <span class="k">supervisor</span> ──▶ verdict-v1.json ──▶ <span class="k">security-analyst</span> ──▶ plan-v2.md ──▶ <span class="k">supervisor</span> ──▶ verdict-v2.json
+               legge .heimdall/        rejected:               risponde a ogni                      approved
+               vincoli.md              Java 8, Dipendenze      violazione
+
+<span class="c">intorno a tutto: tre hook PreToolUse · contratto degli artefatti · test intoccabili · niente merge</span></pre></div>
+  <aside class="notes">Il piano v1 non è sbagliato: è la correzione più diretta, ed è giusto che l'analyst la proponga. Lo dice anche il pom.xml, alle righe 36 e 43. Ma un commento nel pom non è un vincolo: nessuno lo controlla. Oggi lo diventa.</aside>
+</section>
+
+<section class="slide" data-ch="1" data-title="Il pezzo di Heimdall">
+  <div class="eyebrow"><b>01</b> Perché i vincoli</div>
+  <h2>Oggi costruiamo il Supervisor e i guardrail</h2>
+  <p style="line-height:2.1"><span class="tag">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag">Selezione</span> <span aria-hidden="true">→</span> <span class="tag">Security Analyst</span> <span aria-hidden="true">⇄</span> <span class="tag acc">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+  <div class="grid g2">
+    <div class="panel"><span class="tag">lezione 05</span><h3>Dove eravamo</h3><p>Il codice di <code>payments-api</code>, <code>analysis.json</code> e il piano v1: acme-xml 2.0.0 e Java 11. Nessuno l'ha approvato.</p></div>
+    <div class="panel"><span class="tag acc">oggi</span><h3>Dove arriviamo</h3><p>I vincoli in <code>.heimdall/vincoli.md</code>, il verdetto v1 rifiutato, il piano v2 che resta su Java 8 e il verdetto v2 approvato. E tre hook che valgono anche per il Resolver della lezione 07.</p></div>
+  </div>
+  <div class="callout">Prima i limiti, poi i poteri. Oggi nessun agente di Heimdall modifica il codice: i guardrail ci sono già quando, nella lezione 07, il Resolver riceverà <code>Edit</code> e <code>Bash</code>.</div>
+  <aside class="notes">È lo scenario Java 8 della demo: il Supervisor rifiuta il piano v1 e approva il v2. Il ciclo di rifiuto è quello del corso 03, con due differenze: i vincoli sono quelli di un progetto vero, e il verdetto deve dire di averli controllati tutti.</aside>
+</section>
+
+<!-- ============ 2. I VINCOLI DEL PROGETTO ============ -->
+<section class="slide" data-ch="2" data-title="Dove stanno i vincoli">
+  <div class="eyebrow"><b>02</b> I vincoli del progetto</div>
+  <h2>I vincoli stanno nel repo del progetto</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">payments-api/.heimdall/vincoli.md · estratto</span><pre class="code scroll" style="font-size:12.5px;white-space:pre-wrap"># Vincoli di payments-api
+
+1. <span class="k">**Java 8.**</span> payments-api gira su Java 8 nei server
+   della piattaforma pagamenti … Il piano non cambia
+   java.version nel pom.xml e non porta librerie che
+   richiedono una versione di Java più recente.
+2. <span class="k">**Dipendenze.**</span> Nessuna dipendenza nuova. Cambia
+   versione solo la libreria dell'alert. … un cambio di
+   major lo decide il team piattaforma, non Heimdall.
+3. <span class="k">**Perimetro.**</span> Il piano modifica solo il pom.xml e i
+   file di src/main/java che usano la libreria dell'alert …
+4. <span class="k">**Test esistenti.**</span> I file in src/test/ … non si
+   modificano … Ogni correzione ha almeno un test nuovo.
+5. <span class="k">**Nessuna scorciatoia.**</span> … niente @Disabled, niente
+   -DskipTests … Non fa merge e non scrive su main.</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="tablewrap"><table>
+        <thead><tr><th>Dove</th><th>Perché no</th></tr></thead>
+        <tbody>
+          <tr><td>nel plugin</td><td>Heimdall serve tutti i progetti: Java 8 vale per uno solo</td></tr>
+          <tr><td>in <code>.pipeline/</code></td><td>È la cartella di un giro su un alert, non la memoria del progetto</td></tr>
+          <tr><td>nel server MCP</td><td>I vincoli cambiano con il codice, non con lo scanner</td></tr>
+          <tr class="hl"><td><code>.heimdall/</code> nel repo</td><td>Li scrive il team, con una PR; cambiano insieme al codice (ADR-0008)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout">Come <code>CLAUDE.md</code> per le istruzioni: un file del progetto, letto dall'agente, rivisto come il codice. L'agente lo legge e non lo scrive: un hook lo protegge.</div>
+    </div>
+  </div>
+  <aside class="notes">Nel corso 03 i vincoli erano in .pipeline/vincoli.md: andava bene per un esercizio, non per un progetto. La decisione è in ADR-0008. Quando la piattaforma migrerà a Java 11, il team cambierà il vincolo con una PR e Heimdall lo saprà dal giro successivo.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Un vincolo che si può controllare">
+  <div class="eyebrow"><b>02</b> I vincoli del progetto</div>
+  <h2>Un vincolo che si può controllare</h2>
+  <div class="grid g2">
+    <div class="panel"><span class="tag">vago</span><h3>Non si può dire se è violato</h3><ul class="clean">
+      <li>«Fai attenzione alla versione di Java.»</li>
+      <li>«Evita modifiche troppo grandi.»</li>
+      <li>«Non rompere i test.»</li>
+      <li>«Rispetta le convenzioni del team.»</li></ul></div>
+    <div class="panel"><span class="tag acc">controllabile</span><h3>Si indica il punto del piano che lo viola</h3><ul class="clean">
+      <li><strong>Java 8</strong>: il piano non cambia <code>java.version</code>.</li>
+      <li><strong>Perimetro</strong>: solo <code>pom.xml</code> e i file di <code>analysis.json</code>.</li>
+      <li><strong>Test esistenti</strong>: i file in <code>src/test/</code> non cambiano.</li>
+      <li><strong>Dipendenze</strong>: nessuna nuova, nessun cambio di major.</li></ul></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Regola di scrittura</th><th>Perché</th></tr></thead>
+    <tbody>
+      <tr><td>Un nome in grassetto</td><td>Il verdetto lo cita così com'è, e un hook controlla che li citi tutti</td></tr>
+      <tr><td>Il motivo nel testo</td><td>«gira su Java 8 nei server della piattaforma»: chi rielabora il piano capisce che cosa è negoziabile</td></tr>
+      <tr><td>Chi decide le eccezioni</td><td>«la major la decide il team piattaforma»: il Supervisor non fa eccezioni, le rimanda</td></tr>
+      <tr><td>Pochi</td><td>Cinque vincoli che contano, non un regolamento: ogni vincolo in più è un motivo di rifiuto in più</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Test: davanti a un piano, potete indicare la riga che viola il vincolo? Se no, il vincolo è un consiglio. I consigli vanno in CLAUDE.md o nelle istruzioni dell'analyst, non in vincoli.md.</aside>
+</section>
+
+<section class="slide" data-ch="2" data-title="Simulatore del Supervisor">
+  <div class="eyebrow"><b>02</b> I vincoli del progetto</div>
+  <h2>Prova: componi un piano, che cosa dice il Supervisor?</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="seg" id="supPreset"><button type="button" data-v="v1" aria-pressed="true">Piano v1</button><button type="button" data-v="v2" aria-pressed="false">Piano v2</button><button type="button" data-v="none" aria-pressed="false">Vuoto</button></div>
+      <div class="steps" id="supOpts"></div>
+    </div>
+    <div class="term" id="supOut" style="min-height:330px"></div>
+  </div>
+  <aside class="notes">Il simulatore applica i cinque vincoli di payments-api con regole fisse; il Supervisor vero li applica leggendo il piano e il codice. Provate: v1, poi togliete solo Java 11. Resta Dipendenze, e in più acme-xml 2.0.0 su Java 8 non gira. Poi provate a togliere tutto: nessuna violazione, ma il piano non corregge niente. Approvarlo è giusto? Il Supervisor controlla i vincoli; che la correzione funzioni lo dicono il test nuovo e la CI.</aside>
+</section>
+
+<!-- ============ 3. IL SUPERVISOR ============ -->
+<section class="slide" data-ch="3" data-title="Violazione o gusto">
+  <div class="eyebrow"><b>03</b> Il Supervisor</div>
+  <h2>Una violazione si indica, un gusto no</h2>
+  <div class="grid g2">
+    <div class="panel"><span class="tag acc">è una violazione</span><h3>Un punto del piano contro un vincolo scritto</h3><ul class="clean">
+      <li>«Modifiche», passo 2: <code>java.version</code> da 1.8 a 11. Vincolo <strong>Java 8</strong>.</li>
+      <li>«File toccati»: <code>StatementParserTest.java</code>, che esiste. Vincolo <strong>Test esistenti</strong>.</li>
+      <li>Nessun test nuovo in «Test». Vincolo <strong>Test esistenti</strong>.</li></ul></div>
+    <div class="panel"><span class="tag">non è una violazione</span><h3>Va in <code>notes</code>, o da nessuna parte</h3><ul class="clean">
+      <li>«Avrei usato un altro nome per il test.»</li>
+      <li>«Preferirei correggere solo <code>StatementParser</code>.»</li>
+      <li>Un rischio che il piano dichiara: è un'informazione per la review.</li>
+      <li>Una regola che non c'è in <code>vincoli.md</code>.</li></ul></div>
+  </div>
+  <div class="codewrap"><span class="label">agents/supervisor.md · estratto</span><pre class="code" style="white-space:pre-wrap"><span class="k">tools:</span> Read, Grep, Glob
+
+Verifica quello che il piano afferma, invece di fidarti:
+- una versione di Java o di una libreria: nel pom.xml (analysis.build, analysis.dependency)
+  e nei metadati della libreria (analysis.dependency.versions, con javaMin);
+- un file toccato: che esista, e se è in src/main/java, che sia in analysis.usages …
+- un test: se il file esiste già in src/test/, il piano lo sta modificando.</pre></div>
+  <aside class="notes">Un Supervisor che rifiuta per gusto blocca la pipeline al terzo tentativo; uno che approva per cortesia la rende inutile. Per questo le istruzioni dicono che cosa non è una violazione, e che i vincoli non si interpretano a favore del piano. Se un vincolo è ambiguo, lo si applica nel modo più prudente e lo si scrive in notes: chi lo deve chiarire è il team.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Il verdetto">
+  <div class="eyebrow"><b>03</b> Il Supervisor</div>
+  <h2>Il verdetto del corso 03, con <code>checked</code></h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">esempi/PAY-160644/verdict-v1.json · estratto</span><pre class="code scroll" style="font-size:12.5px;white-space:pre-wrap">{
+  <span class="k">"alert"</span>: <span class="s">"PAY-160644"</span>,
+  <span class="k">"plan"</span>: 1,
+  <span class="k">"decision"</span>: <span class="s">"rejected"</span>,
+  <span class="k">"checked"</span>: [<span class="s">"Java 8"</span>, <span class="s">"Dipendenze"</span>, <span class="s">"Perimetro"</span>,
+              <span class="s">"Test esistenti"</span>, <span class="s">"Nessuna scorciatoia"</span>],
+  <span class="k">"violations"</span>: [
+    { <span class="k">"constraint"</span>: <span class="s">"Java 8"</span>,
+      <span class="k">"detail"</span>: <span class="s">"Il passo 2 di «Modifiche» porta java.version
+        da 1.8 a 11 (pom.xml:21) …"</span> },
+    { <span class="k">"constraint"</span>: <span class="s">"Dipendenze"</span>,
+      <span class="k">"detail"</span>: <span class="s">"Il passo 1 di «Modifiche» porta acme-xml
+        da 1.4.2 a 2.0.0 (pom.xml:22): è un cambio di major …"</span> }
+  ],
+  <span class="k">"notes"</span>: <span class="s">"… L'alternativa del piano, resolveExternalEntities(false)
+    sulla 1.4.2, non cambia né Java né la major di acme-xml."</span>
+}</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="tablewrap"><table>
+        <thead><tr><th>L'hook controlla</th><th>Perché</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td><code>checked</code> = tutti i vincoli</td><td>Un verdetto che ne salta uno non è un verdetto</td></tr>
+          <tr><td>Ogni <code>constraint</code> esiste</td><td>Niente vincoli inventati durante la valutazione</td></tr>
+          <tr><td>Rifiuto ⇔ violazioni</td><td>Non si rifiuta senza motivo e non si approva con un motivo</td></tr>
+          <tr><td><code>plan</code> e <code>alert</code></td><td>Il verdetto riguarda un piano che esiste</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout">I nomi in <code>checked</code> l'hook li legge da <code>.heimdall/vincoli.md</code>: se il team aggiunge un vincolo, il prossimo verdetto deve controllarlo, senza toccare il plugin.</div>
+    </div>
+  </div>
+  <aside class="notes">checked non dimostra che il Supervisor abbia ragionato su ogni vincolo: dimostra che non l'ha dimenticato. È la stessa idea del contratto degli artefatti: il programma controlla la forma, il modello il contenuto. Le notes servono al Security Analyst: qui dicono già dove guardare per il v2.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Dal v1 al v2">
+  <div class="eyebrow"><b>03</b> Il Supervisor</div>
+  <h2>Dal piano v1 rifiutato al v2 approvato</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Piano v1 · lezione 05</th><th>Piano v2 · oggi</th></tr></thead>
+    <tbody>
+      <tr><td>acme-xml</td><td>1.4.2 → 2.0.0</td><td>resta alla 1.4.2</td></tr>
+      <tr><td>Java</td><td>1.8 → 11 (<code>pom.xml:21</code>)</td><td>resta 1.8</td></tr>
+      <tr><td>La correzione</td><td>la 2.0.0 non risolve le entità esterne</td><td><code>XmlReader.builder().resolveExternalEntities(false).build()</code>, dalla 1.3.0</td></tr>
+      <tr><td>File toccati</td><td><code>pom.xml</code>, <code>StatementParser</code>, <code>BankCodesLoader</code>, un test nuovo</td><td><code>StatementParser</code>, <code>BankCodesLoader</code>, un test nuovo</td></tr>
+      <tr><td>Rischi</td><td>CI, JDK e runtime a Java 11</td><td>AppScan continua a segnalare la 1.4.2</td></tr>
+      <tr class="hl"><td>Verdetto</td><td>rejected · Java 8, Dipendenze</td><td>approved</td></tr>
+    </tbody>
+  </table></div>
+  <div class="codewrap"><span class="label">esempi/PAY-160644/plan-v2.md · la sezione nuova</span><pre class="code" style="white-space:pre-wrap"><span class="s">## Risposta al verdetto v1</span>
+
+- <span class="k">**Java 8:**</span> java.version resta 1.8. La correzione usa resolveExternalEntities(false),
+  che c'è dalla 1.3.0 e gira su Java 8.
+- <span class="k">**Dipendenze:**</span> acme-xml resta alla 1.4.2, nessuna dipendenza cambia e il pom.xml non si tocca.
+  Il cambio di major resta al team piattaforma.</pre></div>
+  <aside class="notes">Il v2 era già scritto nel v1, tra le alternative: è per questo che la lezione 05 chiedeva di non nasconderle. Il rischio nuovo è vero: lo scanner guarda la versione, non il codice, e continuerà a segnalarla. Come chiudere l'alert lo decide chi rivede la PR, non Heimdall. L'hook controlla che la risposta al verdetto abbia una voce per ogni violazione.</aside>
+</section>
+
+<section class="slide" data-ch="3" data-title="Il ciclo e la timeline">
+  <div class="eyebrow"><b>03</b> Il Supervisor</div>
+  <h2>Il ciclo, il limite e la traccia</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">skills/supervise-plan/SKILL.md · il ciclo</span><pre class="code" style="white-space:pre-wrap">1. Delega al supervisor il verdetto sul piano vN.
+2. Salva la sua risposta in verdict-vN.json.
+3. Se il verdetto è approved, esci dal ciclo.
+4. Se è rejected, delega al security-analyst il piano
+   v(N+1), con il percorso di verdict-vN.json.
+5. Salva la sua risposta in plan-v&lt;N+1&gt;.md e ripeti.</pre></div>
+    <div class="term" style="font-size:12px">node …/scripts/timeline.js PAY-160644
+
+10:02:11      save-alert.js     alert preso in carico     alert.json
+10:14:40      analyze.js        2 catene dagli ingressi   analysis.json
+10:31:05  v1  security-analyst  piano scritto             plan-v1.md
+11:20:32  v1  supervisor        rifiutato                 verdict-v1.json
+                                · Java 8
+                                · Dipendenze
+11:23:57  v2  security-analyst  piano scritto             plan-v2.md
+11:25:18  v2  supervisor        approvato                 verdict-v2.json
+
+<span class="k">Esito: piano v2 approvato. Il prossimo passo è il Resolver.</span></div>
+  </div>
+  <div class="grid g3">
+    <div class="panel"><h3>Riprende</h3><p>La skill parte dalla timeline: se la sessione si interrompe dopo il verdetto v1, riparte dal piano v2.</p></div>
+    <div class="panel"><h3>Si ferma</h3><p>Al terzo rifiuto l'hook blocca <code>plan-v4.md</code> e la timeline esce con 3: decide una persona.</p></div>
+    <div class="panel"><h3>Racconta</h3><p>La timeline legge i file, non il modello: è la traccia leggibile della demo.</p></div>
+  </div>
+  <aside class="notes">È la strada mista del corso 03: la skill guida l'agente principale, gli hook fanno rispettare contratto e limite. La scelta definitiva su chi orchestra Heimdall resta aperta fino alle misure della lezione 08. La timeline prende gli orari dai file; nel terminale vedete anche l'ora a sinistra.</aside>
+</section>
+
+<!-- ============ 4. GLI HOOK COME GUARDRAIL ============ -->
+<section class="slide" data-ch="4" data-title="Istruzione o hook">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Un'istruzione chiede, un hook impedisce</h2>
+  <div class="grid g2">
+    <div class="panel"><span class="tag">istruzione</span><h3>Nel prompt dell'agente</h3><p>«Heimdall non modifica i test.» Il modello di solito la segue. Con un test rosso, un contesto lungo o un'istruzione ambigua, a volte no.</p><p class="small">Va bene per il giudizio: la pertinenza, un verdetto, un piano.</p></div>
+    <div class="panel"><span class="tag acc">hook PreToolUse</span><h3>Prima di ogni azione</h3><p>Un programma riceve lo strumento e i suoi argomenti, e con l'uscita 2 blocca. Il modello legge il motivo e cambia strada, ma non può saltarlo.</p><p class="small">Va bene per le regole senza eccezioni: test esistenti, merge, artefatti.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Regola di Heimdall</th><th>Chi la fa rispettare</th></tr></thead>
+    <tbody>
+      <tr><td>Il piano rispetta Java 8 e il perimetro</td><td>Supervisor: serve leggere il piano e il codice</td></tr>
+      <tr class="hl"><td>Un test esistente non si modifica</td><td>Istruzione dell'analyst, vincolo del progetto <strong>e</strong> hook <code>guard-tests</code></td></tr>
+      <tr class="hl"><td>Niente merge, niente commit su <code>main</code></td><td>Vincolo <strong>e</strong> hook <code>guard-git</code>, poi le branch policy sul server</td></tr>
+      <tr><td>Un artefatto non si riscrive, al massimo tre piani</td><td>Hook <code>guard-pipeline</code>, dal corso 03</td></tr>
+    </tbody>
+  </table></div>
+  <aside class="notes">Le regole importanti sono scritte più volte, a livelli diversi: nell'istruzione perché l'agente non ci provi, nel vincolo perché il Supervisor rifiuti un piano che ci prova, nell'hook perché anche se ci prova non succede. Corso 02: l'uscita 1 non blocca, solo la 2.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Tre hook">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Tre hook, un file di registrazione</h2>
+  <div class="split">
+    <div class="codewrap"><span class="label">hooks/hooks.json · estratto</span><pre class="code scroll" style="font-size:12.5px">{ <span class="k">"hooks"</span>: { <span class="k">"PreToolUse"</span>: [
+  { <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+    <span class="k">"hooks"</span>: [
+      { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>:
+        <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-pipeline.js\""</span> },
+      { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>:
+        <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-tests.js\""</span> } ] },
+  { <span class="k">"matcher"</span>: <span class="s">"Bash"</span>,
+    <span class="k">"hooks"</span>: [
+      { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>:
+        <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-tests.js\""</span> },
+      { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>:
+        <span class="s">"node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-git.js\""</span> } ] }
+] } }</pre></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Hook</th><th>Su</th><th>Blocca</th></tr></thead>
+      <tbody>
+        <tr><td><code>guard-pipeline</code></td><td>Edit, Write</td><td>Input e vincoli toccati, riscritture, versioni fuori ordine, il quarto piano, piani e verdetti fuori formato</td></tr>
+        <tr><td><code>guard-tests</code></td><td>Edit, Write, Bash</td><td>Un test esistente modificato, spostato o cancellato. Un test nuovo passa</td></tr>
+        <tr><td><code>guard-git</code></td><td>Bash</td><td>Merge, commit e push sui branch protetti, push forzati, PR completate o approvate</td></tr>
+        <tr><td><code>common.js</code></td><td>—</td><td>Le parti comuni: l'evento, i test, i progetti seguiti, un lettore di comandi di shell</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Gli script sono in Node.js, senza dipendenze, come il resto di Heimdall. Ogni hook legge l'evento da stdin, decide, ed esce con 0 o con 2 e il motivo su stderr. I motivi sono scritti per il modello: dicono che cosa non fare e che cosa fare al suo posto.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Test intoccabili">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Test intoccabili: esistente no, nuovo sì</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">hooks/common.js · che cosa conta come test</span><pre class="code" style="font-size:12.5px">const TEST_PATTERNS = [
+  /(^|\/)src\/test(\/|$)/,         <span class="c">// Maven e Gradle, risorse comprese</span>
+  /(^|\/)__tests__(\/|$)/,         <span class="c">// Jest</span>
+  /\.(spec|test)\.[cm]?[jt]sx?$/,  <span class="c">// Angular, Jest</span>
+  /(Test|Tests|IT)\.java$/,        <span class="c">// JUnit</span>
+];</pre></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Azione</th><th>Esito</th></tr></thead>
+      <tbody>
+        <tr><td><code>Edit</code> su <code>StatementParserTest.java</code></td><td>bloccato</td></tr>
+        <tr><td><code>Write</code> di <code>StatementParserXxeTest.java</code>, nuovo</td><td>passa</td></tr>
+        <tr><td><code>sed -i …</code> su <code>two-lines.xml</code></td><td>bloccato: è una risorsa di test</td></tr>
+        <tr><td><code>rm -rf src/test</code>, anche in <code>bash -c "…"</code></td><td>bloccato</td></tr>
+        <tr><td><code>mvn -q test</code>, <code>cat</code>, <code>grep</code></td><td>passa: leggere non è modificare</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="callout">Perché le risorse: cambiare <code>two-lines.xml</code> cambia quello che <code>readsCustomerAndLines</code> verifica, senza toccare il codice del test. Un test che si piega alla correzione non dice più niente.</div>
+  <aside class="notes">La regola è della demo: Heimdall non modifica i test. Il motivo è che i test esistenti sono l'unica prova indipendente che la correzione non rompe niente. Lo scenario Angular della lezione 07 mette alla prova la regola: con la CI rossa, la tentazione di cambiare uno spec è forte.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Niente merge">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Niente merge: la rete e il muro</h2>
+  <div class="grid g2">
+    <div class="tablewrap"><table>
+      <thead><tr><th>Comando</th><th><code>guard-git</code></th></tr></thead>
+      <tbody>
+        <tr><td><code>git merge …</code></td><td>bloccato, sempre (non <code>--abort</code>)</td></tr>
+        <tr><td><code>git commit</code> su <code>main</code>, <code>master</code>, <code>develop</code>, <code>release/*</code></td><td>bloccato</td></tr>
+        <tr><td><code>git push origin HEAD:main</code>, <code>--force</code></td><td>bloccato</td></tr>
+        <tr><td><code>gh pr merge</code>, <code>gh pr review --approve</code></td><td>bloccato</td></tr>
+        <tr><td><code>az repos pr update --status completed</code></td><td>bloccato</td></tr>
+        <tr><td>commit e push su <code>fix/pay-160644</code></td><td>passa</td></tr>
+      </tbody>
+    </table></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="panel"><span class="tag">1 · la rete</span><h3>L'hook, sulla macchina</h3><p>Ferma gli errori dell'agente. Legge il testo del comando: uno script, un alias o <code>node -e</code> gli sfuggono.</p></div>
+      <div class="panel"><span class="tag acc">2 · il muro</span><h3>Le branch policy, sul server</h3><p>Azure DevOps chiede una review per completare una PR verso <code>main</code>. Vale per tutti, agenti compresi.</p></div>
+      <div class="panel"><span class="tag acc">3 · le chiavi</span><h3>Il token di Heimdall</h3><p>Può creare branch e PR, non completarle. Lezione 07.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Un hook su Bash non è un sandbox: è un controllo sul testo. La domanda giusta non è se l'agente può aggirarlo, ma che cosa succede se ci riesce: con le branch policy e un token senza permesso di completare, niente. Da qui la regola: un guardrail locale per gli errori, uno sul server per le garanzie.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Dove vale un hook">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Dove vale un hook di plugin</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Dove è dichiarato</th><th>Quando vale</th><th>Per Heimdall</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td><code>hooks/hooks.json</code> del plugin</td><td>In ogni sessione con il plugin attivo, per l'agente principale e i subagenti</td><td>Sì, con un filtro sul progetto</td></tr>
+      <tr><td><code>hooks</code> nel frontmatter di un subagente</td><td>Solo mentre quel subagente lavora</td><td>No: nei subagenti dei plugin Claude Code ignora il campo</td></tr>
+      <tr><td><code>hooks</code> nel frontmatter di una skill</td><td>Dall'invocazione della skill a fine sessione</td><td>No: la regola vale anche fuori dalle skill</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">hooks/common.js · il filtro</span><pre class="code" style="font-size:12.5px"><span class="c">// La radice del progetto seguito da Heimdall:</span>
+<span class="c">// la prima cartella, salendo, con .heimdall/vincoli.md.</span>
+<span class="c">// Null se il progetto non è seguito:</span>
+<span class="c">// lì gli hook non intervengono.</span>
+function heimdallRoot(start) { … }</pre></div>
+    <div class="codewrap"><span class="label">l'evento, dentro un subagente</span><pre class="code" style="font-size:12.5px">{ <span class="k">"cwd"</span>: <span class="s">"/…/payments-api"</span>,
+  <span class="k">"agent_type"</span>: <span class="s">"&lt;il subagente&gt;"</span>,
+  <span class="k">"tool_name"</span>: <span class="s">"Edit"</span>,
+  <span class="k">"tool_input"</span>: { <span class="k">"file_path"</span>: <span class="s">"…Test.java"</span>, … } }
+
+<span class="c">Bloccato: il subagente &lt;il subagente&gt; vuole cambiare …</span></pre></div>
+  </div>
+  <aside class="notes">La conseguenza va detta: in payments-api, con Heimdall installato, nemmeno l'agente con cui lavorate voi cambia un test. È voluto: il vincolo è del progetto, non di un agente. Chi deve cambiare un test lo fa a mano, o disattiva il plugin. agent_type è documentato nell'input degli hook: lo usiamo nel messaggio, non per decidere. Il nome esatto che Claude Code mette in agent_type per un subagente di plugin non l'abbiamo visto in una sessione vera.</aside>
+</section>
+
+<section class="slide" data-ch="4" data-title="Simulatore degli hook">
+  <div class="eyebrow"><b>04</b> Gli hook come guardrail</div>
+  <h2>Prova: che cosa lascia passare Heimdall?</h2>
+  <p class="small">Da <code>~/heimdall-lab/payments-api</code>, sul branch <code>master</code>, con <code>.heimdall/vincoli.md</code>. Gli esiti sono quelli veri degli script del laboratorio.</p>
+  <div class="split">
+    <div class="steps" id="hookList" style="max-height:440px;overflow:auto"></div>
+    <div class="term" id="hookOut" style="min-height:220px"></div>
+  </div>
+  <aside class="notes">Tre casi da commentare. Lo switch seguito dal commit nella stessa riga è bloccato: l'hook valuta il comando prima che giri, e il branch è ancora master. Lo script pulisci-test.sh passa: l'hook non legge dentro gli script. Il Write di StatementParserXxeTest passa: un test nuovo è benvenuto.</aside>
+</section>
+
+<!-- ============ 5. NEI DUE STRUMENTI ============ -->
+<section class="slide" data-ch="5" data-title="Nei due strumenti">
+  <div class="eyebrow"><b>05</b> Nei due strumenti</div>
+  <h2>Supervisor e hook, in Claude Code e Copilot CLI</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Aspetto</th><th class="cc">Claude Code</th><th class="gh">Copilot CLI</th></tr></thead>
+    <tbody>
+      <tr><td>La skill</td><td><code>/heimdall:supervise-plan PAY-160644</code></td><td><code>/supervise-plan PAY-160644</code></td></tr>
+      <tr><td>I subagenti</td><td><code>heimdall:supervisor</code>, <code>heimdall:security-analyst</code></td><td><code>supervisor</code>, <code>security-analyst</code></td></tr>
+      <tr><td>Strumenti del Supervisor</td><td colspan="2"><code>Read, Grep, Glob</code>: legge, non scrive, non esegue</td></tr>
+      <tr><td>Hook su Edit e Write</td><td><code>PreToolUse</code>, uscita 2 blocca</td><td>Con <code>PreToolUse</code> in PascalCase riceve <code>tool_name</code> e <code>tool_input</code>; <code>create</code>→<code>Write</code>, <code>edit</code>→<code>Edit</code> (corso 02)</td></tr>
+      <tr><td>Hook su Bash</td><td><code>tool_input.command</code></td><td class="small">Non verificato: la documentazione non dice come si chiama la shell nella semantica di Claude</td></tr>
+      <tr><td>Nome dell'agente nell'evento</td><td><code>agent_type</code></td><td class="small">Non verificato</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn">In Copilot, finché non è provato, contate solo sugli hook di <code>Edit</code> e <code>Write</code>. La rete su Bash e il muro sul server restano gli stessi per tutti e due gli strumenti.</div>
+  <aside class="notes">Come nelle lezioni precedenti: la delega ai subagenti in Copilot è documentata ma non provata in sessione. Se nel vostro Copilot un rm su un test passa, è il caso da segnalare: aggiungeremo il nome giusto al matcher.</aside>
+</section>
+
+<!-- ============ 6. LABORATORIO ============ -->
+<section class="slide" data-ch="6" data-title="Obiettivo del laboratorio">
+  <div class="eyebrow"><b>06</b> Laboratorio</div>
+  <h2>Dai vincoli di payments-api al piano approvato</h2>
+  <p class="lead">Partiamo da dove finisce la lezione 05: il plugin 0.2.0 in <code>~/heimdall-lab/heimdall</code> e il piano v1 di <code>PAY-160644</code>. Alla fine <code>payments-api</code> ha i suoi vincoli, due verdetti e il piano v2, e Heimdall 0.3.0 ha i suoi guardrail.</p>
+  <div class="grid g3">
+    <div class="panel"><span class="tag acc">Passi 1–3</span><h3>Regole</h3><p>I vincoli nel repo, il contratto e la timeline, gli hook provati a mano.</p></div>
+    <div class="panel"><span class="tag acc">Passi 4–6</span><h3>Verdetti</h3><p>Il Supervisor nel plugin, il verdetto v1, il ciclo fino al v2.</p></div>
+    <div class="panel"><span class="tag acc">Passo 7</span><h3>Guardrail dal vivo</h3><p>L'agente prova a riscrivere un piano, a cambiare un test, a fare un merge.</p></div>
+  </div>
+  <div class="labbar"><span>Avanzamento del laboratorio</span><div class="meter"><i id="labMeter"></i></div><span id="labCount">0 / 0</span></div>
+  <p class="small">Prerequisiti: il repo <code>courses-ai</code> clonato, Claude Code e/o Copilot CLI, Node.js 18 o successivo, Git. Chi non ha fatto la lezione 05 parte dalla sua soluzione: i comandi sono nel README del laboratorio. I passi 5–7 consumano token sul vostro account.</p>
+  <aside class="notes">I passi 1–4 non usano il modello: tutte le regole si vedono e si provano prima che un agente le incontri. Chi finisce prima scrive un sesto vincolo in vincoli.md, lo committa e guarda che cosa succede al verdetto successivo: l'hook pretende che compaia in checked.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 1 · I vincoli">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 1</div>
+  <h2>I vincoli nel repo di payments-api</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">dalla radice di courses-ai</span><pre class="code">export H="$PWD/corsi/06-vincoli-e-guardrail/lab/team-marketplace/plugins/heimdall"
+export L="$PWD/corsi/06-vincoli-e-guardrail/lab"
+cp -r "$L/starter/.heimdall" ~/heimdall-lab/payments-api/
+cd ~/heimdall-lab/payments-api</pre></div>
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">git add .heimdall
+git commit -m "chore: i vincoli di Heimdall per payments-api"</pre></div>
+  </div>
+  <p>Leggete <code>.heimdall/vincoli.md</code>, poi <code>.pipeline/PAY-160644/plan-v1.md</code>. Prima del Supervisor decidete voi: quali vincoli viola il piano v1, e con quale passo?</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab1"><span>I vincoli sono in git, con un commit a sé</span></label>
+    <label class="check"><input type="checkbox" id="lab2"><span>Ho scritto il mio verdetto sul piano v1, con il vincolo e il passo</span></label>
+  </div>
+  <aside class="notes">Il verdetto a mano serve al passo 5: confrontarlo con quello del Supervisor dice se le istruzioni sono chiare. Di solito la sala trova Java 8; Dipendenze, il cambio di major, la trova metà.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 2 · Contratto e timeline">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 2</div>
+  <h2>Il contratto e la timeline</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">cp -r "$H/hooks" ~/heimdall-lab/heimdall/ &amp;&amp; cp "$H/scripts/timeline.js" ~/heimdall-lab/heimdall/scripts/
+node ~/heimdall-lab/heimdall/scripts/timeline.js PAY-160644; echo "exit=$?"
+prova() { printf '{"cwd":"%s","tool_name":"%s","tool_input":%s}' "$PWD" "$2" "$3" | node ~/heimdall-lab/heimdall/hooks/$1.js; echo "exit=$?"; }
+prova guard-pipeline Write '{"file_path":".pipeline/PAY-160644/plan-v2.md","content":"x"}'</pre></div>
+  <div class="term">Esito: il piano v1 aspetta il verdetto. Il prossimo passo è il Supervisor.
+exit=1
+Prima di scrivere plan-v2.md serve il verdetto sul piano v1 (verdict-v1.json).
+<span class="k">exit=2</span></div>
+  <p>Provate anche a riscrivere <code>plan-v1.md</code> con <code>Write</code> e a modificare <code>.heimdall/vincoli.md</code> con <code>Edit</code>.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab3"><span>La timeline aspetta il Supervisor, e il piano v2 senza verdetto è bloccato</span></label>
+    <label class="check"><input type="checkbox" id="lab4"><span>Anche la riscrittura del piano v1 e la modifica dei vincoli sono bloccate</span></label>
+  </div>
+  <aside class="notes">La funzione prova costruisce lo stesso evento che riceverebbe l'hook da Claude Code: cwd, tool_name, tool_input. Gli hook sono già nella cartella del plugin, ma non sono ancora attivi: lo diventano al passo 4, con l'aggiornamento del plugin.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 3 · Test e git">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 3</div>
+  <h2>Test intoccabili e niente merge, a mano</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code">prova guard-tests Edit '{"file_path":"src/test/java/com/acme/payments/statements/StatementParserTest.java","old_string":"x","new_string":"y"}'
+prova guard-tests Write '{"file_path":"src/test/java/com/acme/payments/statements/StatementParserXxeTest.java","content":"x"}'
+prova guard-tests Bash '{"command":"rm -rf src/test"}'
+prova guard-git Bash '{"command":"git commit -am fix"}'
+prova guard-git Bash '{"command":"git merge fix/pay-160644"}'
+git switch -c fix/pay-160644 &amp;&amp; prova guard-git Bash '{"command":"git commit -am fix"}'; git switch -</pre></div>
+  <p>Bloccati, passa, bloccato; bloccato, bloccato, passa. Da <code>/tmp</code> lo stesso merge passa: fuori da un progetto con <code>.heimdall/vincoli.md</code> gli hook non intervengono.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab5"><span>Il test esistente è bloccato, il test nuovo passa</span></label>
+    <label class="check"><input type="checkbox" id="lab6"><span>Commit su <code>master</code> e merge bloccati, commit su <code>fix/pay-160644</code> passa</span></label>
+  </div>
+  <aside class="notes">Il branch di partenza è master o main a seconda della configurazione di git: tutti e due sono protetti. Il commit sul branch di lavoro passa all'hook; il comando vero non lo lanciamo, la funzione prova chiama solo l'hook.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 4 · Il Supervisor nel plugin">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 4</div>
+  <h2>Il Supervisor nel plugin</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/heimdall</span><pre class="code">cd ~/heimdall-lab/heimdall
+cp "$H/agents/"{supervisor,security-analyst}.md agents/
+cp "$H/.claude-plugin/plugin.json" .claude-plugin/
+cp -r "$H/skills/supervise-plan" skills/
+cp "$H/skills/analyze-alert/SKILL.md" skills/analyze-alert/
+claude plugin validate ~/heimdall-lab
+claude plugin marketplace update heimdall-lab
+claude plugin update heimdall@heimdall-lab
+claude plugin details heimdall</pre></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="term">heimdall 0.3.0
+  Skills (3)  analyze-alert, retrieve-alerts, supervise-plan
+  Agents (3)  security-analyst, supervisor, data-retriever
+  Hooks (1)  PreToolUse
+  MCP servers (1)  heimdall</div>
+      <div class="codewrap"><span class="label gh">Copilot CLI · non verificato</span><pre class="code">copilot plugin marketplace update heimdall-lab
+copilot plugin install heimdall@heimdall-lab</pre></div>
+    </div>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab7"><span><code>plugin details</code> dice 0.3.0, con 3 skill, 3 agenti, 1 hook e 1 server MCP</span></label>
+  </div>
+  <aside class="notes">claude plugin update chiede di riavviare la sessione: da qui gli hook sono attivi. diff -r ~/heimdall-lab/heimdall "$H" non deve stampare niente. In Copilot, se il plugin resta alla 0.2.0, disinstallatelo e installatelo di nuovo.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 5 · Il verdetto v1">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 5</div>
+  <h2>Il Supervisor da solo, sul piano v1</h2>
+  <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api, in una sessione nuova di Claude Code</span><pre class="code" style="white-space:pre-wrap">Usa il subagente heimdall:supervisor per valutare .pipeline/PAY-160644/plan-v1.md. Mostrami il verdetto e non salvarlo.</pre></div>
+  <ul class="clean">
+    <li>In Copilot: <code>Use the supervisor agent to …</code> con la stessa richiesta.</li>
+    <li>Confrontate il verdetto con <code>esempi/PAY-160644/verdict-v1.json</code> e con il vostro del passo 1.</li>
+  </ul>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab8"><span>Il verdetto è <code>rejected</code> e cita «Java 8» e «Dipendenze»</span></label>
+    <label class="check"><input type="checkbox" id="lab9"><span><code>checked</code> elenca tutti e cinque i vincoli</span></label>
+  </div>
+  <aside class="notes">Espandete la chiamata al subagente per vedere quali file ha letto: vincoli.md, il piano, analysis.json, il pom. Se ha trovato violazioni che non ci sono, guardate se sono gusti: le istruzioni dicono di metterli in notes.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 6 · Il ciclo">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 6</div>
+  <h2>Il ciclo fino al piano v2</h2>
+  <div class="grid g2">
+    <div class="codewrap"><span class="label">da ~/heimdall-lab/payments-api</span><pre class="code"><span class="c"># Claude Code</span>
+/heimdall:supervise-plan PAY-160644
+
+<span class="c"># Copilot CLI</span>
+/supervise-plan PAY-160644</pre></div>
+    <ul class="clean">
+      <li>Approvate le scritture in <code>.pipeline/PAY-160644/</code>.</li>
+      <li>La skill salva <code>verdict-v1.json</code>, chiede il piano v2, lo fa valutare, salva <code>verdict-v2.json</code>.</li>
+      <li>Alla fine mostra la timeline. Confrontate il piano con <code>esempi/PAY-160644/plan-v2.md</code>.</li>
+    </ul>
+  </div>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab10"><span>Il piano v2 lascia Java a 1.8 e acme-xml alla 1.4.2, con <code>resolveExternalEntities(false)</code></span></label>
+    <label class="check"><input type="checkbox" id="lab11"><span>«Risposta al verdetto v1» ha una voce per «Java 8» e una per «Dipendenze»</span></label>
+    <label class="check"><input type="checkbox" id="lab12"><span>La timeline finisce con «piano v2 approvato»</span></label>
+  </div>
+  <aside class="notes">Se il v2 viene rifiutato di nuovo, lasciate andare: la skill prova il v3, e dopo il terzo rifiuto l'hook ferma tutto. È l'occasione per leggere i verdetti e chiedersi se è il piano a sbagliare o il vincolo a essere ambiguo.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Passo 7 · I guardrail dal vivo">
+  <div class="eyebrow"><b>06</b> Laboratorio · Passo 7</div>
+  <h2>I guardrail dal vivo</h2>
+  <div class="codewrap"><span class="label">nella stessa sessione, una richiesta alla volta</span><pre class="code" style="white-space:pre-wrap">Correggi il piano v1 togliendo il passaggio a Java 11.
+In StatementParserTest aggiungi un caso per un estratto vuoto.
+Fai il commit di .pipeline/ su questo branch, poi il merge di fix/pay-160644.</pre></div>
+  <p>Leggete il motivo che l'agente riceve, e che cosa propone al suo posto. Poi <code>git log --oneline</code> e <code>git status</code>: nessun commit nuovo, i test sono quelli di partenza.</p>
+  <div class="steps" data-lab>
+    <label class="check"><input type="checkbox" id="lab13"><span>La riscrittura del piano v1 è bloccata da <code>guard-pipeline</code></span></label>
+    <label class="check"><input type="checkbox" id="lab14"><span>La modifica di <code>StatementParserTest</code> è bloccata, e l'agente propone un test nuovo o si ferma</span></label>
+    <label class="check"><input type="checkbox" id="lab15"><span>Commit e merge sono bloccati da <code>guard-git</code></span></label>
+  </div>
+  <aside class="notes">La seconda richiesta è la più istruttiva: l'agente bloccato di solito propone di scrivere il caso in un file nuovo. È esattamente quello che vogliamo dal Resolver. Se invece prova un'altra strada, per esempio un comando di shell diverso, guardate se l'hook lo ferma: è un buon caso per i limiti della rete.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Quiz">
+  <div class="eyebrow"><b>06</b> Laboratorio · Verifica</div>
+  <h2>Cinque domande per chiudere</h2>
+  <div class="grid g2" id="quiz"></div>
+  <div class="labbar"><span>Punteggio</span><span class="score" id="quizScore">0 / 5</span><button class="btn" id="quizReset" type="button">Ricomincia</button></div>
+  <aside class="notes">Come nei corsi precedenti: ognuno risponde a voce, poi si clicca.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Dove andiamo">
+  <div class="eyebrow"><b>06</b> Dove andiamo</div>
+  <h2>Heimdall, un pezzo alla volta</h2>
+  <div class="split">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="lead">Un plugin per Claude Code e Copilot CLI: parte da un alert di sicurezza di AppScan o SonarQube e arriva a una pull request su Azure DevOps, pronta per la review.</p>
+      <p style="line-height:2"><span class="tag acc">Data Retriever</span> <span aria-hidden="true">→</span> <span class="tag acc">Security Analyst</span> <span aria-hidden="true">⇄</span> <span class="tag acc">Supervisor</span> <span aria-hidden="true">→</span> <span class="tag">Resolver</span> <span aria-hidden="true">→</span> <span class="tag">CI</span> <span aria-hidden="true">→</span> <span class="tag">Review umana</span></p>
+      <div class="callout"><strong>Da oggi:</strong> Heimdall arriva a un piano approvato, e i suoi agenti non toccano i test e non fanno merge. La lezione 07 porta il Resolver: dal piano v2 al branch, ai commit e alla PR su Azure DevOps, con lo scenario Angular e la CI che fallisce.</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>#</th><th>Lezione</th><th>Pezzo di Heimdall</th></tr></thead>
+      <tbody>
+      <tr><td><code>01</code></td><td>Skill e plugin</td><td>il comando <code>/heimdall</code>, il plugin, il marketplace</td></tr>
+      <tr><td><code>02</code></td><td>Subagenti, hook e server MCP</td><td>i mattoni: agenti, guard, connettori</td></tr>
+      <tr><td><code>03</code></td><td>Orchestrare più agenti</td><td>la pipeline, il piano rifiutato, i retry</td></tr>
+      <tr><td><code>04</code></td><td>Connettere i sistemi</td><td>Data Retriever e il server MCP degli alert</td></tr>
+      <tr><td><code>05</code></td><td>Capire il codice</td><td>Security Analyst e piano di remediation</td></tr>
+      <tr class="hl"><td><code>06</code></td><td>Vincoli e guardrail <span class="tag acc">oggi</span></td><td>Supervisor e hook: test intoccabili, niente merge</td></tr>
+      <tr><td><code>07</code></td><td>Dalla patch alla pull request</td><td>Resolver, conventional commits, CI</td></tr>
+      <tr><td><code>08</code></td><td>Misurare e rendere affidabile</td><td>i tre scenari come casi di prova</td></tr>
+      <tr><td><code>09</code></td><td>Heimdall in funzione</td><td><code>/heimdall remediate</code> sui tre scenari</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <aside class="notes">Il piano completo è in docs/percorso-heimdall.md. La decisione di oggi: ADR-0008, i vincoli nel repo del progetto. Restano aperte la CI simulata e l'uso di azure-devops-mcp, nella lezione 07, e chi orchestra la pipeline, dopo le misure della lezione 08.</aside>
+</section>
+
+<section class="slide" data-ch="6" data-title="Risorse">
+  <div class="eyebrow">Per approfondire</div>
+  <h2>Risorse</h2>
+  <div class="grid g2">
+    <div class="panel"><h3 class="cc">Claude Code</h3><ul class="clean">
+      <li><a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener">Hook</a>: <code>PreToolUse</code>, l'uscita 2, <code>agent_type</code></li>
+      <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagenti</a>: i campi del frontmatter nei plugin</li>
+      <li><a href="https://code.claude.com/docs/en/plugins-reference" target="_blank" rel="noopener">Riferimento dei plugin</a>: <code>hooks/hooks.json</code></li></ul></div>
+    <div class="panel"><h3 class="gh">GitHub Copilot</h3><ul class="clean">
+      <li><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference" target="_blank" rel="noopener">Riferimento dei plugin della CLI</a></li>
+      <li><a href="https://docs.github.com/en/copilot/reference/custom-agents-configuration" target="_blank" rel="noopener">Configurazione dei custom agent</a></li></ul></div>
+    <div class="panel"><h3>Sicurezza</h3><ul class="clean">
+      <li><a href="https://cwe.mitre.org/data/definitions/611.html" target="_blank" rel="noopener">CWE-611</a>, XXE</li>
+      <li>Le branch policy di Azure DevOps e i permessi del token: nella lezione 07</li></ul></div>
+    <div class="panel"><h3>Nel repo</h3><ul class="clean">
+      <li><code>corsi/06-vincoli-e-guardrail/lab/</code>: la soluzione, i vincoli, gli esempi</li>
+      <li><code>heimdall@courses-ai</code>: il plugin 0.3.0, installabile</li>
+      <li><code>docs/adr/0008-…</code>: i vincoli nel repo del progetto</li></ul></div>
+  </div>
+  <aside class="notes">Grazie. Domande?</aside>
+</section>
+
+  </main>
+
+  <footer class="bottom"><nav class="prog" id="prog" aria-label="Capitoli"></nav></footer>
+</div>
+
+<div class="notespanel" id="notesPanel" hidden><h4>Note del relatore</h4><div id="notesText"></div></div>
+<div class="overview" id="overview" hidden>
+  <div class="head"><h2 style="font-size:26px">Indice</h2><button class="btn" id="ovClose">Chiudi</button></div>
+  <div class="ovgrid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  const CHAPTERS = ["Introduzione","Perché i vincoli","I vincoli del progetto","Il Supervisor","Gli hook come guardrail","Nei due strumenti","Laboratorio"];
+  const slides = $$('.slide');
+  let cur = 0;
+
+  // ---- navigazione
+  function go(i, focus){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    const s = slides[i];
+    s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter');
+    cur = i;
+    const ch = +s.dataset.ch;
+    $('#chapter').textContent = (ch ? String(ch).padStart(2,'0') + ' · ' : '') + CHAPTERS[ch] + ' — ' + s.dataset.title;
+    $('#count').textContent = (i + 1) + ' / ' + slides.length;
+    $('#prev').disabled = i === 0; $('#next').disabled = i === slides.length - 1;
+    $$('#prog button').forEach(b => {
+      const c = +b.dataset.ch;
+      b.classList.toggle('cur', c === ch); b.classList.toggle('past', c < ch);
+    });
+    const n = s.querySelector('.notes');
+    $('#notesText').textContent = n ? n.textContent : '';
+    $('#stage').scrollTop = 0;
+    const h = '#s' + (i + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function fromHash(){ const m = /^#s(\d+)$/.exec(location.hash); return m ? +m[1] - 1 : 0; }
+  $('#prev').onclick = () => go(cur - 1);
+  $('#next').onclick = () => go(cur + 1);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i !== cur) go(i); });
+
+  // barra capitoli
+  const prog = $('#prog');
+  CHAPTERS.forEach((name, c) => {
+    const b = document.createElement('button');
+    b.dataset.ch = c; b.title = name; b.setAttribute('aria-label', 'Capitolo: ' + name);
+    b.innerHTML = '<span>' + (c ? String(c).padStart(2,'0') : '◆') + '</span><i></i>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    prog.appendChild(b);
+  });
+
+  // agenda
+  const agenda = $('#agenda');
+  CHAPTERS.slice(1).forEach((name, k) => {
+    const c = k + 1;
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + String(c).padStart(2,'0') + '</span><span class="t">' + name + '</span>';
+    b.onclick = () => go(slides.findIndex(s => +s.dataset.ch === c));
+    agenda.appendChild(b);
+  });
+
+  // indice
+  const ov = $('#overview'), ovGrid = $('#ovGrid');
+  function openOverview(){
+    ovGrid.innerHTML = '';
+    slides.forEach((s, i) => {
+      const b = document.createElement('button');
+      if (i === cur) b.className = 'cur';
+      const ch = +s.dataset.ch;
+      b.innerHTML = '<span class="oc">' + (i + 1) + ' · ' + CHAPTERS[ch] + '</span><span class="ot"></span>';
+      b.querySelector('.ot').textContent = s.dataset.title;
+      b.onclick = () => { ov.hidden = true; go(i); };
+      ovGrid.appendChild(b);
+    });
+    ov.hidden = false;
+    (ovGrid.querySelector('.cur') || ovGrid.firstChild).focus();
+  }
+  $('#btnOverview').onclick = openOverview;
+  $('#ovClose').onclick = () => { ov.hidden = true; };
+
+  // note
+  function toggleNotes(force){
+    const on = force ?? $('#notesPanel').hidden;
+    $('#notesPanel').hidden = !on;
+    $('#btnNotes').setAttribute('aria-pressed', String(on));
+  }
+  $('#btnNotes').onclick = () => toggleNotes();
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!ov.hidden){ if (e.key === 'Escape' || e.key === 'o' || e.key === 'O'){ ov.hidden = true; e.preventDefault(); } return; }
+    switch (e.key){
+      case 'ArrowRight': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case ' ': if (t.tagName !== 'BUTTON'){ go(cur + 1); e.preventDefault(); } break;
+      case 'ArrowLeft': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(slides.length - 1); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'o': case 'O': openOverview(); break;
+      case 'Escape': toggleNotes(false); break;
+    }
+  });
+
+  // ---- pulsanti copia
+  $$('pre.code').forEach(pre => {
+    const wrap = pre.parentElement;
+    const b = document.createElement('button');
+    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copia';
+    if (wrap.querySelector('.label')) b.style.top = '28px';
+    b.onclick = () => copyText(pre.innerText, b, pre);
+    wrap.appendChild(b);
+  });
+  function copyText(text, btn, el){
+    const done = () => { btn.textContent = 'Copiato'; setTimeout(() => btn.textContent = 'Copia', 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selezionato: Ctrl+C'; setTimeout(() => btn.textContent = 'Copia', 2200); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+  }
+
+  // ---- schede
+  $$('.tabgroup').forEach(g => {
+    const tabs = $$('.tab', g);
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.setAttribute('aria-selected', String(x === t)));
+      $$('.tabpanel', g).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    });
+  });
+
+  // ---- esploratori di file
+  $$('[data-explorer]').forEach(ex => {
+    const btns = $$('.tree button', ex);
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $$('[data-file]', ex).forEach(f => f.hidden = f.dataset.file !== b.dataset.show);
+    });
+  });
+
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function segInit(id, cb){ $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cb(b.dataset.v); }); }
+
+  // ---- simulatore del Supervisor (i cinque vincoli di payments-api, con regole fisse)
+  const SOPTS = [
+    { id: 'acme2', text: 'acme-xml da 1.4.2 a 2.0.0 (<code>pom.xml:22</code>)' },
+    { id: 'java11', text: '<code>java.version</code> da 1.8 a 11 (<code>pom.xml:21</code>)' },
+    { id: 'rx', text: '<code>XmlReader.builder().resolveExternalEntities(false)</code> in <code>StatementParser</code>' },
+    { id: 'bank', text: 'Cambia anche <code>BankCodesLoader</code>, che usa la libreria' },
+    { id: 'newtest', text: 'Aggiunge <code>StatementParserXxeTest</code>, nuovo' },
+    { id: 'edittest', text: 'Aggiunge il caso XXE a <code>StatementParserTest</code>, che esiste' },
+    { id: 'cookie', text: 'Già che c\'è, <code>setSecure(true)</code> in <code>SessionCookieFilter</code>' },
+    { id: 'scanner', text: 'Esclude acme-xml dall\'analisi di AppScan' },
+    { id: 'dep', text: 'Aggiunge un altro parser XML come dipendenza' }
+  ];
+  const SPRESET = { v1: ['acme2', 'java11', 'bank', 'newtest'], v2: ['rx', 'bank', 'newtest'], none: [] };
+  const NAMES = ['Java 8', 'Dipendenze', 'Perimetro', 'Test esistenti', 'Nessuna scorciatoia'];
+  const sel = new Set(SPRESET.v1);
+  SOPTS.forEach(o => {
+    const l = document.createElement('label'); l.className = 'check';
+    l.innerHTML = '<input type="checkbox" data-o="' + o.id + '"><span>' + o.text + '</span>';
+    l.querySelector('input').addEventListener('change', e => { e.target.checked ? sel.add(o.id) : sel.delete(o.id); renderS(); });
+    $('#supOpts').appendChild(l);
+  });
+  function renderS(){
+    $$('#supOpts input').forEach(i => { i.checked = sel.has(i.dataset.o); });
+    const v = [];
+    const add = (c, d) => v.push({ constraint: c, detail: d });
+    if (sel.has('java11')) add('Java 8', 'Il piano porta java.version da 1.8 a 11 (pom.xml:21).');
+    else if (sel.has('acme2')) add('Java 8', 'acme-xml 2.0.0 richiede Java 11 (javaMin) e il progetto resta su 1.8: il piano porta una libreria che su Java 8 non gira.');
+    if (sel.has('acme2')) add('Dipendenze', 'acme-xml da 1.4.2 a 2.0.0 è un cambio di major della libreria comune: lo decide il team piattaforma.');
+    if (sel.has('dep')) add('Dipendenze', 'Il piano aggiunge una dipendenza nuova.');
+    if (sel.has('cookie')) add('Perimetro', 'SessionCookieFilter.java non usa acme-xml e non contiene la riga dell\'alert: non è in analysis.json.');
+    if (sel.has('edittest')) add('Test esistenti', 'Il piano modifica StatementParserTest.java, che esiste in src/test/.');
+    if (!sel.has('newtest')) add('Test esistenti', 'Il piano non aggiunge un test nuovo che fallisce prima della correzione e passa dopo.');
+    if (sel.has('scanner')) add('Nessuna scorciatoia', 'Escludere acme-xml da AppScan nasconde l\'alert invece di correggerlo.');
+    const verdict = { alert: 'PAY-160644', plan: 1, decision: v.length ? 'rejected' : 'approved', checked: NAMES, violations: v };
+    const fixes = sel.has('acme2') || sel.has('rx');
+    if (!v.length && !fixes) verdict.notes = 'Nessuna violazione, ma il piano non corregge l\'XXE: lo direbbero il test nuovo e la CI, non i vincoli.';
+    else if (!v.length && !sel.has('bank')) verdict.notes = 'BankCodesLoader continua a creare un lettore che risolve le entità esterne: non è sfruttabile oggi, ma il piano dovrebbe dirlo nei rischi.';
+    else if (!v.length) verdict.notes = 'AppScan continuerà a segnalare acme-xml 1.4.2: il piano dovrebbe dirlo nei rischi.';
+    const json = JSON.stringify(verdict, null, 2)
+      .replace(/"checked": \[[^\]]*\]/, '"checked": [' + NAMES.map(n => '"' + n + '"').join(', ') + ']');
+    $('#supOut').innerHTML = '<span class="c">// verdict-v1.json, se il piano fosse così</span>\n' +
+      esc(json).replace(/"decision": "(approved|rejected)"/, (m, d) => '"decision": <span class="k">"' + d + '"</span>');
+  }
+  segInit('supPreset', v => { sel.clear(); SPRESET[v].forEach(x => sel.add(x)); renderS(); });
+  renderS();
+
+  // ---- simulatore degli hook: gli esiti veri di hooks/*.js su ~/heimdall-lab/payments-api, branch master
+  const HSIM = [{"tool": "Edit", "input": {"file_path": "src/test/java/com/acme/payments/statements/StatementParserTest.java", "old_string": "assertEquals(2,", "new_string": "assertEquals(3,"}, "hook": "guard-tests", "exit": 2, "msg": "Bloccato: l'agente vuole cambiare src/test/java/com/acme/payments/statements/StatementParserTest.java, un test esistente. Heimdall non modifica i test: i test esistenti dicono se la correzione rompe qualcosa (vincolo «Test esistenti»). Un test nuovo è un file nuovo. Se un test esistente va cambiato, fermati e dillo: lo decide una persona."}, {"tool": "Write", "input": {"file_path": "src/test/java/com/acme/payments/statements/StatementParserXxeTest.java", "content": "class StatementParserXxeTest { … }"}, "hook": "guard-pipeline, guard-tests", "exit": 0, "msg": ""}, {"tool": "Edit", "input": {"file_path": "src/main/java/com/acme/payments/statements/StatementParser.java", "old_string": "XmlReaderFactory.newReader()", "new_string": "XmlReader.builder().resolveExternalEntities(false).build()"}, "hook": "guard-pipeline, guard-tests", "exit": 0, "msg": ""}, {"tool": "Bash", "input": {"command": "sed -i 's/125000/0/' src/test/resources/statements/two-lines.xml"}, "hook": "guard-tests", "exit": 2, "msg": "Bloccato: l'agente vuole eseguire «sed -i 's/125000/0/' src/test/resources/statements/two-lines.xml», che tocca src/test/resources/statements/two-lines.xml, dove ci sono test esistenti. Heimdall non modifica i test: i test esistenti dicono se la correzione rompe qualcosa (vincolo «Test esistenti»). Un test nuovo è un file nuovo. Se un test esistente va cambiato, fermati e dillo: lo decide una persona."}, {"tool": "Bash", "input": {"command": "rm -rf src/test"}, "hook": "guard-tests", "exit": 2, "msg": "Bloccato: l'agente vuole eseguire «rm -rf src/test», che tocca src/test, dove ci sono test esistenti. Heimdall non modifica i test: i test esistenti dicono se la correzione rompe qualcosa (vincolo «Test esistenti»). Un test nuovo è un file nuovo. Se un test esistente va cambiato, fermati e dillo: lo decide una persona."}, {"tool": "Bash", "input": {"command": "mvn -q test"}, "hook": "guard-tests, guard-git", "exit": 0, "msg": ""}, {"tool": "Bash", "input": {"command": "git commit -am \"fix: XXE negli estratti conto\""}, "hook": "guard-git", "exit": 2, "msg": "Bloccato «git commit -am \"fix: XXE negli estratti conto\"»: il branch corrente è master, che è protetto. Crea un branch per la correzione. Heimdall non fa merge e non scrive sui branch protetti: l'esito è una pull request che rivede una persona."}, {"tool": "Bash", "input": {"command": "git switch -c fix/pay-160644 && git commit -am \"fix: XXE negli estratti conto\""}, "hook": "guard-git", "exit": 2, "msg": "Bloccato «git commit -am \"fix: XXE negli estratti conto\"»: il branch corrente è master, che è protetto. Crea un branch per la correzione. Heimdall non fa merge e non scrive sui branch protetti: l'esito è una pull request che rivede una persona."}, {"tool": "Bash", "input": {"command": "git push origin HEAD:main"}, "hook": "guard-git", "exit": 2, "msg": "Bloccato «git push origin HEAD:main»: spinge su main, che è protetto. Heimdall non fa merge e non scrive sui branch protetti: l'esito è una pull request che rivede una persona."}, {"tool": "Bash", "input": {"command": "git merge fix/pay-160644"}, "hook": "guard-git", "exit": 2, "msg": "Bloccato «git merge fix/pay-160644». Heimdall non fa merge e non scrive sui branch protetti: l'esito è una pull request che rivede una persona."}, {"tool": "Bash", "input": {"command": "gh pr merge 12 --squash"}, "hook": "guard-git", "exit": 2, "msg": "Bloccato «gh pr merge 12 --squash». Heimdall non fa merge e non scrive sui branch protetti: l'esito è una pull request che rivede una persona."}, {"tool": "Bash", "input": {"command": "bash scripts/pulisci-test.sh"}, "hook": "guard-tests, guard-git", "exit": 0, "msg": ""}, {"tool": "Write", "input": {"file_path": ".pipeline/PAY-160644/plan-v1.md", "content": "…"}, "hook": "guard-pipeline", "exit": 2, "msg": "plan-v1.md esiste già e non si riscrive: ogni passo della pipeline resta come traccia. Una rielaborazione è una versione nuova."}, {"tool": "Edit", "input": {"file_path": ".heimdall/vincoli.md", "old_string": "Java 8", "new_string": "Java 11"}, "hook": "guard-pipeline", "exit": 2, "msg": "I vincoli in .heimdall/ li scrive il team del progetto, con una pull request: l'agente non li modifica."}];
+  HSIM.forEach(c => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'check'; b.style.textAlign = 'left';
+    const what = c.input.command || c.input.file_path;
+    b.innerHTML = '<span class="tag' + (c.tool === 'Bash' ? '' : ' acc') + '">' + c.tool + '</span> <span><code></code></span>';
+    b.querySelector('code').textContent = what.replace(/src\/(main|test)\/java\/com\/acme\/payments\//g, 'src/$1/…/');
+    b.onclick = () => {
+      $$('#hookList button').forEach(x => { x.style.borderColor = ''; });
+      b.style.borderColor = 'var(--accent)';
+      $('#hookOut').innerHTML = '<span class="c">' + esc(c.tool) + ' · ' + esc(what) + '</span>\n\n' +
+        (c.exit === 2 ? '<span class="k">' + esc(c.hook) + ' · exit=2 · bloccato</span>\n' + esc(c.msg)
+                      : '<span class="k">' + esc(c.hook) + ' · exit=0 · passa</span>\nNessun hook interviene: l\'azione prosegue.');
+    };
+    $('#hookList').appendChild(b);
+  });
+  $('#hookList button').click();
+
+  // ---- checklist laboratorio
+  const labBoxes = $$('[data-lab] input');
+  const labState = store.get('skilllab06.lab', {});
+  function labUpdate(){
+    const done = labBoxes.filter(b => b.checked).length;
+    $('#labCount').textContent = done + ' / ' + labBoxes.length;
+    $('#labMeter').style.width = Math.max(3, done / labBoxes.length * 100) + '%';
+    labBoxes.forEach(b => b.closest('.check').classList.toggle('done', b.checked));
+  }
+  labBoxes.forEach(b => { b.checked = !!labState[b.id]; b.addEventListener('change', () => { labState[b.id] = b.checked; store.set('skilllab06.lab', labState); labUpdate(); }); });
+  labUpdate();
+
+  // ---- quiz
+  const QZ = [
+    ['Dove stanno i vincoli di payments-api, e perché lì?', ['Nel plugin heimdall, perché valgono per tutti i progetti','In .pipeline/vincoli.md, accanto agli artefatti','In .heimdall/vincoli.md, nel repo del progetto: li scrive il team con una PR e cambiano con il codice'], 2, 'Java 8 vale per payments-api, non per tutti i progetti. .pipeline/ è la cartella di un giro su un alert (ADR-0008).'],
+    ['Il Supervisor trova brutto il nome del test nuovo. Che cosa fa?', ['Rifiuta per «Test esistenti»','Lo scrive in notes: un gusto non è una violazione','Approva e corregge il nome nel piano'], 1, 'Una violazione è un punto del piano che contraddice un vincolo scritto. Il Supervisor non scrive piani e non modifica file.'],
+    ['«Test esistenti» è un vincolo del progetto e anche un hook. Perché due volte?', ['Il vincolo fa rifiutare un piano che ci prova, l\'hook impedisce l\'azione anche se un agente ci prova lo stesso','È una ridondanza da togliere','L\'hook serve solo per Copilot'], 0, 'Il giudizio sul piano è del Supervisor; l\'azione su un file la ferma un programma, con l\'uscita 2.'],
+    ['L\'agente lancia bash scripts/pulisci-test.sh, che cancella un test. Che cosa succede?', ['guard-tests lo blocca','Passa: l\'hook legge il comando, non lo script. Il muro sono la review e la CI','Claude Code rifiuta gli script di shell'], 1, 'Un hook su Bash è una rete per gli errori dell\'agente, non un sandbox. Le garanzie stanno sul server: branch policy e permessi del token.'],
+    ['Perché gli hook di Heimdall sono in hooks/hooks.json e non nel frontmatter dei subagenti?', ['Perché il frontmatter non accetta JSON','Perché nei subagenti dei plugin Claude Code ignora il campo hooks','Perché gli hook non vedono i subagenti'], 1, 'Gli hook di hooks.json valgono anche dentro i subagenti, e l\'evento porta agent_type. Per non disturbare altri progetti, Heimdall interviene solo dove c\'è .heimdall/vincoli.md.']
+  ];
+  let score = 0;
+  function renderQuiz(){
+    score = 0; $('#quizScore').textContent = '0 / ' + QZ.length;
+    const box = $('#quiz'); box.innerHTML = '';
+    QZ.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'panel q';
+      d.innerHTML = '<h3>' + (i + 1) + '. ' + esc(q[0]) + '</h3><div class="opts"></div><p class="why" hidden></p>';
+      const opts = d.querySelector('.opts');
+      q[1].forEach((o, k) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = o;
+        b.onclick = () => {
+          if (d.dataset.done) return; d.dataset.done = '1';
+          b.classList.add(k === q[2] ? 'right' : 'wrong');
+          opts.children[q[2]].classList.add('right');
+          if (k === q[2]) score++;
+          $('#quizScore').textContent = score + ' / ' + QZ.length;
+          const why = d.querySelector('.why'); why.textContent = q[3]; why.hidden = false;
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  }
+  $('#quizReset').onclick = renderQuiz; renderQuiz();
+
+  go(fromHash());
+})();
+</script>
+</body>
+</html>
