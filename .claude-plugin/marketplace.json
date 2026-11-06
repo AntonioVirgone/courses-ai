@@ -24,8 +24,8 @@
     },
     {
       "name": "heimdall",
-      "source": "./corsi/04-connettere-i-sistemi/lab/team-marketplace/plugins/heimdall",
-      "description": "Corso 04 · Heimdall, primo pezzo: server MCP degli alert di AppScan e SonarQube, con backend simulato e reale, e Data Retriever"
+      "source": "./corsi/05-capire-il-codice/lab/team-marketplace/plugins/heimdall",
+      "description": "Corso 05 · Heimdall fino al Security Analyst: server MCP degli alert e dei metadati delle librerie, Data Retriever, analisi statica del codice e Remediation Plan v1"
     }
   ]
 }

@@ -33,6 +33,16 @@ I termini che usiamo nei corsi e nel repo. Se un termine ha un nome diverso in C
 - **Id di installazione**: `nome-plugin@nome-marketplace`, per esempio `team-toolkit@courses-ai`.
 - **Marketplace predefinito**: quello già registrato al primo avvio: `claude-plugins-official` in Claude Code, `awesome-copilot` in Copilot.
 
+## Heimdall
+
+- **Heimdall**: il plugin che i laboratori costruiscono dalla lezione 04. Parte da un alert di sicurezza e arriva a una pull request da rivedere.
+- **Alert normalizzato**: un alert di AppScan o SonarQube nello schema comune di Heimdall, con un id stabile come `PAY-160644`.
+- **Pertinenza**: il giudizio del Security Analyst su un alert. È pertinente se il problema c'è ed è raggiungibile con un input esterno; pertinente ma non sfruttabile oggi se nessuna catena porta un input esterno; non pertinente se il problema non c'è.
+- **Punto d'ingresso**: un metodo da cui parte l'esecuzione: un endpoint HTTP, un filtro, l'avvio, un job pianificato, un `main`. I test sono punti d'ingresso a parte.
+- **Catena**: la sequenza di chiamate da un punto d'ingresso al codice di un alert, con file e riga di ogni passo.
+- **Albero sintattico** (AST): la struttura di un file sorgente come la vede un parser: tipi, metodi, chiamate. Commenti e stringhe ne restano fuori.
+- **Remediation Plan**: il piano di correzione di un alert, in `.pipeline/<ID>/plan-vN.md`. Lo scrive il Security Analyst e lo valuta il Supervisor.
+
 ## Documentazione delle decisioni
 
 - **ADR** (Architecture Decision Record): un file in `docs/adr/` che fissa una decisione e il suo perché.

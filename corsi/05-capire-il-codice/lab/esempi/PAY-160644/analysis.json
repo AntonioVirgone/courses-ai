@@ -1,0 +1,343 @@
+{
+  "alert": "PAY-160644",
+  "project": "payments-api",
+  "kind": "dependency",
+  "tool": {
+    "name": "heimdall analyze.js",
+    "version": "0.2.0"
+  },
+  "build": {
+    "tool": "maven",
+    "file": "pom.xml",
+    "parent": "org.springframework.boot:spring-boot-starter-parent:2.7.18",
+    "java": "1.8",
+    "javaAt": "pom.xml:21"
+  },
+  "index": {
+    "mainFiles": 12,
+    "testFiles": 2,
+    "types": 12,
+    "methods": 30,
+    "calls": 109,
+    "entryPoints": [
+      {
+        "kind": "main",
+        "label": "main",
+        "method": "com.acme.payments.PaymentsApplication#main",
+        "at": "src/main/java/com/acme/payments/PaymentsApplication.java:9"
+      },
+      {
+        "kind": "startup",
+        "label": "all'avvio (@PostConstruct)",
+        "method": "com.acme.payments.banks.BankCodesLoader#load",
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:25"
+      },
+      {
+        "kind": "http",
+        "label": "POST /api/statements",
+        "method": "com.acme.payments.statements.StatementController#upload",
+        "at": "src/main/java/com/acme/payments/statements/StatementController.java:32"
+      },
+      {
+        "kind": "filter",
+        "label": "ogni richiesta HTTP (filtro)",
+        "method": "com.acme.payments.web.SessionCookieFilter#doFilterInternal",
+        "at": "src/main/java/com/acme/payments/web/SessionCookieFilter.java:25"
+      }
+    ]
+  },
+  "dependency": {
+    "name": "com.acme.libs:acme-xml",
+    "declared": {
+      "at": "pom.xml:46-50",
+      "alertLineInside": true,
+      "version": "1.4.2",
+      "versionAt": "pom.xml:22",
+      "versionProperty": "acme-xml.version",
+      "scope": "compile",
+      "direct": true
+    },
+    "packages": [
+      "com.acme.xml"
+    ],
+    "versions": [
+      {
+        "version": "1.3.0",
+        "released": "2024-11-04",
+        "javaMin": "8",
+        "notes": [
+          "Adds XmlReader.builder() and XmlReader.Builder#resolveExternalEntities(boolean). The default is true, as with XmlReaderFactory.newReader()."
+        ]
+      },
+      {
+        "version": "1.4.2",
+        "released": "2025-06-17",
+        "javaMin": "8",
+        "notes": [
+          "Last release of the 1.x line. No further 1.x releases are planned."
+        ]
+      },
+      {
+        "version": "2.0.0",
+        "released": "2026-09-08",
+        "javaMin": "11",
+        "notes": [
+          "External entities are no longer resolved by default (CWE-611)."
+        ],
+        "breaking": [
+          {
+            "api": "com.acme.xml.XmlReaderFactory",
+            "change": "Removed. Use XmlReader.builder().build()."
+          },
+          {
+            "api": null,
+            "change": "Requires Java 11 or later."
+          }
+        ]
+      }
+    ],
+    "current": {
+      "version": "1.4.2",
+      "released": "2025-06-17",
+      "javaMin": "8",
+      "notes": [
+        "Last release of the 1.x line. No further 1.x releases are planned."
+      ]
+    },
+    "fixedIn": {
+      "version": "2.0.0",
+      "released": "2026-09-08",
+      "javaMin": "11",
+      "notes": [
+        "External entities are no longer resolved by default (CWE-611)."
+      ],
+      "breaking": [
+        {
+          "api": "com.acme.xml.XmlReaderFactory",
+          "change": "Removed. Use XmlReader.builder().build()."
+        },
+        {
+          "api": null,
+          "change": "Requires Java 11 or later."
+        }
+      ]
+    },
+    "compatibleFixes": [],
+    "javaUpgrade": {
+      "from": "1.8",
+      "to": "11",
+      "at": "pom.xml:21"
+    },
+    "metadata": "get_component"
+  },
+  "usages": {
+    "imports": [
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:12",
+        "name": "com.acme.xml.XmlDocument"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:13",
+        "name": "com.acme.xml.XmlElement"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:14",
+        "name": "com.acme.xml.XmlReaderFactory"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:8",
+        "name": "com.acme.xml.XmlDocument"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:9",
+        "name": "com.acme.xml.XmlElement"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:10",
+        "name": "com.acme.xml.XmlException"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:11",
+        "name": "com.acme.xml.XmlReader"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:12",
+        "name": "com.acme.xml.XmlReaderFactory"
+      }
+    ],
+    "calls": [
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:27",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "api": "com.acme.xml.XmlReaderFactory.newReader"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:28",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "api": "com.acme.xml.XmlDocument.getRoot"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:29",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "api": "com.acme.xml.XmlElement.attribute"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:29",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "api": "com.acme.xml.XmlElement.text"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:22",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlReaderFactory.newReader"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:24",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlReader.read"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:25",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlDocument.getRoot"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:26",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlElement.attribute"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:26",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlElement.attribute"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:27",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlElement.children"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:32",
+        "in": "com.acme.payments.statements.StatementParser#parse",
+        "api": "com.acme.xml.XmlException.getMessage"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:38",
+        "in": "com.acme.payments.statements.StatementParser#toLine",
+        "api": "com.acme.xml.XmlElement.attribute"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:39",
+        "in": "com.acme.payments.statements.StatementParser#toLine",
+        "api": "com.acme.xml.XmlElement.attribute"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementParser.java:40",
+        "in": "com.acme.payments.statements.StatementParser#toLine",
+        "api": "com.acme.xml.XmlElement.text"
+      }
+    ],
+    "untyped": [
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:27",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "call": "?.read"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:28",
+        "in": "com.acme.payments.banks.BankCodesLoader#load",
+        "call": "?.children"
+      }
+    ],
+    "inTests": []
+  },
+  "upgradeImpact": [
+    {
+      "api": "com.acme.xml.XmlReaderFactory",
+      "change": "Removed. Use XmlReader.builder().build().",
+      "usedAt": [
+        "src/main/java/com/acme/payments/banks/BankCodesLoader.java:27",
+        "src/main/java/com/acme/payments/statements/StatementParser.java:22"
+      ]
+    },
+    {
+      "api": null,
+      "change": "Requires Java 11 or later.",
+      "usedAt": []
+    }
+  ],
+  "grep": {
+    "terms": [
+      "XmlDocument",
+      "XmlElement",
+      "XmlReaderFactory",
+      "XmlException",
+      "XmlReader"
+    ],
+    "lines": 18,
+    "code": 16,
+    "textOnly": [
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementController.java:37",
+        "why": "stringa",
+        "text": "log.warn(\"Estratto rifiutato da XmlReader: {}\", e.getMessage());"
+      },
+      {
+        "at": "src/main/java/com/acme/payments/statements/StatementImportService.java:23",
+        "why": "commento",
+        "text": "// XmlReader non è thread-safe: StatementParser ne crea uno per ogni estratto"
+      }
+    ]
+  },
+  "reachability": [
+    {
+      "entry": {
+        "kind": "http",
+        "label": "POST /api/statements",
+        "method": "com.acme.payments.statements.StatementController#upload",
+        "at": "src/main/java/com/acme/payments/statements/StatementController.java:32"
+      },
+      "steps": [
+        {
+          "method": "com.acme.payments.statements.StatementController#upload",
+          "at": "src/main/java/com/acme/payments/statements/StatementController.java:34"
+        },
+        {
+          "method": "com.acme.payments.statements.StatementImportService#importStatement",
+          "at": "src/main/java/com/acme/payments/statements/StatementImportService.java:24"
+        },
+        {
+          "method": "com.acme.payments.statements.StatementParser#parse",
+          "at": "src/main/java/com/acme/payments/statements/StatementParser.java:22"
+        }
+      ]
+    },
+    {
+      "entry": {
+        "kind": "startup",
+        "label": "all'avvio (@PostConstruct)",
+        "method": "com.acme.payments.banks.BankCodesLoader#load",
+        "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:25"
+      },
+      "steps": [
+        {
+          "method": "com.acme.payments.banks.BankCodesLoader#load",
+          "at": "src/main/java/com/acme/payments/banks/BankCodesLoader.java:27"
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "test": "com.acme.payments.statements.StatementParserTest#readsCustomerAndLines",
+      "at": "src/test/java/com/acme/payments/statements/StatementParserTest.java:15",
+      "reaches": "com.acme.payments.statements.StatementParser#parse"
+    },
+    {
+      "test": "com.acme.payments.statements.StatementParserTest#rejectsMalformedXml",
+      "at": "src/test/java/com/acme/payments/statements/StatementParserTest.java:23",
+      "reaches": "com.acme.payments.statements.StatementParser#parse"
+    }
+  ],
+  "unreached": []
+}

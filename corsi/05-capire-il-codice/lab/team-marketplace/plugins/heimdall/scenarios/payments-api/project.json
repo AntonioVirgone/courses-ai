@@ -1,0 +1,7 @@
+{
+  "project": "payments-api",
+  "key": "PAY",
+  "stack": "Java 8 · Maven",
+  "source": "appscan",
+  "export": "appscan-issues.json"
+}

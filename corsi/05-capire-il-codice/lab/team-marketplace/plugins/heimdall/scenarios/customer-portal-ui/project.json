@@ -1,0 +1,7 @@
+{
+  "project": "customer-portal-ui",
+  "key": "CPU",
+  "stack": "Angular 21 · npm",
+  "source": "appscan",
+  "export": "appscan-issues.json"
+}
