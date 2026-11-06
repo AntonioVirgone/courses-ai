@@ -201,7 +201,7 @@ I passi 5 e 6 con l'agente consumano token sul tuo account.
 
 ## Installare la soluzione senza fare il laboratorio
 
-Dal marketplace del repo, che dalla lezione 05 punta a questa copia del plugin (ADR-0007):
+Dal marketplace del repo. Dalla lezione 06 `heimdall@courses-ai` è il plugin dell'ultima lezione fatta (ADR-0007): per avere esattamente quello di questa lezione usa `--plugin-dir`, più sotto.
 
 ```bash
 claude plugin install heimdall@courses-ai
